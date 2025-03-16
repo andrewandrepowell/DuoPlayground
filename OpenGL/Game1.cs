@@ -2,16 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
+using Pow.Utilities;
 using Pow;
 
 namespace OpenGLGame
 {
-    public class Game1 : Game
+    public class Game1 : Game, IRunnerParent
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private TiledMap _tiledMap;
-        private TiledMapRenderer _tiledMapRenderer;
 
         public Game1()
         {
@@ -24,14 +23,15 @@ namespace OpenGLGame
         {
             base.Initialize();
         }
-
+        public void Initialize(Map map)
+        {
+            map.Configure("tiled/test_map_0");
+        }
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Globals.InitializeMonoGame(spriteBatch: _spriteBatch, contentManager: Content);
-            Globals.InitializePow();
-            _tiledMap = Content.Load<TiledMap>("tiled/test_map_0");
-            _tiledMapRenderer = new(GraphicsDevice, _tiledMap);
+            Globals.InitializePow(this);
         }
         protected override void EndRun()
         {
@@ -44,7 +44,7 @@ namespace OpenGLGame
                 Exit();
 
             // TODO: Add your update logic here
-            _tiledMapRenderer.Update(gameTime);
+            Globals.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -53,8 +53,7 @@ namespace OpenGLGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            _tiledMapRenderer.Draw();
-
+            Globals.Draw();
             base.Draw(gameTime);
         }
     }
