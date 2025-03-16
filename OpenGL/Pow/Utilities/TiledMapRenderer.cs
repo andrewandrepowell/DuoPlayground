@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Pow
+namespace Pow.Utilities
 {
-    public class TiledMapRenderer
+    internal class TiledMapRenderer
     {
         private readonly TiledMapModelBuilder _mapModelBuilder;
         private readonly TiledMapEffect _defaultEffect;
@@ -42,7 +42,7 @@ namespace Pow
             _mapModel?.Dispose();
             if (map != null)
             {
-                _mapModel =_mapModelBuilder.Build(map);
+                _mapModel = _mapModelBuilder.Build(map);
                 _mapModelAnimatedTilesets = Enumerable.Range(0, _mapModel.Tilesets.Count).Select(x => _mapModel.GetAnimatedTiles(x).ToArray()).ToArray();
                 _mapModelLayerModelsets = _mapModel.LayersOfLayerModels.Values.Select(x => x.OfType<TiledMapAnimatedLayerModel>().ToArray()).ToArray();
             }
@@ -193,8 +193,10 @@ namespace Pow
                     _graphicsDevice.Indices = layerModel.IndexBuffer;
 
                     // for each pass in our effect
-                    foreach (var pass in effect1.CurrentTechnique.Passes)
+                    for (var passI = 0; passI < effect1.CurrentTechnique.Passes.Count; passI++)
                     {
+                        var pass = effect1.CurrentTechnique.Passes[passI];
+
                         // apply the pass, effectively choosing which vertex shader and fragment (pixel) shader to use
                         pass.Apply();
 
