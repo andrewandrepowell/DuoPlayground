@@ -54,13 +54,11 @@ namespace Pow.Utilities
         {
             _mapNode.Renderer.Update(Globals.GameTime);
         }
-        public void Draw(in Layers layer, in Matrix view)
+        public void Draw(in Layers layer, in Matrix view, in Matrix projection)
         {
             Debug.Assert(_loaded);
-            var gd = Globals.SpriteBatch.GraphicsDevice;
-            var p = Matrix.CreateOrthographicOffCenter(0, gd.Viewport.Width, gd.Viewport.Height, 0, 0, -1); // DEBUG NEEDS FIXING
             foreach (ref var mapLayer in _mapNode.Layers[layer].AsSpan())
-                _mapNode.Renderer.Draw(layer: mapLayer, view, p);
+                _mapNode.Renderer.Draw(layer: mapLayer, view, projection);
         }
     }
 }
