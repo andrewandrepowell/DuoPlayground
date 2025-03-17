@@ -55,7 +55,6 @@ namespace Pow.Utilities
             }
 
             _camera.Size = _graphicsDevice.Viewport.Bounds.Size;
-
             _updateDraw.UpdateSystem.Update(Globals.GameTime);
         }
         public void Draw()

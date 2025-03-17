@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Pow.Utilities
 {
 
-    public abstract class Pool<T>  : IDisposable where T : class, new()
+    public class Pool<T>  : IDisposable where T : class, new()
     {
         private readonly Resources<T> _resource;
         private readonly UnsafeQueue<Handle<T>> _pool;

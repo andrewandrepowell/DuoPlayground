@@ -34,9 +34,11 @@ namespace Pow.Systems.Render
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly UpdateDraw _parent;
+        private readonly QueryDescription _allSprites;
         public DrawSystem(UpdateDraw parent) : base(parent.World)
         {
             _parent = parent;
+            //_allSprites = new QueryDescription().WithAll<Sprite>();
         }
         public override void Update(in GameTime t)
         {
@@ -47,6 +49,7 @@ namespace Pow.Systems.Render
             foreach (ref var layer in _layers.AsSpan())
             {
                 map.Draw(in layer, in view, in projection);
+
             }
             base.Update(t);
         }
