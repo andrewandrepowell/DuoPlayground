@@ -27,7 +27,7 @@ namespace Pow
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Debug.Assert(_state == States.GameRunning);
+                Debug.Assert(_state > States.WaitingForInitMG);
                 return _spriteBatch;
             }
         }
@@ -36,7 +36,7 @@ namespace Pow
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Debug.Assert(_state == States.GameRunning);
+                Debug.Assert(_state > States.WaitingForInitMG);
                 return _contentManager;
             }
         }

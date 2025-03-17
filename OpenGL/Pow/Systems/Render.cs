@@ -41,11 +41,12 @@ namespace Pow.Systems.Render
         public override void Update(in GameTime t)
         {
             ref var view = ref _parent.Camera.View;
+            ref var projection = ref _parent.Camera.Projection;
             var map = _parent.Map;
 
             foreach (ref var layer in _layers.AsSpan())
             {
-                map.Draw(in layer, in view);
+                map.Draw(in layer, in view, in projection);
             }
             base.Update(t);
         }

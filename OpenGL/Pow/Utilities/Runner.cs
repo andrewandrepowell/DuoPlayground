@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arch.Bus;
 using Arch.Core;
+using Microsoft.Xna.Framework.Graphics;
 using Pow;
 using Pow.Systems;
 using Schedulers;
@@ -17,6 +19,7 @@ namespace Pow.Utilities
         private readonly JobScheduler _jobScheduler;
         private readonly Camera _camera;
         private readonly Map _map;
+        private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
         private readonly Systems.Render.UpdateDraw _updateDraw;
         public Runner(IRunnerParent parent)
@@ -32,13 +35,12 @@ namespace Pow.Utilities
                 StrictAllocationMode = false,
             });
             World.SharedJobScheduler = _jobScheduler;
-
+            _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
             _map = new();
+            _updateDraw = new(_world, _camera, _map);
 
             _parent.Initialize(_map);
-
-            _updateDraw = new(_world, _camera, _map);
         }
         public Camera Camera => _camera;
         public Map Map => _map;
@@ -46,7 +48,13 @@ namespace Pow.Utilities
         {
             // DEBUG DEBUG DEBUG
             if (!_map.Loaded)
+            {
+                _camera.Zoom = 1.5f;
+                _camera.Rotation = (float)Math.PI * 0.1f;
                 _map.Load(0);
+            }
+
+            _camera.Size = _graphicsDevice.Viewport.Bounds.Size;
 
             _updateDraw.UpdateSystem.Update(Globals.GameTime);
         }
