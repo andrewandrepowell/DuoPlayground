@@ -4,11 +4,13 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using MonoGame.Extended.Collisions.Layers;
 using Pow.Utilities;
+using Pow.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection.Emit;
 
 namespace Pow.Systems
 {
@@ -16,17 +18,17 @@ namespace Pow.Systems
     {
         
         private readonly Render _parent;
+        private readonly QueryDescription _allAnimationComponents;
+        private readonly ForEach<AnimationComponent> _updateAnimationComponents;
         public RenderUpdateSystem(Render parent) : base(parent.World) 
         {
             _parent = parent;
+            _allAnimationComponents = new QueryDescription().WithAll<AnimationComponent>();
+            _updateAnimationComponents = new((ref AnimationComponent component) => component.Manager.Update());
         }
         public override void Update(in GameTime t)
         {
-          
-            var map = _parent.Map;
-
-            map.Update();
-
+            World.Query(_allAnimationComponents, _updateAnimationComponents);
             base.Update(t);
         }
     }
@@ -34,23 +36,41 @@ namespace Pow.Systems
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly Render _parent;
-        private readonly QueryDescription _allSprites;
+        private readonly QueryDescription _allAnimationComponents;
+        private readonly Dictionary<Layers, ForEach<AnimationComponent>> _updateAnimationComponents;
         public RenderDrawSystem(Render parent) : base(parent.World)
         {
             _parent = parent;
-            //_allSprites = new QueryDescription().WithAll<Sprite>();
+            _allAnimationComponents = new QueryDescription().WithAll<AnimationComponent>();
+            _updateAnimationComponents = new();
+            foreach (var layer in _layers)
+            {
+                _updateAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
+                {
+                    if (layer == component.Manager.Layer)
+                        component.Manager.Draw();
+                }));
+            }
         }
         public override void Update(in GameTime t)
         {
             ref var view = ref _parent.Camera.View;
-            ref var projection = ref _parent.Camera.Projection;
+            var spriteBatch = Globals.SpriteBatch;
             var map = _parent.Map;
 
-            foreach (ref var layer in _layers.AsSpan())
+            
+            foreach (var layer in _layers.AsSpan())
             {
-                map.Draw(in layer, in view, in projection);
+                spriteBatch.Begin(transformMatrix: view);
+                map.Draw(layer);
+                spriteBatch.End();
+
+                spriteBatch.Begin(transformMatrix: view);
+                World.Query(_allAnimationComponents, _updateAnimationComponents[layer]);
+                spriteBatch.End();
 
             }
+            
             base.Update(t);
         }
     }

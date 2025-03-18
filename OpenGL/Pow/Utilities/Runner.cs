@@ -26,7 +26,7 @@ namespace Pow.Utilities
         private readonly AnimationGenerator _animationGenerator;
         public Runner(IRunnerParent parent)
         {
-            Debug.Assert(Globals.State == Globals.States.WaitingForInitPow);
+            // Create objects.
             _parent = parent;
             _world = World.Create();
             _jobScheduler = new(new JobScheduler.Config()
@@ -43,8 +43,10 @@ namespace Pow.Utilities
             _render = new(_world, _camera, _map);
             _animationGenerator = new();
 
+            // Let the parent initialize.
             _parent.Initialize(this);
 
+            // Initialize based on paret configurations.
             _animationGenerator.Initialize();
         }
         public Camera Camera => _camera;
@@ -52,7 +54,6 @@ namespace Pow.Utilities
         public AnimationGenerator AnimationGenerator => _animationGenerator;
         public void Update()
         {
-            _camera.Size = _graphicsDevice.Viewport.Bounds.Size;
             _render.UpdateSystem.Update(Globals.GameTime);
         }
         public void Draw()
@@ -64,6 +65,7 @@ namespace Pow.Utilities
             World.Destroy(_world);
             _jobScheduler.Dispose();
             _render.Dispose();
+            _map.Dispose();
         }
     }
 }

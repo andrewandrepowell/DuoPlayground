@@ -47,8 +47,8 @@ namespace OpenGLGame
             Globals.InitializePow(this);
 
             Globals.Runner.Camera.Zoom = 2f;
-            Globals.Runner.Camera.Position = new Vector2(-32, 0);
-            Globals.Runner.Camera.Rotation = (float)Math.PI * 0;
+            Globals.Runner.Camera.Position = new Vector2(32, 0);
+            Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
             Globals.Runner.Map.Load(0);
 
             _animationManager = Globals.Runner.AnimationGenerator.Acquire();
@@ -128,7 +128,7 @@ namespace OpenGLGame
             Globals.Draw();
 
             _spriteBatch.Begin(transformMatrix: Globals.Runner.Camera.View);
-            //_animationManager.Draw();
+            _animationManager.Draw();
             _spriteBatch.End();
             base.Draw(gameTime);
         }

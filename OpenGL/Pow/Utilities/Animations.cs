@@ -54,6 +54,7 @@ namespace Pow.Utilities.Animations
                 UpdateSpritePosition();
             }
         }
+        public Layers Layer = Layers.Ground;
         public void LoadSprite(int spriteId)
         {
             Debug.Assert(!_spriteNodes.ContainsKey(spriteId));
