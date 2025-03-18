@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pow.Utilities.Animations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Pow.Utilities
     public interface IRunnerParent
     {
         public void Initialize(Map map);
+        public void Initialize(AnimationGenerator generator);
     }
 }
