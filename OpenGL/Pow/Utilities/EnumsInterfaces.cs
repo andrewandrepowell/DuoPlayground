@@ -10,7 +10,6 @@ namespace Pow.Utilities
     public enum Layers { Background, Ground, Foreground }
     public interface IRunnerParent
     {
-        public void Initialize(Map map);
-        public void Initialize(AnimationGenerator generator);
+        public void Initialize(Runner runner);
     }
 }

@@ -27,6 +27,14 @@ namespace Pow.Utilities.Animations
             sprite.Position.X = (float)Math.Floor(_position.X);
             sprite.Position.Y = (float)Math.Floor(_position.Y);
         }
+        public int AnimationId
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationId.Value;
+            }
+        }
         public bool Running
         {
             get
@@ -139,8 +147,15 @@ namespace Pow.Utilities.Animations
         public void Initialize(int capacity = 64)
         {
             Debug.Assert(_state == States.Configuring);
+            // Initialize pool
             for (var i = 0; i < capacity; i++)
                 _managerPool.Enqueue(new(this));
+            // Load all the animations
+            {
+                var manager = new AnimationManager(this);
+                foreach (var animationId in _animationConfigNodes.Keys)
+                    manager.LoadAnimation(animationId);
+            }
             _state = States.Running;
         }
         public AnimationManager Acquire()

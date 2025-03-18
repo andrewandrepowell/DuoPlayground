@@ -19,7 +19,7 @@ namespace Pow
         private static States _state = States.WaitingForInitMG;
         private static SpriteBatch _spriteBatch;
         private static ContentManager _contentManager;
-        private static GameTime _gameTime;
+        private static GameTime _gameTime = new();
         private static Runner _runner;
         public enum States { WaitingForInitMG, WaitingForInitPow, GameRunning, Disposed }
         public static SpriteBatch SpriteBatch

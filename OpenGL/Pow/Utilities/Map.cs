@@ -10,6 +10,7 @@ using MonoGame.Extended.Collections;
 using Microsoft.Xna.Framework;
 using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collisions.Layers;
 
 namespace Pow.Utilities
 {
@@ -44,11 +45,12 @@ namespace Pow.Utilities
         }
         public void Unload()
         {
-
+            Debug.Assert(_loaded);
             _loaded = false;
         }
         public void Update()
         {
+            Debug.Assert(_loaded);
             _mapNode.Renderer.Update(Globals.GameTime);
         }
         public void Draw(in Layers layer, in Matrix view, in Matrix projection)
