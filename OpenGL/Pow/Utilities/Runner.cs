@@ -43,23 +43,15 @@ namespace Pow.Utilities
             _render = new(_world, _camera, _map);
             _animationGenerator = new();
 
-            _parent.Initialize(_map);
-            _parent.Initialize(_animationGenerator);
+            _parent.Initialize(this);
 
-
+            _animationGenerator.Initialize();
         }
         public Camera Camera => _camera;
         public Map Map => _map;
+        public AnimationGenerator AnimationGenerator => _animationGenerator;
         public void Update()
         {
-            // DEBUG DEBUG DEBUG
-            if (!_map.Loaded)
-            {
-                _camera.Zoom = 1.5f;
-                _camera.Rotation = (float)Math.PI * 0.1f;
-                _map.Load(0);
-            }
-
             _camera.Size = _graphicsDevice.Viewport.Bounds.Size;
             _render.UpdateSystem.Update(Globals.GameTime);
         }

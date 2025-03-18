@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using MonoGame.Extended.Collections;
 using Arch.LowLevel;
 using Pow.Utilities.Animations;
+using MonoGame.Extended;
+using System;
 
 namespace OpenGLGame
 {
@@ -19,6 +21,7 @@ namespace OpenGLGame
         private Queue<int> _csQueue = [];
         private Deque<int> _mgeQueue = [];
         private UnsafeQueue<int> _archQueue = new(64);
+        private AnimationManager _animationManager;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -30,19 +33,27 @@ namespace OpenGLGame
         {
             base.Initialize();
         }
-        public void Initialize(Map map)
+        public void Initialize(Runner runner)
         {
-            map.Configure(0, "tiled/test_map_0");
-        }
-        public void Initialize(AnimationGenerator generator)
-        {
-
+            runner.Map.Configure(0, "tiled/test_map_0");
+            runner.AnimationGenerator.ConfigureSprite(0, "images/test_ball_0", new(32, 32));
+            runner.AnimationGenerator.ConfigureAnimation(0, 0, 0, [0, 1, 2, 3], 0.25f, false);
+            runner.AnimationGenerator.ConfigureAnimation(1, 0, 1, [0, 4, 5], 0.25f, false);
         }
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Globals.InitializeMonoGame(spriteBatch: _spriteBatch, contentManager: Content);
             Globals.InitializePow(this);
+
+            Globals.Runner.Camera.Zoom = 2f;
+            Globals.Runner.Camera.Position = new Vector2(-32, 0);
+            Globals.Runner.Camera.Rotation = (float)Math.PI * 0;
+            Globals.Runner.Map.Load(0);
+
+            _animationManager = Globals.Runner.AnimationGenerator.Acquire();
+            _animationManager.Play(0);
+            _animationManager.Position = new Vector2(x: 64, y: 64);
         }
         protected override void EndRun()
         {
@@ -54,11 +65,26 @@ namespace OpenGLGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+           
+
+            
+
+            {
+                if (!_animationManager.Running)
+                {
+                    if (_animationManager.AnimationId == 0)
+                    {
+                        _animationManager.Play(1);
+                    }
+                    else
+                    {
+                        _animationManager.Play(0);
+                    }
+                }
+                _animationManager.Update();
+            }
             {
                 var total = 10000;
-        //private Queue<int> _csQueue = [];
-        //private Deque<int> _mgeQueue = [];
-        //private UnsafeQueue<int> _archQueue = [];
                 void CSTest()
                 {
                     for (var i = 0; i < total; i++)
@@ -98,7 +124,12 @@ namespace OpenGLGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            
             Globals.Draw();
+
+            _spriteBatch.Begin(transformMatrix: Globals.Runner.Camera.View);
+            //_animationManager.Draw();
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
