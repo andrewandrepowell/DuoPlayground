@@ -15,25 +15,22 @@ namespace Pow.Utilities
 {
     public class Map
     {
-        private readonly List<ConfigNode> _configNodes = [];
+        private readonly Dictionary<int, ConfigNode> _configNodes = [];
         private readonly Dictionary<int, MapNode> _mapNodes = [];
         private MapNode _mapNode;
         private bool _loaded = false;
         private record ConfigNode(string AssetName);
         private record MapNode(ConfigNode Config, TiledMap Map, TiledMapRenderer Renderer, ReadOnlyDictionary<Layers, TiledMapLayer[]> Layers);
         public bool Loaded => _loaded;
-        public int Configure(string assetName)
+        public void Configure(int id, string assetName)
         {
             Debug.Assert(!_loaded);
-            Debug.Assert(Globals.State >= Globals.States.WaitingForInitPow);
-            var id = _configNodes.Count;
-            _configNodes.Add(new(assetName));
-            return id;
+            Debug.Assert(!_configNodes.ContainsKey(id));
+            _configNodes.Add(id, new(assetName));
         }
         public void Load(int id)
         {
             Debug.Assert(!_loaded);
-            Debug.Assert(Globals.State >= Globals.States.WaitingForInitPow);
             if (!_mapNodes.ContainsKey(id))
             {
                 var configNode = _configNodes[id];

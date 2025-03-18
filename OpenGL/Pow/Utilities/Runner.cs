@@ -9,6 +9,7 @@ using Arch.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Pow;
 using Pow.Systems;
+using Pow.Utilities.Animations;
 using Schedulers;
 
 namespace Pow.Utilities
@@ -21,7 +22,8 @@ namespace Pow.Utilities
         private readonly Map _map;
         private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
-        private readonly Systems.Render.UpdateDraw _updateDraw;
+        private readonly Render _render;
+        private readonly AnimationGenerator _animationGenerator;
         public Runner(IRunnerParent parent)
         {
             Debug.Assert(Globals.State == Globals.States.WaitingForInitPow);
@@ -38,9 +40,13 @@ namespace Pow.Utilities
             _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
             _map = new();
-            _updateDraw = new(_world, _camera, _map);
+            _render = new(_world, _camera, _map);
+            _animationGenerator = new();
 
             _parent.Initialize(_map);
+            _parent.Initialize(_animationGenerator);
+
+
         }
         public Camera Camera => _camera;
         public Map Map => _map;
@@ -55,17 +61,17 @@ namespace Pow.Utilities
             }
 
             _camera.Size = _graphicsDevice.Viewport.Bounds.Size;
-            _updateDraw.UpdateSystem.Update(Globals.GameTime);
+            _render.UpdateSystem.Update(Globals.GameTime);
         }
         public void Draw()
         {
-            _updateDraw.DrawSystem.Update(Globals.GameTime);
+            _render.DrawSystem.Update(Globals.GameTime);
         }
         public void Dispose()
         {
             World.Destroy(_world);
             _jobScheduler.Dispose();
-            _updateDraw.Dispose();
+            _render.Dispose();
         }
     }
 }

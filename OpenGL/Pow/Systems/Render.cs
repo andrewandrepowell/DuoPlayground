@@ -10,13 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pow.Systems.Render
+namespace Pow.Systems
 {
-    internal class UpdateSystem : BaseSystem<World, GameTime>
+    internal class RenderUpdateSystem : BaseSystem<World, GameTime>
     {
         
-        private readonly UpdateDraw _parent;
-        public UpdateSystem(UpdateDraw parent) : base(parent.World) 
+        private readonly Render _parent;
+        public RenderUpdateSystem(Render parent) : base(parent.World) 
         {
             _parent = parent;
         }
@@ -30,12 +30,12 @@ namespace Pow.Systems.Render
             base.Update(t);
         }
     }
-    internal class DrawSystem : BaseSystem<World, GameTime>
+    internal class RenderDrawSystem : BaseSystem<World, GameTime>
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
-        private readonly UpdateDraw _parent;
+        private readonly Render _parent;
         private readonly QueryDescription _allSprites;
-        public DrawSystem(UpdateDraw parent) : base(parent.World)
+        public RenderDrawSystem(Render parent) : base(parent.World)
         {
             _parent = parent;
             //_allSprites = new QueryDescription().WithAll<Sprite>();
@@ -54,19 +54,19 @@ namespace Pow.Systems.Render
             base.Update(t);
         }
     }
-    internal class UpdateDraw : IDisposable
+    internal class Render : IDisposable
     {
         private readonly World _world;
         private readonly Camera _camera;
         private readonly Map _map;
-        private readonly UpdateSystem _updateSystem;
-        private readonly DrawSystem _drawSystem;
+        private readonly RenderUpdateSystem _updateSystem;
+        private readonly RenderDrawSystem _drawSystem;
         public World World => _world;
         public Camera Camera => _camera;
         public Map Map => _map;
-        public UpdateSystem UpdateSystem => _updateSystem;
-        public DrawSystem DrawSystem => _drawSystem;
-        public UpdateDraw(World world, Camera camera, Map map)
+        public RenderUpdateSystem UpdateSystem => _updateSystem;
+        public RenderDrawSystem DrawSystem => _drawSystem;
+        public Render(World world, Camera camera, Map map)
         {
             _world = world;
             _camera = camera;
