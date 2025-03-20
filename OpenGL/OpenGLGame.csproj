@@ -24,6 +24,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aether.Physics2D.MG" Version="2.1.1" />
     <PackageReference Include="Arch" Version="2.0.0" />
     <PackageReference Include="Arch.EventBus" Version="1.0.2" />
     <PackageReference Include="Arch.LowLevel" Version="1.1.3" />

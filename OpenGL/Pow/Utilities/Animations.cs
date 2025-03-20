@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Pow.Utilities.GO;
 
 
 namespace Pow.Utilities.Animations
 {
-    public class AnimationManager(AnimationGenerator parent)
+    public class AnimationManager(AnimationGenerator parent) : IGOManager
     {
         private bool _acquired = false;
         private AnimationGenerator _parent = parent;
@@ -121,7 +122,7 @@ namespace Pow.Utilities.Animations
             _animationNode.SpriteNode.Sprite.Draw();
         }
     }
-    public class AnimationGenerator
+    public class AnimationGenerator : IGOGenerator<AnimationManager>
     {
         private Queue<AnimationManager> _managerPool = new();
         private Dictionary<int, SpriteConfigNode> _spriteConfigNodes = [];
