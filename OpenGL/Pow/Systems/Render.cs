@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Collisions.Layers;
 using Pow.Utilities;
 using Pow.Components;
+using Pow.Utilities.Animations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace Pow.Systems
         }
         public override void Update(in GameTime t)
         {
-            World.Query(_allAnimationComponents, _updateAnimationComponents);
+            World.ParallelQuery(_allAnimationComponents, _updateAnimationComponents);
             base.Update(t);
         }
     }
@@ -41,15 +42,11 @@ namespace Pow.Systems
         public RenderDrawSystem(Render parent) : base(parent.World)
         {
             _parent = parent;
-            _allAnimationComponents = new QueryDescription().WithAll<AnimationComponent>();
+            _allAnimationComponents = new QueryDescription().WithAny<AnimationComponent>();
             _updateAnimationComponents = new();
             foreach (var layer in _layers)
             {
-                _updateAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
-                {
-                    if (layer == component.Manager.Layer)
-                        component.Manager.Draw();
-                }));
+                _updateAnimationComponents.Add(layer, new((ref AnimationComponent component) => component.Manager.Draw()));
             }
         }
         public override void Update(in GameTime t)

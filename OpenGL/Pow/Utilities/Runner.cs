@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Arch.Bus;
 using Arch.Core;
 using Microsoft.Xna.Framework.Graphics;
-using Pow;
 using Pow.Systems;
 using Pow.Utilities.Animations;
 using Schedulers;
