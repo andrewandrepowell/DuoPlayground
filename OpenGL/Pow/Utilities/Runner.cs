@@ -7,7 +7,11 @@ using Schedulers;
 
 namespace Pow.Utilities
 {
-    public class Runner : IDisposable
+    public interface IRunnerParent
+    {
+        public void Initialize(Runner runner);
+    }
+    public class Runner : IDisposable, IMapParent
     {
         private readonly World _world;
         private readonly JobScheduler _jobScheduler;
@@ -32,15 +36,19 @@ namespace Pow.Utilities
             World.SharedJobScheduler = _jobScheduler;
             _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
-            _map = new();
+            _map = new(this);
             _render = new(_world, _camera, _map);
             _animationGenerator = new();
 
             // Let the parent initialize.
             _parent.Initialize(this);
 
-            // Initialize based on paret configurations.
+            // Initialize based on parent configurations.
             _animationGenerator.Initialize();
+        }
+        public void Initialize(Map.MapNode node)
+        {
+
         }
         public Camera Camera => _camera;
         public Map Map => _map;

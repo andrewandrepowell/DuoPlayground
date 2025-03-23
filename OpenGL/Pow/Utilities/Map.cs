@@ -10,14 +10,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pow.Utilities
 {
-    public class Map : IDisposable
+    public interface IMapParent
+    {
+        public void Initialize(Map.MapNode mapNode);
+    }
+    public class Map(IMapParent parent) : IDisposable
     {
         private readonly Dictionary<int, ConfigNode> _configNodes = [];
         private readonly Dictionary<int, MapNode> _mapNodes = [];
+        private readonly IMapParent _parent = parent;
         private MapNode _mapNode;
         private bool _loaded = false;
-        private record ConfigNode(string AssetName);
-        private record MapNode(ConfigNode Config, TiledMap Map, ReadOnlyDictionary<Layers, RenderTarget2D[]> RenderTargets);
         private RenderTarget2D DrawMapLayerToRenderTarget(TiledMap map, TiledMapRenderer renderer, TiledMapLayer mapLayer)
         {
             var graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
@@ -29,6 +32,13 @@ namespace Pow.Utilities
             graphicsDevice.SetRenderTargets(previousTarget);
             return renderTarget;
         }
+        public record ConfigNode(string AssetName);
+        public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
+        public record MapNode(
+            ConfigNode Config,
+            TiledMap Map,
+            ReadOnlyDictionary<Layers, RenderTarget2D[]> RenderTargets,
+            PolygonNode[] PolygonNodes);
         public bool Loaded => _loaded;
         public void Configure(int id, string assetName)
         {
@@ -51,9 +61,18 @@ namespace Pow.Utilities
                         .Select(mapLayer => DrawMapLayerToRenderTarget(map, renderer, mapLayer))
                         .ToArray()))
                     .ToDictionary();
-                _mapNodes.Add(id, new(configNode, map, new(renderTargets)));
+                var polygonNodes = map.ObjectLayers
+                    .Where(objectLayer => objectLayer.Name.StartsWith("objects"))
+                    .SelectMany(objectLayer => objectLayer.Objects.OfType<TiledMapPolygonObject>())
+                    .Select(polygonObject => new PolygonNode(
+                        Position: polygonObject.Position,
+                        Vertices: polygonObject.Points,
+                        Parameters: new(polygonObject.Properties.ToDictionary(kv => kv.Key, kv => kv.Value.Value))))
+                    .ToArray();
+                _mapNodes.Add(id, new(configNode, map, new(renderTargets), polygonNodes));
             }
             _mapNode = _mapNodes[id];
+            _parent.Initialize(_mapNode);
             _loaded = true;
         }
         public void Unload()
