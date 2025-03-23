@@ -8,8 +8,4 @@ using System.Threading.Tasks;
 namespace Pow.Utilities
 {
     public enum Layers { Background, Ground, Foreground }
-    public interface IRunnerParent
-    {
-        public void Initialize(Runner runner);
-    }
 }
