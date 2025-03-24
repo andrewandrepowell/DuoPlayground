@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pow.Utilities;
 using Pow;
+using System;
+using MonoGame.Extended.Animations;
 
 
 namespace OpenGLGame
@@ -28,6 +30,7 @@ namespace OpenGLGame
             runner.AnimationGenerator.ConfigureSprite(0, "images/test_ball_0", new(32, 32));
             runner.AnimationGenerator.ConfigureAnimation(0, 0, 0, [0, 1, 2, 3], 0.25f, false);
             runner.AnimationGenerator.ConfigureAnimation(1, 0, 1, [0, 4, 5], 0.25f, false);
+            runner.AddEntityType(0, [typeof(AnimationComponent)]);
         }
         protected override void LoadContent()
         {
@@ -35,9 +38,11 @@ namespace OpenGLGame
             Globals.InitializeMonoGame(spriteBatch: _spriteBatch, contentManager: Content);
             Globals.InitializePow(this);
 
-            //Globals.Runner.Camera.Zoom = 2f;
-            //Globals.Runner.Camera.Position = new Vector2(32, 0);
-            //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
+            Globals.Runner.Camera.Zoom = 2f;
+            Globals.Runner.Camera.Position = new Vector2(-32, -32);
+            Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
+
+            Globals.Runner.CreateEntity(0);
             Globals.Runner.Map.Load(0);
         }
         protected override void EndRun()

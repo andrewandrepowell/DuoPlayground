@@ -1,9 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Arch.Buffer;
 using Arch.Core;
+using Arch.System;
+using Arch.Core.Extensions;
+using Arch.Core.Utils;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pow.Systems;
 using Pow.Utilities.Animations;
+using Pow.Utilities.GO;
+using Pow.Components;
 using Schedulers;
+using System.Reflection;
 
 namespace Pow.Utilities
 {
@@ -15,15 +26,23 @@ namespace Pow.Utilities
     {
         private readonly World _world;
         private readonly JobScheduler _jobScheduler;
+        private readonly CommandBuffer _commandBuffer;
         private readonly Camera _camera;
         private readonly Map _map;
         private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
         private readonly Render _render;
+        private readonly Group<GameTime> _systemGroups;
+        private readonly GOCustomSystem _goCustomSystem;
+        private readonly GOGeneratorContainer _goGeneratorContainer;
         private readonly AnimationGenerator _animationGenerator;
+        private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
+        private bool _initialized;
+        private record EntityTypeNode(ComponentType[] ComponentTypes);
         public Runner(IRunnerParent parent)
         {
             // Create objects.
+            _initialized = false;
             _parent = parent;
             _world = World.Create();
             _jobScheduler = new(new JobScheduler.Config()
@@ -34,17 +53,29 @@ namespace Pow.Utilities
                 StrictAllocationMode = false,
             });
             World.SharedJobScheduler = _jobScheduler;
+            _commandBuffer = new();
             _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
             _map = new(this);
             _render = new(_world, _camera, _map);
+            _goCustomSystem = new(_world);
+            _systemGroups = new Group<GameTime>(
+                "Systems",
+                new DestroySystem(_world),
+                _goCustomSystem,
+                _render.UpdateSystem);
+            
             _animationGenerator = new();
+            _goGeneratorContainer = new();
 
             // Let the parent initialize.
             _parent.Initialize(this);
 
             // Initialize based on parent configurations.
             _animationGenerator.Initialize();
+            _goGeneratorContainer.Initialize();
+
+            _initialized = true;
         }
         public void Initialize(Map.MapNode node)
         {
@@ -53,16 +84,42 @@ namespace Pow.Utilities
         public Camera Camera => _camera;
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
+        public GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
+        public void AddEntityType(int id, ComponentType[] componentTypes)
+        {
+            Debug.Assert(!_initialized);
+            Debug.Assert(!_entityTypeNodes.ContainsKey(id));
+            Debug.Assert(!componentTypes.Contains(typeof(StatusComponent)));
+            _entityTypeNodes.Add(id, new(componentTypes));
+        }
+        public Entity CreateEntity(int id)
+        {
+            Debug.Assert(_initialized);
+            return _commandBuffer.Create(_entityTypeNodes[id].ComponentTypes); 
+        }
+        public void DestroyEntity(in Entity entity)
+        {
+            Debug.Assert(_initialized);
+            ref var statusComponent = ref _world.Get<StatusComponent>(entity);
+            Debug.Assert(statusComponent.State == EntityStates.Running);
+            statusComponent.State = EntityStates.Destroying;
+            _commandBuffer.Destroy(in entity);
+
+        }
         public void Update()
         {
-            _render.UpdateSystem.Update(Globals.GameTime);
+            Debug.Assert(_initialized);
+            _systemGroups.Update(Globals.GameTime);
+            _commandBuffer.Playback(_world);
         }
         public void Draw()
         {
+            Debug.Assert(_initialized);
             _render.DrawSystem.Update(Globals.GameTime);
         }
         public void Dispose()
         {
+            Debug.Assert(_initialized);
             World.Destroy(_world);
             _jobScheduler.Dispose();
             _render.Dispose();
