@@ -63,7 +63,13 @@ namespace Pow.Utilities.GO
     {
         private readonly Action<GOCustomManager> _returnAction;
         private Queue<T> _managerPool = new();
-        public bool _initialized = false;
+        private bool _initialized = false;
+        private void Create()
+        {
+            var manager = new T();
+            manager.Initialize(_returnAction);
+            _managerPool.Enqueue(manager);
+        }
         public GOCustomGenerator()
         {
             _returnAction = (GOCustomManager manager) => Return((T)manager);
@@ -71,18 +77,13 @@ namespace Pow.Utilities.GO
         public void Initialize(int capacity)
         {
             Debug.Assert(!_initialized);
-            for (var i = 0; i < capacity; i++)
-            {
-                var manager = new T();
-                manager.Initialize(_returnAction);
-                _managerPool.Enqueue(manager);
-            }
+            for (var i = 0; i < capacity; i++) Create();
             _initialized = true;
         }
         public T Acquire()
         {
             Debug.Assert(_initialized);
-            if (_managerPool.Count == 0) _managerPool.Enqueue(new T());
+            if (_managerPool.Count == 0) Create();
             var manager = _managerPool.Dequeue();
             manager.Acquire();
             return manager;

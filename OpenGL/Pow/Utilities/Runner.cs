@@ -32,6 +32,8 @@ namespace Pow.Utilities
         private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
         private readonly Render _render;
+        private readonly InitializeSystem _initializeSystem;
+        private readonly DestroySystem _destroySystem;
         private readonly Group<GameTime> _systemGroups;
         private readonly GOCustomSystem _goCustomSystem;
         private readonly GOGeneratorContainer _goGeneratorContainer;
@@ -59,12 +61,13 @@ namespace Pow.Utilities
             _map = new(this);
             _render = new(_world, _camera, _map);
             _goCustomSystem = new(_world);
+            _initializeSystem = new InitializeSystem(_world);
+            _destroySystem = new DestroySystem(_world);
             _systemGroups = new Group<GameTime>(
                 "Systems",
-                new DestroySystem(_world),
                 _goCustomSystem,
+                new PositionSystem(_world),
                 _render.UpdateSystem);
-            
             _animationGenerator = new();
             _goGeneratorContainer = new();
 
@@ -84,19 +87,39 @@ namespace Pow.Utilities
         public Camera Camera => _camera;
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
-        public GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
+        internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
         public void AddEntityType(int id, ComponentType[] componentTypes)
         {
             Debug.Assert(!_initialized);
             Debug.Assert(!_entityTypeNodes.ContainsKey(id));
-            Debug.Assert(!componentTypes.Contains(typeof(StatusComponent)));
+            Debug.Assert(componentTypes.Contains(typeof(StatusComponent)));
             _entityTypeNodes.Add(id, new(componentTypes));
+        }
+        public void AddGOCustomManager<T>(int capacity = 32) where T : GOCustomManager, new()
+        {
+            Debug.Assert(!_initialized);
+            _goGeneratorContainer.Add<T>(capacity);
+            _goCustomSystem.Add<T>();
         }
         public Entity CreateEntity(int id)
         {
             Debug.Assert(_initialized);
-            return _commandBuffer.Create(_entityTypeNodes[id].ComponentTypes); 
+            var entity = _commandBuffer.Create(_entityTypeNodes[id].ComponentTypes);
+            _commandBuffer.Set(in entity, new StatusComponent() { State = EntityStates.Initializing });
+            return entity; 
         }
+#nullable enable
+        public void SetCreatedEntity<T>(in Entity entity, in T? value)
+        {
+            Debug.Assert(_initialized);
+            _commandBuffer.Set(in entity, in value);
+        }
+        public void AddCreatedEntity<T>(in Entity entity, in T? component)
+        {
+            Debug.Assert(_initialized);
+            _commandBuffer.Add(in entity, in component);
+        }
+#nullable disable
         public void DestroyEntity(in Entity entity)
         {
             Debug.Assert(_initialized);
@@ -104,13 +127,14 @@ namespace Pow.Utilities
             Debug.Assert(statusComponent.State == EntityStates.Running);
             statusComponent.State = EntityStates.Destroying;
             _commandBuffer.Destroy(in entity);
-
         }
         public void Update()
         {
             Debug.Assert(_initialized);
-            _systemGroups.Update(Globals.GameTime);
+            _destroySystem.Update(Globals.GameTime);
             _commandBuffer.Playback(_world);
+            _initializeSystem.Update(Globals.GameTime);
+            _systemGroups.Update(Globals.GameTime);
         }
         public void Draw()
         {
