@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Arch.Core.Utils;
+using System.Diagnostics;
 
 namespace Pow.Systems
 {
@@ -17,25 +18,41 @@ namespace Pow.Systems
     {
         private readonly QueryDescription _queryDescription = new QueryDescription().WithAll<StatusComponent>();
         private readonly ForEach _initializeComponents;
+        private readonly Dictionary<ComponentType, IEntityInitialize> _componentNodes = [];
+        private bool _initialized = false;
+        private record ComponentNode<T>(World World) : IEntityInitialize where T : IEntityInitialize
+        {
+            public void Initialize(in Entity entity)
+            {
+                ref var component = ref World.Get<T>(entity);
+                component.Initialize(entity);
+            }
+        }
         private void InitializeComponents(in Entity entity)
         {
             ref var statusComponent = ref entity.Get<StatusComponent>();
             if (statusComponent.State != EntityStates.Initializing)
                 return;
-            var componentTypes = World.GetComponentTypes(entity);
-            foreach (ref var componentType in componentTypes.AsSpan())
-            {
-                if (World.Get(entity, componentType) is IEntityInitialize entityInitialize)
-                {
-                    entityInitialize.Initialize(in entity);
-                    World.Set(entity, (object)entityInitialize);
-                }
-            }
+            foreach (ref var componentType in World.GetComponentTypes(entity).AsSpan())
+                if (_componentNodes.TryGetValue(componentType, out var componentNode))
+                    componentNode.Initialize(in entity);
             statusComponent.State = EntityStates.Running;
+        }
+        public void Add<T>() where T : IEntityInitialize
+        {
+            Debug.Assert(!_initialized);
+            var componentType = (ComponentType)typeof(T);
+            Debug.Assert(!_componentNodes.ContainsKey(componentType));
+            _componentNodes.Add(componentType, new ComponentNode<T>(World));
         }
         public InitializeSystem(World world) : base(world)
         {
             _initializeComponents = new((Entity entity) => InitializeComponents(in entity));
+        }
+        public override void Initialize()
+        {
+            base.Initialize();
+            _initialized = true;
         }
         public override void Update(in GameTime t)
         {

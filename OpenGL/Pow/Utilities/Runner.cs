@@ -71,6 +71,11 @@ namespace Pow.Utilities
             _animationGenerator = new();
             _goGeneratorContainer = new();
 
+            // Associate components with initialize and destroy systems.
+            _initializeSystem.Add<AnimationComponent>();
+            _initializeSystem.Add<InitializeComponent>();
+            _destroySystem.Add<AnimationComponent>();
+
             // Let the parent initialize.
             _parent.Initialize(this);
 
@@ -100,6 +105,8 @@ namespace Pow.Utilities
             Debug.Assert(!_initialized);
             _goGeneratorContainer.Add<T>(capacity);
             _goCustomSystem.Add<T>();
+            _initializeSystem.Add<GOCustomComponent<T>>();
+            _destroySystem.Add<GOCustomComponent<T>>();
         }
         public Entity CreateEntity(int id)
         {
