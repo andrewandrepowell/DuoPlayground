@@ -7,34 +7,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Arch.Core;
+using Arch.Core.Utils;
+using System.Diagnostics;
+using Arch.Core.Extensions;
+using System.Numerics;
 
 namespace Pow.Components
 {
+    public delegate void EntityAction(in Entity entity);
+
     public struct StatusComponent()
     {
         internal EntityStates State = EntityStates.Initializing;
     }
-    public readonly struct AnimationComponent : IDisposable
+    public struct AnimationComponent : IDisposable, IEntityInitialize
     {
-        public readonly AnimationManager Manager;
-        public AnimationComponent()
-        {
-            Manager = Globals.Runner.AnimationGenerator.Acquire();
-        }
-        public void Dispose()
-        {
-            Manager.Return();
-        }
+        public AnimationManager Manager;
+        public void Initialize(in Entity entity) => Manager = Globals.Runner.AnimationGenerator.Acquire();
+        public void Dispose() => Manager.Return();
     }
-    public readonly struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager
+    public struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager
     {
-        public readonly GOCustomManager Manager;
-        public GOCustomComponent() => Manager = Globals.Runner.GOGeneratorContainer.Acquire<T>();
-        public void Initialize(in Entity entity) 
-        { 
+        public GOCustomManager Manager;
+        public void Initialize(in Entity entity)
+        {
+            Manager = Globals.Runner.GOGeneratorContainer.Acquire<T>();
             Manager.Initialize(entity);
-            Manager.Initialize();
         }
         public void Dispose() => Manager.Return();
+    }
+    public record struct PositionComponent(Vector2 Vector);
+    
+    public record struct InitializeComponent(EntityAction Action) : IEntityInitialize
+    {
+        public void Initialize(in Entity entity) => Action(in entity);
     }
 }

@@ -132,6 +132,7 @@ namespace Pow.Utilities.Animations
         internal record AnimationConfigNode(int SpriteId, int SpriteAnimationId, int[] Indices, float Period = 0, bool Repeat = false);
         internal Dictionary<int, SpriteConfigNode> SpriteConfigNodes =>  _spriteConfigNodes;
         internal Dictionary<int, AnimationConfigNode> AnimationConfigNodes => _animationConfigNodes;
+        private void Create() => _managerPool.Enqueue(new(this));
         public enum States { Configuring, Running }
         public void ConfigureSprite(int spriteId, string assetName, Size regionSize)
         {
@@ -150,8 +151,7 @@ namespace Pow.Utilities.Animations
         {
             Debug.Assert(_state == States.Configuring);
             // Initialize pool
-            for (var i = 0; i < capacity; i++)
-                _managerPool.Enqueue(new(this));
+            for (var i = 0; i < capacity; i++) Create();
             // Load all the animations
             {
                 var manager = new AnimationManager(this);
@@ -163,6 +163,7 @@ namespace Pow.Utilities.Animations
         public AnimationManager Acquire()
         {
             Debug.Assert(_state == States.Running);
+            if (_managerPool.Count == 0) Create();
             var manager = _managerPool.Dequeue();
             manager.Acquire();
             return manager;

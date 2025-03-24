@@ -38,16 +38,14 @@ namespace Pow.Systems
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly Render _parent;
         private readonly QueryDescription _allAnimationComponents;
-        private readonly Dictionary<Layers, ForEach<AnimationComponent>> _updateAnimationComponents;
+        private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawAnimationComponents;
         public RenderDrawSystem(Render parent) : base(parent.World)
         {
             _parent = parent;
             _allAnimationComponents = new QueryDescription().WithAny<AnimationComponent>();
-            _updateAnimationComponents = new();
+            _drawAnimationComponents = new();
             foreach (var layer in _layers)
-            {
-                _updateAnimationComponents.Add(layer, new((ref AnimationComponent component) => component.Manager.Draw()));
-            }
+                _drawAnimationComponents.Add(layer, new((ref AnimationComponent component) => component.Manager.Draw()));
         }
         public override void Update(in GameTime t)
         {
@@ -63,7 +61,7 @@ namespace Pow.Systems
                 spriteBatch.End();
 
                 spriteBatch.Begin(transformMatrix: view);
-                World.Query(_allAnimationComponents, _updateAnimationComponents[layer]);
+                World.Query(_allAnimationComponents, _drawAnimationComponents[layer]);
                 spriteBatch.End();
 
             }

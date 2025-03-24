@@ -4,15 +4,46 @@ using Microsoft.Xna.Framework.Input;
 using Pow.Utilities;
 using Pow;
 using System;
-using MonoGame.Extended.Animations;
+using Pow.Components;
+using Pow.Utilities.GO;
+using Arch.Core.Extensions;
+using MonoGame.Extended;
 
 
 namespace OpenGLGame
 {
+    public class DebugGOManager : GOCustomManager
+    {
+        private float timer;
+        public override void Initialize()
+        {
+            var animationManager = Entity.Get<AnimationComponent>().Manager;
+            animationManager.Play(0);
+            timer = 3;
+            var status = Entity.Get<StatusComponent>();
+            base.Initialize();
+        }
+        public override void Update()
+        {
+            var animationManager = Entity.Get<AnimationComponent>().Manager;
+            if (!animationManager.Running)
+            {
+                animationManager.Play(0);
+            }
+            if (timer > 0)
+                timer -= Globals.GameTime.GetElapsedSeconds();
+            else
+            {
+                Globals.Runner.DestroyEntity(in Entity);
+            }
+            base.Update();
+        }
+    }
     public class Game1 : Game, IRunnerParent
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private float _debugTimer = 6;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -30,7 +61,8 @@ namespace OpenGLGame
             runner.AnimationGenerator.ConfigureSprite(0, "images/test_ball_0", new(32, 32));
             runner.AnimationGenerator.ConfigureAnimation(0, 0, 0, [0, 1, 2, 3], 0.25f, false);
             runner.AnimationGenerator.ConfigureAnimation(1, 0, 1, [0, 4, 5], 0.25f, false);
-            runner.AddEntityType(0, [typeof(AnimationComponent)]);
+            runner.AddGOCustomManager<DebugGOManager>();
+            runner.AddEntityType(0, [typeof(StatusComponent), typeof(AnimationComponent), typeof(PositionComponent), typeof(GOCustomComponent<DebugGOManager>)]);
         }
         protected override void LoadContent()
         {
@@ -41,8 +73,6 @@ namespace OpenGLGame
             Globals.Runner.Camera.Zoom = 2f;
             Globals.Runner.Camera.Position = new Vector2(-32, -32);
             Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
-
-            Globals.Runner.CreateEntity(0);
             Globals.Runner.Map.Load(0);
         }
         protected override void EndRun()
@@ -54,6 +84,19 @@ namespace OpenGLGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            while (_debugTimer <= 0)
+            {
+                for (var i = 0; i < 64; i++)
+                {
+                    var entity = Globals.Runner.CreateEntity(0);
+                    Globals.Runner.SetCreatedEntity<PositionComponent>(in entity, new(new(i, i)));
+                }
+                _debugTimer += 4;
+            }
+
+            _debugTimer -= Globals.GameTime.GetElapsedSeconds();
+
             Globals.Update(gameTime);
             base.Update(gameTime);
         }
