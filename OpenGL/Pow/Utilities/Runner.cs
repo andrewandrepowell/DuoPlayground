@@ -9,6 +9,9 @@ using Pow.Utilities.Animations;
 using Pow.Utilities.GO;
 using Pow.Components;
 using Schedulers;
+using nkast.Aether.Physics2D.Dynamics;
+using EcsWorld = Arch.Core.World;
+using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 
 namespace Pow.Utilities
 {
@@ -18,7 +21,8 @@ namespace Pow.Utilities
     }
     public class Runner : IDisposable, IMapParent
     {
-        private readonly World _world;
+        private readonly EcsWorld _ecsWorld;
+        private readonly PhysicsWorld _physicsWorld;
         private readonly JobScheduler _jobScheduler;
         private readonly Camera _camera;
         private readonly Map _map;
@@ -34,29 +38,30 @@ namespace Pow.Utilities
         private readonly AnimationGenerator _animationGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
-        private record EntityTypeNode(Func<World, Entity> CreateEntity);
+        private record EntityTypeNode(Func<EcsWorld, Entity> CreateEntity);
         private readonly record struct CreateEntityNode(EntityTypeNode EntityTypeNode, Queue<Entity> ResponseQueue = null);
         private readonly record struct DestroyEntityNode(Entity Entity);
         private void ServiceCreateEntities()
         {
             while (_createEntities.TryDequeue(out var node))
             {
-                var entity = node.EntityTypeNode.CreateEntity(_world);
-                Debug.Assert(_world.Has<StatusComponent>(entity));
+                var entity = node.EntityTypeNode.CreateEntity(_ecsWorld);
+                Debug.Assert(_ecsWorld.Has<StatusComponent>(entity));
                 node.ResponseQueue?.Enqueue(entity);
             }
         }
         private void ServiceDestroyEntities()
         {
             while (_destroyEntities.TryDequeue(out var node))
-                _world.Destroy(node.Entity);
+                _ecsWorld.Destroy(node.Entity);
         }
         public Runner(IRunnerParent parent)
         {
             // Create objects.
             _initialized = false;
             _parent = parent;
-            _world = World.Create();
+            _physicsWorld = new PhysicsWorld(Vector2.Zero);
+            _ecsWorld = EcsWorld.Create();
             _jobScheduler = new(new JobScheduler.Config()
             {
                 ThreadPrefixName = "Pow.Thread",
@@ -64,18 +69,19 @@ namespace Pow.Utilities
                 MaxExpectedConcurrentJobs = 64,
                 StrictAllocationMode = false,
             });
-            World.SharedJobScheduler = _jobScheduler;
+            EcsWorld.SharedJobScheduler = _jobScheduler;
             _camera = new();
             _map = new(this);
-            _renderDrawSystem = new(_world, _map, _camera);
-            _goCustomSystem = new(_world);
-            _initializeSystem = new InitializeSystem(_world);
-            _destroySystem = new DestroySystem(_world);
+            _renderDrawSystem = new(_ecsWorld, _map, _camera);
+            _goCustomSystem = new(_ecsWorld);
+            _initializeSystem = new InitializeSystem(_ecsWorld);
+            _destroySystem = new DestroySystem(_ecsWorld);
             _systemGroups = new Group<GameTime>(
                 "Systems",
                 _goCustomSystem,
-                new PositionSystem(_world),
-                new RenderUpdateSystem(_world));
+                new PhysicsSystem(_ecsWorld, _physicsWorld),
+                new PositionSystem(_ecsWorld),
+                new RenderUpdateSystem(_ecsWorld));
             _animationGenerator = new();
             _goGeneratorContainer = new();
 
@@ -100,7 +106,7 @@ namespace Pow.Utilities
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
-        public void AddEntityType(int id, Func<World, Entity> createEntity)
+        public void AddEntityType(int id, Func<EcsWorld, Entity> createEntity)
         {
             Debug.Assert(!_initialized);
             Debug.Assert(!_entityTypeNodes.ContainsKey(id));
@@ -123,7 +129,7 @@ namespace Pow.Utilities
         public void DestroyEntity(in Entity entity)
         {
             Debug.Assert(_initialized);
-            ref var statusComponent = ref _world.Get<StatusComponent>(entity);
+            ref var statusComponent = ref _ecsWorld.Get<StatusComponent>(entity);
             Debug.Assert(statusComponent.State == EntityStates.Running);
             statusComponent.State = EntityStates.Destroying;
             _destroyEntities.Enqueue(new(entity));
@@ -145,7 +151,7 @@ namespace Pow.Utilities
         public void Dispose()
         {
             Debug.Assert(_initialized);
-            World.Destroy(_world);
+            EcsWorld.Destroy(_ecsWorld);
             _jobScheduler.Dispose();
             _renderDrawSystem.Dispose();
             _initializeSystem.Dispose();
