@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using Arch.Buffer;
 using Arch.Core;
 using Arch.System;
-using Arch.Core.Extensions;
-using Arch.Core.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Pow.Systems;
 using Pow.Utilities.Animations;
 using Pow.Utilities.GO;
 using Pow.Components;
 using Schedulers;
-using System.Reflection;
 
 namespace Pow.Utilities
 {
@@ -28,13 +22,12 @@ namespace Pow.Utilities
         private readonly JobScheduler _jobScheduler;
         private readonly Camera _camera;
         private readonly Map _map;
-        private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
         private readonly Queue<CreateEntityNode> _createEntities = [];
         private readonly Queue<DestroyEntityNode> _destroyEntities = [];
-        private readonly Render _render;
         private readonly InitializeSystem _initializeSystem;
         private readonly DestroySystem _destroySystem;
+        private readonly RenderDrawSystem _renderDrawSystem;
         private readonly Group<GameTime> _systemGroups;
         private readonly GOCustomSystem _goCustomSystem;
         private readonly GOGeneratorContainer _goGeneratorContainer;
@@ -44,13 +37,13 @@ namespace Pow.Utilities
         private record EntityTypeNode(Func<World, Entity> CreateEntity);
         private readonly record struct CreateEntityNode(EntityTypeNode EntityTypeNode, Queue<Entity> ResponseQueue = null);
         private readonly record struct DestroyEntityNode(Entity Entity);
-        private unsafe void ServiceCreateEntities()
+        private void ServiceCreateEntities()
         {
             while (_createEntities.TryDequeue(out var node))
             {
                 var entity = node.EntityTypeNode.CreateEntity(_world);
                 Debug.Assert(_world.Has<StatusComponent>(entity));
-                if (node.ResponseQueue != null) node.ResponseQueue.Enqueue(entity);
+                node.ResponseQueue?.Enqueue(entity);
             }
         }
         private void ServiceDestroyEntities()
@@ -72,10 +65,9 @@ namespace Pow.Utilities
                 StrictAllocationMode = false,
             });
             World.SharedJobScheduler = _jobScheduler;
-            _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
             _map = new(this);
-            _render = new(_world, _camera, _map);
+            _renderDrawSystem = new(_world, _map, _camera);
             _goCustomSystem = new(_world);
             _initializeSystem = new InitializeSystem(_world);
             _destroySystem = new DestroySystem(_world);
@@ -83,13 +75,12 @@ namespace Pow.Utilities
                 "Systems",
                 _goCustomSystem,
                 new PositionSystem(_world),
-                _render.UpdateSystem);
+                new RenderUpdateSystem(_world));
             _animationGenerator = new();
             _goGeneratorContainer = new();
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
-            _initializeSystem.Add<InitializeComponent>();
             _destroySystem.Add<AnimationComponent>();
 
             // Let the parent initialize.
@@ -149,14 +140,14 @@ namespace Pow.Utilities
         public void Draw()
         {
             Debug.Assert(_initialized);
-            _render.DrawSystem.Update(Globals.GameTime);
+            _renderDrawSystem.Update(Globals.GameTime);
         }
         public void Dispose()
         {
             Debug.Assert(_initialized);
             World.Destroy(_world);
             _jobScheduler.Dispose();
-            _render.Dispose();
+            _renderDrawSystem.Dispose();
             _initializeSystem.Dispose();
             _destroySystem.Dispose();
             _systemGroups.Dispose();

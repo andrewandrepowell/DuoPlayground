@@ -14,8 +14,6 @@ using Microsoft.Xna.Framework;
 
 namespace Pow.Components
 {
-    public delegate void EntityAction(in Entity entity);
-
     public struct StatusComponent()
     {
         internal EntityStates State = EntityStates.Initializing;
@@ -37,9 +35,4 @@ namespace Pow.Components
         public void Dispose() => Manager.Return();
     }
     public record struct PositionComponent(Vector2 Vector);
-    
-    public record struct InitializeComponent(EntityAction Action) : IEntityInitialize
-    {
-        public void Initialize(in Entity entity) => Action(in entity);
-    }
 }
