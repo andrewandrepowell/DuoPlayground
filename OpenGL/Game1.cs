@@ -76,8 +76,8 @@ namespace OpenGLGame
             Globals.InitializePow(this);
 
             Globals.Runner.Camera.Zoom = 2f;
-            Globals.Runner.Camera.Position = new Vector2(-32, -32);
-            Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
+            //Globals.Runner.Camera.Position = new Vector2(-32, -32);
+            //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
             Globals.Runner.Map.Load(0);
         }
         protected override void EndRun()
@@ -92,11 +92,11 @@ namespace OpenGLGame
 
             while (_debugTimer <= 0)
             {
-                for (var i = 0; i < 128; i++)
+                for (var i = 0; i < 16; i++)
                 {
                     //EntityAction lambda = (in Entity entity) => entity.Set<PositionComponent>(new(new(i, i)));
                     Globals.Runner.CreateEntity(0, _debugResponseQueue);
-                    _debugPositionQueue.Enqueue(new(i, i));
+                    _debugPositionQueue.Enqueue(new(i + 64, i + 64));
                     //Globals.Runner.SetCreatedEntity<PositionComponent>(in entity, new(new(i, i)));
                 }
                 _debugTimer += 4;
