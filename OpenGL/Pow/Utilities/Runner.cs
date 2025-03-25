@@ -26,11 +26,12 @@ namespace Pow.Utilities
     {
         private readonly World _world;
         private readonly JobScheduler _jobScheduler;
-        private readonly CommandBuffer _commandBuffer;
         private readonly Camera _camera;
         private readonly Map _map;
         private readonly GraphicsDevice _graphicsDevice;
         private readonly IRunnerParent _parent;
+        private readonly Queue<CreateEntityNode> _createEntities = [];
+        private readonly Queue<DestroyEntityNode> _destroyEntities = [];
         private readonly Render _render;
         private readonly InitializeSystem _initializeSystem;
         private readonly DestroySystem _destroySystem;
@@ -40,7 +41,23 @@ namespace Pow.Utilities
         private readonly AnimationGenerator _animationGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
-        private record EntityTypeNode(ComponentType[] ComponentTypes);
+        private record EntityTypeNode(Func<World, Entity> CreateEntity);
+        private readonly record struct CreateEntityNode(EntityTypeNode EntityTypeNode, Queue<Entity> ResponseQueue = null);
+        private readonly record struct DestroyEntityNode(Entity Entity);
+        private unsafe void ServiceCreateEntities()
+        {
+            while (_createEntities.TryDequeue(out var node))
+            {
+                var entity = node.EntityTypeNode.CreateEntity(_world);
+                Debug.Assert(_world.Has<StatusComponent>(entity));
+                if (node.ResponseQueue != null) node.ResponseQueue.Enqueue(entity);
+            }
+        }
+        private void ServiceDestroyEntities()
+        {
+            while (_destroyEntities.TryDequeue(out var node))
+                _world.Destroy(node.Entity);
+        }
         public Runner(IRunnerParent parent)
         {
             // Create objects.
@@ -55,7 +72,6 @@ namespace Pow.Utilities
                 StrictAllocationMode = false,
             });
             World.SharedJobScheduler = _jobScheduler;
-            _commandBuffer = new();
             _graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             _camera = new();
             _map = new(this);
@@ -93,12 +109,11 @@ namespace Pow.Utilities
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
-        public void AddEntityType(int id, ComponentType[] componentTypes)
+        public void AddEntityType(int id, Func<World, Entity> createEntity)
         {
             Debug.Assert(!_initialized);
             Debug.Assert(!_entityTypeNodes.ContainsKey(id));
-            Debug.Assert(componentTypes.Contains(typeof(StatusComponent)));
-            _entityTypeNodes.Add(id, new(componentTypes));
+            _entityTypeNodes.Add(id, new(createEntity));
         }
         public void AddGOCustomManager<T>(int capacity = 32) where T : GOCustomManager, new()
         {
@@ -108,38 +123,26 @@ namespace Pow.Utilities
             _initializeSystem.Add<GOCustomComponent<T>>();
             _destroySystem.Add<GOCustomComponent<T>>();
         }
-        public Entity CreateEntity(int id)
+        public unsafe void CreateEntity(int id, Queue<Entity> responseQueue = null)
         {
             Debug.Assert(_initialized);
-            var entity = _commandBuffer.Create(_entityTypeNodes[id].ComponentTypes);
-            _commandBuffer.Set(in entity, new StatusComponent() { State = EntityStates.Initializing });
-            return entity; 
+            Debug.Assert(_entityTypeNodes.ContainsKey(id));
+            _createEntities.Enqueue(new(_entityTypeNodes[id], responseQueue));
         }
-#nullable enable
-        public void SetCreatedEntity<T>(in Entity entity, in T? value)
-        {
-            Debug.Assert(_initialized);
-            _commandBuffer.Set(in entity, in value);
-        }
-        public void AddCreatedEntity<T>(in Entity entity, in T? component)
-        {
-            Debug.Assert(_initialized);
-            _commandBuffer.Add(in entity, in component);
-        }
-#nullable disable
         public void DestroyEntity(in Entity entity)
         {
             Debug.Assert(_initialized);
             ref var statusComponent = ref _world.Get<StatusComponent>(entity);
             Debug.Assert(statusComponent.State == EntityStates.Running);
             statusComponent.State = EntityStates.Destroying;
-            _commandBuffer.Destroy(in entity);
+            _destroyEntities.Enqueue(new(entity));
         }
         public void Update()
         {
             Debug.Assert(_initialized);
             _destroySystem.Update(Globals.GameTime);
-            _commandBuffer.Playback(_world);
+            ServiceDestroyEntities();
+            ServiceCreateEntities();
             _initializeSystem.Update(Globals.GameTime);
             _systemGroups.Update(Globals.GameTime);
         }
@@ -154,6 +157,9 @@ namespace Pow.Utilities
             World.Destroy(_world);
             _jobScheduler.Dispose();
             _render.Dispose();
+            _initializeSystem.Dispose();
+            _destroySystem.Dispose();
+            _systemGroups.Dispose();
             _map.Dispose();
         }
     }

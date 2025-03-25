@@ -10,7 +10,7 @@ using Arch.Core;
 using Arch.Core.Utils;
 using System.Diagnostics;
 using Arch.Core.Extensions;
-using System.Numerics;
+using Microsoft.Xna.Framework;
 
 namespace Pow.Components
 {

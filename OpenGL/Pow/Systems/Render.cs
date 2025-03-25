@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection.Emit;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Pow.Systems
 {
@@ -39,13 +40,18 @@ namespace Pow.Systems
         private readonly Render _parent;
         private readonly QueryDescription _allAnimationComponents;
         private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawAnimationComponents;
+        private readonly GraphicsDevice _graphicsDevice;
         public RenderDrawSystem(Render parent) : base(parent.World)
         {
             _parent = parent;
             _allAnimationComponents = new QueryDescription().WithAny<AnimationComponent>();
             _drawAnimationComponents = new();
             foreach (var layer in _layers)
-                _drawAnimationComponents.Add(layer, new((ref AnimationComponent component) => component.Manager.Draw()));
+                _drawAnimationComponents.Add(layer, new((ref AnimationComponent component) => 
+                {
+                    if (component.Manager.Layer == layer) 
+                        component.Manager.Draw(); 
+                }));
         }
         public override void Update(in GameTime t)
         {
