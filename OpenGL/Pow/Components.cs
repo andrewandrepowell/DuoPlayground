@@ -22,7 +22,7 @@ namespace Pow.Components
     {
         public AnimationManager Manager;
         public void Initialize(in Entity entity) => Manager = Globals.Runner.AnimationGenerator.Acquire();
-        public void Dispose() => Manager.Return();
+        public readonly void Dispose() => Manager.Return();
     }
     public struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager
     {
@@ -32,7 +32,7 @@ namespace Pow.Components
             Manager = Globals.Runner.GOGeneratorContainer.Acquire<T>();
             Manager.Initialize(entity);
         }
-        public void Dispose() => Manager.Return();
+        public readonly void Dispose() => Manager.Return();
     }
     public record struct PositionComponent(Vector2 Vector);
 }

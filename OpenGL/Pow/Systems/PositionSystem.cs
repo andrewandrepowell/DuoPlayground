@@ -1,24 +1,18 @@
 ﻿using Arch.System;
 using Arch.Core;
-using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Pow.Components;
 
 namespace Pow.Systems
 {
     internal class PositionSystem : BaseSystem<World, GameTime>
     {
-        private readonly QueryDescription _allPositionAnimation = new QueryDescription().WithAll<PositionComponent, AnimationComponent>();
-        private readonly ForEach _setAnimationPosition = new((Entity entity) => SetAnimationPosition(in entity));
-        private static void SetAnimationPosition(in Entity entity)
+        private readonly QueryDescription _allPositionAnimation;
+        private readonly ForEach _setAnimationPosition;
+        private void SetAnimationPosition(in Entity entity)
         {
-            var positionComponent = entity.Get<PositionComponent>();
-            var animationComponent = entity.Get<AnimationComponent>();
+            var positionComponent = World.Get<PositionComponent>(entity);
+            var animationComponent = World.Get<AnimationComponent>(entity);
             animationComponent.Manager.Position = positionComponent.Vector;
         }
         public override void Update(in GameTime t)
@@ -28,6 +22,8 @@ namespace Pow.Systems
         }
         public PositionSystem(World world) : base(world)
         {
+            _allPositionAnimation = new QueryDescription().WithAll<PositionComponent, AnimationComponent>();
+            _setAnimationPosition = new((Entity entity) => SetAnimationPosition(in entity));
         }
     }
 }
