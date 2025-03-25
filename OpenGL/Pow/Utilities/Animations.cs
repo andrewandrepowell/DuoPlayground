@@ -124,7 +124,7 @@ namespace Pow.Utilities.Animations
     }
     public class AnimationGenerator : IGOGenerator<AnimationManager>
     {
-        private Queue<AnimationManager> _managerPool = new();
+        private Stack<AnimationManager> _managerPool = new();
         private Dictionary<int, SpriteConfigNode> _spriteConfigNodes = [];
         private Dictionary<int, AnimationConfigNode> _animationConfigNodes = [];
         private States _state = States.Configuring;
@@ -132,7 +132,7 @@ namespace Pow.Utilities.Animations
         internal record AnimationConfigNode(int SpriteId, int SpriteAnimationId, int[] Indices, float Period = 0, bool Repeat = false);
         internal Dictionary<int, SpriteConfigNode> SpriteConfigNodes =>  _spriteConfigNodes;
         internal Dictionary<int, AnimationConfigNode> AnimationConfigNodes => _animationConfigNodes;
-        private void Create() => _managerPool.Enqueue(new(this));
+        private void Create() => _managerPool.Push(new(this));
         public enum States { Configuring, Running }
         public void ConfigureSprite(int spriteId, string assetName, Size regionSize)
         {
@@ -164,14 +164,14 @@ namespace Pow.Utilities.Animations
         {
             Debug.Assert(_state == States.Running);
             if (_managerPool.Count == 0) Create();
-            var manager = _managerPool.Dequeue();
+            var manager = _managerPool.Pop();
             manager.Acquire();
             return manager;
         }
         internal void Return(AnimationManager manager)
         {
             Debug.Assert(_state == States.Running);
-            _managerPool.Enqueue(manager);
+            _managerPool.Push(manager);
         }
     }
     public class Sprite
