@@ -4,10 +4,13 @@ using Microsoft.Xna.Framework.Input;
 using Pow.Utilities;
 using Pow;
 using System;
+using System.Collections.Generic;
 using Pow.Components;
 using Pow.Utilities.GO;
+using Arch.Core;
 using Arch.Core.Extensions;
 using MonoGame.Extended;
+using System.Collections;
 
 
 namespace OpenGLGame
@@ -44,6 +47,8 @@ namespace OpenGLGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private float _debugTimer = 6;
+        private Queue<Entity> _debugResponseQueue = [];
+        private Queue<Vector2> _debugPositionQueue = [];
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -62,7 +67,7 @@ namespace OpenGLGame
             runner.AnimationGenerator.ConfigureAnimation(0, 0, 0, [0, 1, 2, 3], 0.25f, false);
             runner.AnimationGenerator.ConfigureAnimation(1, 0, 1, [0, 4, 5], 0.25f, false);
             runner.AddGOCustomManager<DebugGOManager>();
-            runner.AddEntityType(0, [typeof(StatusComponent), typeof(AnimationComponent), typeof(PositionComponent), typeof(GOCustomComponent<DebugGOManager>)]);
+            runner.AddEntityType(0, (World world) => world.Create(new StatusComponent() { State = EntityStates.Initializing}, new AnimationComponent(), new PositionComponent(), new GOCustomComponent<DebugGOManager>()));
         }
         protected override void LoadContent()
         {
@@ -87,14 +92,23 @@ namespace OpenGLGame
 
             while (_debugTimer <= 0)
             {
-                for (var i = 0; i < 64; i++)
+                for (var i = 0; i < 128; i++)
                 {
-                    var entity = Globals.Runner.CreateEntity(0);
-                    Globals.Runner.SetCreatedEntity<PositionComponent>(in entity, new(new(i, i)));
+                    //EntityAction lambda = (in Entity entity) => entity.Set<PositionComponent>(new(new(i, i)));
+                    Globals.Runner.CreateEntity(0, _debugResponseQueue);
+                    _debugPositionQueue.Enqueue(new(i, i));
+                    //Globals.Runner.SetCreatedEntity<PositionComponent>(in entity, new(new(i, i)));
                 }
                 _debugTimer += 4;
             }
 
+
+            while (_debugResponseQueue.Count > 0 && _debugPositionQueue.Count > 0)
+            {
+                var entity = _debugResponseQueue.Dequeue();
+                var position = _debugPositionQueue.Dequeue();
+                entity.Set(new PositionComponent(position));
+            }
             _debugTimer -= Globals.GameTime.GetElapsedSeconds();
 
             Globals.Update(gameTime);
