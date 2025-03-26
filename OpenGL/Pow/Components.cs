@@ -11,6 +11,7 @@ using Arch.Core.Utils;
 using System.Diagnostics;
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
+using Pow.Utilities.Physics;
 
 namespace Pow.Components
 {
@@ -22,6 +23,12 @@ namespace Pow.Components
     {
         public AnimationManager Manager;
         public void Initialize(in Entity entity) => Manager = Globals.Runner.AnimationGenerator.Acquire();
+        public readonly void Dispose() => Manager.Return();
+    }
+    public struct PhysicsComponent : IDisposable, IEntityInitialize
+    {
+        public PhysicsManager Manager;
+        public void Initialize(in Entity entity) => Manager = Globals.Runner.PhysicsGenerator.Acquire();
         public readonly void Dispose() => Manager.Return();
     }
     public struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager

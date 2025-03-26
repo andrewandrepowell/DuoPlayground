@@ -1,22 +1,17 @@
-﻿using Arch.Core;
-using Arch.System;
-using nkast.Aether.Physics2D.Dynamics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arch.System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using EcsWorld = Arch.Core.World;
+using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 
 namespace Pow.Systems
 {
-    internal class PhysicsSystem : BaseSystem<Arch.Core.World, GameTime>
+    internal class PhysicsSystem : BaseSystem<EcsWorld, GameTime>
     {
         private const float _period = (float)1 / 60;
         private float _time = _period;
-        private readonly nkast.Aether.Physics2D.Dynamics.World _physicsWorld;
-        public PhysicsSystem(Arch.Core.World ecsWorld, nkast.Aether.Physics2D.Dynamics.World physicsWorld) : base(ecsWorld) 
+        private readonly PhysicsWorld _physicsWorld;
+        public PhysicsSystem(EcsWorld ecsWorld, PhysicsWorld physicsWorld) : base(ecsWorld) 
         {
             _physicsWorld = physicsWorld;
         }

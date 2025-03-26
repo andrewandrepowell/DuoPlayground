@@ -69,6 +69,10 @@ namespace OpenGLGame
             runner.AddGOCustomManager<DebugGOManager>();
             runner.AddEntityType(0, (World world) => world.Create(new StatusComponent() { State = EntityStates.Initializing}, new AnimationComponent(), new PositionComponent(), new GOCustomComponent<DebugGOManager>()));
         }
+        public void Initialize(Map.MapNode node)
+        {
+
+        }
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
