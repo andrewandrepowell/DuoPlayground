@@ -12,12 +12,14 @@ using Schedulers;
 using nkast.Aether.Physics2D.Dynamics;
 using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
+using Pow.Utilities.Physics;
 
 namespace Pow.Utilities
 {
     public interface IRunnerParent
     {
         public void Initialize(Runner runner);
+        public void Initialize(Map.MapNode node);
     }
     public class Runner : IDisposable, IMapParent
     {
@@ -36,6 +38,7 @@ namespace Pow.Utilities
         private readonly GOCustomSystem _goCustomSystem;
         private readonly GOGeneratorContainer _goGeneratorContainer;
         private readonly AnimationGenerator _animationGenerator;
+        private readonly PhysicsGenerator _physicsGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
         private record EntityTypeNode(Func<EcsWorld, Entity> CreateEntity);
@@ -84,6 +87,7 @@ namespace Pow.Utilities
                 new RenderUpdateSystem(_ecsWorld));
             _animationGenerator = new();
             _goGeneratorContainer = new();
+            _physicsGenerator = new(_physicsWorld);
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
@@ -95,16 +99,15 @@ namespace Pow.Utilities
             // Initialize based on parent configurations.
             _animationGenerator.Initialize();
             _goGeneratorContainer.Initialize();
+            _physicsGenerator.Initialize();
 
             _initialized = true;
         }
-        public void Initialize(Map.MapNode node)
-        {
-
-        }
+        public void Initialize(Map.MapNode node) => _parent.Initialize(node);
         public Camera Camera => _camera;
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
+        public PhysicsGenerator PhysicsGenerator => _physicsGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
         public void AddEntityType(int id, Func<EcsWorld, Entity> createEntity)
         {

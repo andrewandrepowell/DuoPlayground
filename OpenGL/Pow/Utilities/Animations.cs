@@ -13,7 +13,7 @@ namespace Pow.Utilities.Animations
     public class AnimationManager(AnimationGenerator parent) : IGOManager
     {
         private bool _acquired = false;
-        private AnimationGenerator _parent = parent;
+        private readonly AnimationGenerator _parent = parent;
         private readonly Dictionary<int, SpriteNode> _spriteNodes = [];
         private readonly Dictionary<int, AnimationNode> _animationNodes = [];
         private AnimationNode _animationNode;
@@ -127,29 +127,28 @@ namespace Pow.Utilities.Animations
         private Stack<AnimationManager> _managerPool = new();
         private Dictionary<int, SpriteConfigNode> _spriteConfigNodes = [];
         private Dictionary<int, AnimationConfigNode> _animationConfigNodes = [];
-        private States _state = States.Configuring;
+        private bool _initialized = false;
         internal record SpriteConfigNode(string AssetName, Size RegionSize);
         internal record AnimationConfigNode(int SpriteId, int SpriteAnimationId, int[] Indices, float Period = 0, bool Repeat = false);
         internal Dictionary<int, SpriteConfigNode> SpriteConfigNodes =>  _spriteConfigNodes;
         internal Dictionary<int, AnimationConfigNode> AnimationConfigNodes => _animationConfigNodes;
         private void Create() => _managerPool.Push(new(this));
-        public enum States { Configuring, Running }
         public void ConfigureSprite(int spriteId, string assetName, Size regionSize)
         {
-            Debug.Assert(_state == States.Configuring);
+            Debug.Assert(!_initialized);
             Debug.Assert(!_spriteConfigNodes.ContainsKey(spriteId));
             _spriteConfigNodes.Add(spriteId, new(assetName, regionSize));
         }
         public void ConfigureAnimation(int animationId, int spriteId, int spriteAnimationId, int[] indices, float period = 0, bool repeat = false)
         {
-            Debug.Assert(_state == States.Configuring);
+            Debug.Assert(!_initialized);
             Debug.Assert(!_animationConfigNodes.ContainsKey(animationId));
             Debug.Assert(_spriteConfigNodes.ContainsKey(spriteId));
             _animationConfigNodes.Add(animationId, new(spriteId, spriteAnimationId, indices, period, repeat));
         }
         public void Initialize(int capacity = 64)
         {
-            Debug.Assert(_state == States.Configuring);
+            Debug.Assert(!_initialized);
             // Initialize pool
             for (var i = 0; i < capacity; i++) Create();
             // Load all the animations
@@ -158,11 +157,11 @@ namespace Pow.Utilities.Animations
                 foreach (var animationId in _animationConfigNodes.Keys)
                     manager.LoadAnimation(animationId);
             }
-            _state = States.Running;
+            _initialized = true;
         }
         public AnimationManager Acquire()
         {
-            Debug.Assert(_state == States.Running);
+            Debug.Assert(_initialized);
             if (_managerPool.Count == 0) Create();
             var manager = _managerPool.Pop();
             manager.Acquire();
@@ -170,7 +169,7 @@ namespace Pow.Utilities.Animations
         }
         internal void Return(AnimationManager manager)
         {
-            Debug.Assert(_state == States.Running);
+            Debug.Assert(_initialized);
             _managerPool.Push(manager);
         }
     }
