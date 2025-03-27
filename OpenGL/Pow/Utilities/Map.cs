@@ -18,10 +18,11 @@ namespace Pow.Utilities
     {
         private readonly Dictionary<int, ConfigNode> _configNodes = [];
         private readonly Dictionary<int, MapNode> _mapNodes = [];
+        private readonly Queue<int> _idQueue = [];
         private readonly IMapParent _parent = parent;
         private MapNode _mapNode;
         private bool _loaded = false;
-        private RenderTarget2D DrawMapLayerToRenderTarget(TiledMap map, TiledMapRenderer renderer, TiledMapLayer mapLayer)
+        private static RenderTarget2D DrawMapLayerToRenderTarget(TiledMap map, TiledMapRenderer renderer, TiledMapLayer mapLayer)
         {
             var graphicsDevice = Globals.SpriteBatch.GraphicsDevice;
             var renderTarget = new RenderTarget2D(graphicsDevice: graphicsDevice, width: map.WidthInPixels, height: map.HeightInPixels);
@@ -32,21 +33,7 @@ namespace Pow.Utilities
             graphicsDevice.SetRenderTargets(previousTarget);
             return renderTarget;
         }
-        public record ConfigNode(string AssetName);
-        public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
-        public record MapNode(
-            ConfigNode Config,
-            TiledMap Map,
-            ReadOnlyDictionary<Layers, RenderTarget2D[]> RenderTargets,
-            PolygonNode[] PolygonNodes);
-        public bool Loaded => _loaded;
-        public void Configure(int id, string assetName)
-        {
-            Debug.Assert(!_loaded);
-            Debug.Assert(!_configNodes.ContainsKey(id));
-            _configNodes.Add(id, new(assetName));
-        }
-        public void Load(int id)
+        private void PrivateLoad(int id)
         {
             Debug.Assert(!_loaded);
             if (!_mapNodes.ContainsKey(id))
@@ -75,10 +62,34 @@ namespace Pow.Utilities
             _parent.Initialize(_mapNode);
             _loaded = true;
         }
+        public record ConfigNode(string AssetName);
+        public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
+        public record MapNode(
+            ConfigNode Config,
+            TiledMap Map,
+            ReadOnlyDictionary<Layers, RenderTarget2D[]> RenderTargets,
+            PolygonNode[] PolygonNodes);
+        public bool Loaded => _loaded;
+        public bool Loading => _idQueue.Count > 0;
+        public void Configure(int id, string assetName)
+        {
+            Debug.Assert(!_loaded);
+            Debug.Assert(!_configNodes.ContainsKey(id));
+            _configNodes.Add(id, new(assetName));
+        }
+        public void Load(int id)
+        {
+            Debug.Assert(_configNodes.ContainsKey(id));
+            _idQueue.Enqueue(id);
+        }
         public void Unload()
         {
             Debug.Assert(_loaded);
             _loaded = false;
+        }
+        public void Update()
+        {
+            while (_idQueue.TryDequeue(out var id)) PrivateLoad(id);
         }
         public void Draw(Layers layer)
         {

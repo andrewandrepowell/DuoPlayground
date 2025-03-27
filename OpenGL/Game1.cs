@@ -11,33 +11,51 @@ using Arch.Core;
 using Arch.Core.Extensions;
 using MonoGame.Extended;
 using System.Collections;
+using System.Diagnostics;
 
 
 namespace OpenGLGame
 {
-    public class DebugGOManager : GOCustomManager
+    public enum Maps { LevelDebug0 }
+    public enum Animations { BallDebug0, BallDebug1 }
+    public enum EntityTypes { Initialize, Wall }
+    public class WallGOManager : GOCustomManager
     {
-        private float timer;
+        private bool _initialized = false;
+        public void Initialize(Map.PolygonNode node)
+        {
+            Debug.Assert(!_initialized);
+            var body = Entity.Get<PhysicsComponent>().Manager.Body;
+            body.BodyType = nkast.Aether.Physics2D.Dynamics.BodyType.Static;
+            body.CreatePolygon(vertices: new(node.Vertices), density: 1);
+            body.Position = node.Position;
+            _initialized = true;
+        }
+    }
+    public class InitializeGOManager : GOCustomManager
+    {
+        private static InitializeGOManager _manager;
+        private readonly Queue<Map.PolygonNode> _polygonNodes = [];
+        private readonly Queue<Entity> _entities = [];
+        public Queue<Map.PolygonNode> PolygonNodes => _polygonNodes;
+        public Queue<Entity> Entities => _entities;
+        public static InitializeGOManager Manager => _manager;
         public override void Initialize()
         {
-            var animationManager = Entity.Get<AnimationComponent>().Manager;
-            animationManager.Play(0);
-            timer = 3;
-            var status = Entity.Get<StatusComponent>();
+            Debug.Assert(_manager == null);
+            _manager = this;
             base.Initialize();
         }
         public override void Update()
         {
-            var animationManager = Entity.Get<AnimationComponent>().Manager;
-            if (!animationManager.Running)
+            while (_entities.TryDequeue(out var entity))
             {
-                animationManager.Play(0);
-            }
-            if (timer > 0)
-                timer -= Globals.GameTime.GetElapsedSeconds();
-            else
-            {
-                Globals.Runner.DestroyEntity(in Entity);
+                if (entity.Has<GOCustomComponent<WallGOManager>>())
+                {
+                    var manager = entity.Get<GOCustomComponent<WallGOManager>>().Manager;
+                    var polygonNode = _polygonNodes.Dequeue();
+                    manager.Initialize(polygonNode);
+                }
             }
             base.Update();
         }
@@ -46,9 +64,6 @@ namespace OpenGLGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private float _debugTimer = 6;
-        private Queue<Entity> _debugResponseQueue = [];
-        private Queue<Vector2> _debugPositionQueue = [];
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -62,16 +77,24 @@ namespace OpenGLGame
         }
         public void Initialize(Runner runner)
         {
-            runner.Map.Configure(0, "tiled/test_map_0");
+            runner.Map.Configure((int)Maps.LevelDebug0, "tiled/test_map_0");
             runner.AnimationGenerator.ConfigureSprite(0, "images/test_ball_0", new(32, 32));
-            runner.AnimationGenerator.ConfigureAnimation(0, 0, 0, [0, 1, 2, 3], 0.25f, false);
-            runner.AnimationGenerator.ConfigureAnimation(1, 0, 1, [0, 4, 5], 0.25f, false);
-            runner.AddGOCustomManager<DebugGOManager>();
-            runner.AddEntityType(0, (World world) => world.Create(new StatusComponent() { State = EntityStates.Initializing}, new AnimationComponent(), new PositionComponent(), new GOCustomComponent<DebugGOManager>()));
+            runner.AnimationGenerator.ConfigureAnimation((int)Animations.BallDebug0, 0, 0, [0, 1, 2, 3], 0.25f, false);
+            runner.AnimationGenerator.ConfigureAnimation((int)Animations.BallDebug1, 0, 1, [0, 4, 5], 0.25f, false);
+            runner.AddGOCustomManager<InitializeGOManager>();
+            runner.AddGOCustomManager<WallGOManager>();
+            runner.AddEntityType((int)EntityTypes.Initialize, (World world) => world.Create(new StatusComponent(), new GOCustomComponent<InitializeGOManager>()));
+            runner.AddEntityType((int)EntityTypes.Wall, (World world) => world.Create(new StatusComponent(), new PhysicsComponent(), new GOCustomComponent<WallGOManager>()));
         }
         public void Initialize(Map.MapNode node)
         {
-
+            var initialize = InitializeGOManager.Manager;
+            var runner = Globals.Runner;
+            foreach (var polygonNode in node.PolygonNodes)
+            {
+                runner.CreateEntity((int)EntityTypes.Wall, initialize.Entities);
+                initialize.PolygonNodes.Enqueue(polygonNode);
+            }
         }
         protected override void LoadContent()
         {
@@ -82,7 +105,9 @@ namespace OpenGLGame
             Globals.Runner.Camera.Zoom = 2f;
             //Globals.Runner.Camera.Position = new Vector2(-32, -32);
             //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
-            Globals.Runner.Map.Load(0);
+
+            Globals.Runner.CreateEntity((int)EntityTypes.Initialize);
+            Globals.Runner.Map.Load((int)Maps.LevelDebug0);
         }
         protected override void EndRun()
         {
@@ -93,28 +118,6 @@ namespace OpenGLGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            while (_debugTimer <= 0)
-            {
-                for (var i = 0; i < 16; i++)
-                {
-                    //EntityAction lambda = (in Entity entity) => entity.Set<PositionComponent>(new(new(i, i)));
-                    Globals.Runner.CreateEntity(0, _debugResponseQueue);
-                    _debugPositionQueue.Enqueue(new(i + 64, i + 64));
-                    //Globals.Runner.SetCreatedEntity<PositionComponent>(in entity, new(new(i, i)));
-                }
-                _debugTimer += 4;
-            }
-
-
-            while (_debugResponseQueue.Count > 0 && _debugPositionQueue.Count > 0)
-            {
-                var entity = _debugResponseQueue.Dequeue();
-                var position = _debugPositionQueue.Dequeue();
-                entity.Set(new PositionComponent(position));
-            }
-            _debugTimer -= Globals.GameTime.GetElapsedSeconds();
-
             Globals.Update(gameTime);
             base.Update(gameTime);
         }
