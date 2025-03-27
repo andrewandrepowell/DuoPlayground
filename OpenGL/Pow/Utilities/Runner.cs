@@ -91,7 +91,9 @@ namespace Pow.Utilities
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
+            _initializeSystem.Add<PhysicsComponent>();
             _destroySystem.Add<AnimationComponent>();
+            _destroySystem.Add<PhysicsComponent>();
 
             // Let the parent initialize.
             _parent.Initialize(this);
@@ -140,11 +142,16 @@ namespace Pow.Utilities
         public void Update()
         {
             Debug.Assert(_initialized);
-            _destroySystem.Update(Globals.GameTime);
-            ServiceDestroyEntities();
-            ServiceCreateEntities();
-            _initializeSystem.Update(Globals.GameTime);
+            {
+                ServiceCreateEntities();
+                _initializeSystem.Update(Globals.GameTime);
+            }
             _systemGroups.Update(Globals.GameTime);
+            {
+                _destroySystem.Update(Globals.GameTime);
+                ServiceDestroyEntities();
+            }
+            _map.Update();
         }
         public void Draw()
         {

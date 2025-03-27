@@ -33,7 +33,7 @@ namespace Pow.Components
     }
     public struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager
     {
-        public GOCustomManager Manager;
+        public T Manager;
         public void Initialize(in Entity entity)
         {
             Manager = Globals.Runner.GOGeneratorContainer.Acquire<T>();
