@@ -22,6 +22,7 @@ namespace Pow.Systems
             var animationManager = World.Get<AnimationComponent>(entity).Manager;
             var physicsBody = World.Get<PhysicsComponent>(entity).Manager.Body;
             animationManager.Position = physicsBody.Position;
+            animationManager.Rotation = physicsBody.Rotation;
         }
         public override void Update(in GameTime t)
         {
