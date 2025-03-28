@@ -19,14 +19,20 @@ namespace Pow.Utilities.Animations
         private AnimationNode _animationNode;
         private int? _animationId = null;
         private Vector2 _position;
+        private float _rotation;
         private record SpriteNode(Sprite Sprite);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
         private void UpdateSpritePosition()
         {
             Debug.Assert(_animationId != null);
             var sprite = _animationNode.SpriteNode.Sprite;
-            sprite.Position.X = (float)Math.Floor(_position.X);
-            sprite.Position.Y = (float)Math.Floor(_position.Y);
+            sprite.Position = _position;
+        }
+        private void UpdateSpriteRotation()
+        {
+            Debug.Assert(_animationId != null);
+            var sprite = _animationNode.SpriteNode.Sprite;
+            sprite.Rotation = _rotation;
         }
         public int AnimationId
         {
@@ -53,6 +59,17 @@ namespace Pow.Utilities.Animations
                 if (_position == value) return;
                 _position = value;
                 UpdateSpritePosition();
+            }
+        }
+        public float Rotation
+        {
+            get => _rotation;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_rotation == value) return; 
+                _rotation = value;
+                UpdateSpriteRotation();
             }
         }
         public Layers Layer = Layers.Ground;
@@ -91,6 +108,7 @@ namespace Pow.Utilities.Animations
             }
             _animationNode.SpriteNode.Sprite.Play(_animationNode.SpriteAnimationId);
             UpdateSpritePosition();
+            UpdateSpriteRotation();
         }
         public void Stop()
         {

@@ -45,6 +45,7 @@ namespace Pow.Utilities.GO
         {
             Debug.Assert(_initialized);
             Debug.Assert(_acquired);
+            Cleanup();
             _returnAction(this);
             _acquired = false;
         }
@@ -54,6 +55,11 @@ namespace Pow.Utilities.GO
             Debug.Assert(_acquired);
         }
         public virtual void Update()
+        {
+            Debug.Assert(_initialized);
+            Debug.Assert(_acquired);
+        }
+        public virtual void Cleanup()
         {
             Debug.Assert(_initialized);
             Debug.Assert(_acquired);

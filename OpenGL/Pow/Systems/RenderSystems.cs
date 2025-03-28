@@ -52,11 +52,11 @@ namespace Pow.Systems
             
             foreach (var layer in _layers.AsSpan())
             {
-                _spriteBatch.Begin(transformMatrix: view);
+                _spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
                 _map.Draw(layer);
                 _spriteBatch.End();
 
-                _spriteBatch.Begin(transformMatrix: view);
+                _spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
                 World.Query(_allAnimationComponents, _drawAnimationComponents[layer]);
                 _spriteBatch.End();
 
@@ -65,33 +65,4 @@ namespace Pow.Systems
             base.Update(t);
         }
     }
-    //internal class Render : IDisposable
-    //{
-    //    private readonly World _world;
-    //    private readonly Camera _camera;
-    //    private readonly Map _map;
-    //    private readonly RenderUpdateSystem _updateSystem;
-    //    private readonly RenderDrawSystem _drawSystem;
-    //    public World World => _world;
-    //    public Camera Camera => _camera;
-    //    public Map Map => _map;
-    //    public RenderUpdateSystem UpdateSystem => _updateSystem;
-    //    public RenderDrawSystem DrawSystem => _drawSystem;
-    //    public Render(World world, Camera camera, Map map)
-    //    {
-    //        _world = world;
-    //        _camera = camera;
-    //        _map = map;
-    //        _updateSystem = new(this);
-    //        _drawSystem = new(this);
-
-    //        _updateSystem.Initialize();
-    //        _drawSystem.Initialize();
-    //    }
-    //    public void Dispose()
-    //    {
-    //        _updateSystem.Dispose();
-    //        _drawSystem.Dispose();
-    //    }
-    //}
 }

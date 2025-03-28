@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="2">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <layer id="1" name="ground_0" width="15" height="15">
   <data encoding="csv">
@@ -20,9 +20,38 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
  </layer>
- <objectgroup id="3" name="objects_0">
+ <objectgroup id="3" name="objects_walls_0">
   <object id="1" x="0" y="224">
+   <properties>
+    <property name="EntityType" value="Wall"/>
+   </properties>
    <polygon points="0,0 16,0 16,-16 32,-16 32,16 0,16"/>
+  </object>
+  <object id="2" x="32" y="224">
+   <properties>
+    <property name="EntityType" value="Wall"/>
+   </properties>
+   <polygon points="0,0 0,-32 16,-32 16,-48 48,-48 48,0"/>
+  </object>
+  <object id="3" x="80" y="192">
+   <properties>
+    <property name="EntityType" value="Wall"/>
+   </properties>
+   <polygon points="0,0 0,-32 64,-32 64,0"/>
+  </object>
+  <object id="4" x="112" y="160">
+   <properties>
+    <property name="EntityType" value="Wall"/>
+   </properties>
+   <polygon points="0,0 0,-16 48,-16 48,-32 128,-32 128,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="objects_balls_0">
+  <object id="8" x="96" y="0">
+   <properties>
+    <property name="EntityType" value="Ball"/>
+   </properties>
+   <polygon points="0,0 32,0 32,32 0,32"/>
   </object>
  </objectgroup>
  <layer id="2" name="foreground_0" width="15" height="15">
