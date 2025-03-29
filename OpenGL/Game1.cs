@@ -52,7 +52,7 @@ namespace OpenGLGame
             Debug.Assert(_initialized);
             if (!_animationManager.Running)
                 _animationManager.Play((int)Animations.BallDebug0);
-            _physicsBody.ApplyForce(new Vector2(0, 20000));
+            _physicsBody.ApplyForce(new Vector2(0, 200000));
             base.Update();
         }
         public override void Cleanup()

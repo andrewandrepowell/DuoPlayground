@@ -47,7 +47,7 @@
   </object>
  </objectgroup>
  <objectgroup id="4" name="objects_balls_0">
-  <object id="8" x="96" y="0">
+  <object id="8" x="133.667" y="4.66667">
    <properties>
     <property name="EntityType" value="Ball"/>
    </properties>
