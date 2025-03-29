@@ -8,7 +8,7 @@ namespace Pow.Systems
 {
     internal class PhysicsSystem : BaseSystem<EcsWorld, GameTime>
     {
-        private const float _period = (float)1 / 60;
+        private const float _period = (float)1 / 120;
         private float _time = _period;
         private readonly PhysicsWorld _physicsWorld;
         public PhysicsSystem(EcsWorld ecsWorld, PhysicsWorld physicsWorld) : base(ecsWorld) 
