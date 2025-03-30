@@ -1,0 +1,19 @@
+{
+  "name": "pow-palettes",
+  "displayName": "Andrew A. Powell Palettes",
+  "description": "Palettes created by Andrew A. Powell",
+  "version": "1.0",
+  "author": { "name": "Andrew A. Powell", "url": "https://andrewandrepowell.itch.io" },
+  "publisher": "None",
+  "categories": [
+    "Palettes"
+  ],
+  "contributes": {
+    "palettes": [
+      {
+        "id": "CAT_0",
+        "path": "./cat_0.gpl" 
+      },
+    ]
+  }
+}
