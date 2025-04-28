@@ -18,4 +18,5 @@ namespace Pow.Utilities
     }
     public enum Layers { Background, Ground, Foreground }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }
+    public enum Directions { Left, Right, Up, Down }
 }

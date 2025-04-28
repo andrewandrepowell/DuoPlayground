@@ -55,11 +55,13 @@ namespace Pow.Systems
         }
         public override void Initialize()
         {
+            Debug.Assert(!_initialized);
             base.Initialize();
             _initialized = true;
         }
         public override void Update(in GameTime t)
         {
+            Debug.Assert(_initialized);
             World.Query(_queryDescription, _destroyComponents);
             base.Update(t);
         }

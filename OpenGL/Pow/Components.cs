@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
 using Pow.Utilities.Physics;
+using Pow.Utilities.Control;
 
 namespace Pow.Components
 {
@@ -29,6 +30,12 @@ namespace Pow.Components
     {
         public PhysicsManager Manager;
         public void Initialize(in Entity entity) => Manager = Globals.Runner.PhysicsGenerator.Acquire();
+        public readonly void Dispose() => Manager.Return();
+    }
+    public struct ControlComponent : IDisposable, IEntityInitialize
+    {
+        public ControlManager Manager;
+        public void Initialize(in Entity entity) => Manager = Globals.Runner.ControlGenerator.Acquire();
         public readonly void Dispose() => Manager.Return();
     }
     public struct GOCustomComponent<T> : IDisposable, IEntityInitialize where T : GOCustomManager

@@ -38,6 +38,7 @@ namespace Pow.Systems
         }
         public override void Update(in GameTime t)
         {
+            Debug.Assert(_initialized);
             foreach (var update in _updates) update.Update();
             base.Update(t);
         }

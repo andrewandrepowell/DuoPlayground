@@ -13,6 +13,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 using Pow.Utilities.Physics;
+using Pow.Utilities.Control;
 
 namespace Pow.Utilities
 {
@@ -39,6 +40,7 @@ namespace Pow.Utilities
         private readonly GOGeneratorContainer _goGeneratorContainer;
         private readonly AnimationGenerator _animationGenerator;
         private readonly PhysicsGenerator _physicsGenerator;
+        private readonly ControlGenerator _controlGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
         private record EntityTypeNode(Func<EcsWorld, Entity> CreateEntity);
@@ -81,6 +83,7 @@ namespace Pow.Utilities
             _destroySystem = new DestroySystem(_ecsWorld);
             _systemGroups = new Group<GameTime>(
                 "Systems",
+                new ControlSystem(_ecsWorld),
                 _goCustomSystem,
                 new PhysicsSystem(_ecsWorld, _physicsWorld),
                 new PositionSystem(_ecsWorld),
@@ -88,20 +91,27 @@ namespace Pow.Utilities
             _animationGenerator = new();
             _goGeneratorContainer = new();
             _physicsGenerator = new(_physicsWorld);
+            _controlGenerator = new();
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
             _initializeSystem.Add<PhysicsComponent>();
+            _initializeSystem.Add<ControlComponent>();
             _destroySystem.Add<AnimationComponent>();
             _destroySystem.Add<PhysicsComponent>();
+            _destroySystem.Add<ControlComponent>();
 
             // Let the parent initialize.
             _parent.Initialize(this);
 
             // Initialize based on parent configurations.
+            _initializeSystem.Initialize();
+            _destroySystem.Initialize();
+            _systemGroups.Initialize();
             _animationGenerator.Initialize();
             _goGeneratorContainer.Initialize();
             _physicsGenerator.Initialize();
+            _controlGenerator.Initialize();
 
             _initialized = true;
         }
@@ -110,6 +120,7 @@ namespace Pow.Utilities
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;
         public PhysicsGenerator PhysicsGenerator => _physicsGenerator;
+        public ControlGenerator ControlGenerator => _controlGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
         public void AddEntityType(int id, Func<EcsWorld, Entity> createEntity)
         {
