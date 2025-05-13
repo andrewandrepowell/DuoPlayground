@@ -9,7 +9,6 @@ using Pow.Utilities.Animations;
 using Pow.Utilities.GO;
 using Pow.Components;
 using Schedulers;
-using nkast.Aether.Physics2D.Dynamics;
 using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 using Pow.Utilities.Physics;
@@ -83,8 +82,8 @@ namespace Pow.Utilities
             _destroySystem = new DestroySystem(_ecsWorld);
             _systemGroups = new Group<GameTime>(
                 "Systems",
-                new ControlSystem(_ecsWorld),
                 _goCustomSystem,
+                new ControlSystem(_ecsWorld),
                 new PhysicsSystem(_ecsWorld, _physicsWorld),
                 new PositionSystem(_ecsWorld),
                 new RenderUpdateSystem(_ecsWorld));

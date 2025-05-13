@@ -26,13 +26,42 @@ namespace Duo.Data
             // maps
             runner.Map.Configure((int)Maps.LevelDebug0, "tiled/test_map_0");
             // sprites / animations.
-            runner.AnimationGenerator.ConfigureSprite((int)Sprites.Cat, "images/cat_0", new(112, 112));
-            runner.AnimationGenerator.ConfigureAnimation((int)Animations.CatWalk, (int)Sprites.Cat, 0, [3, 4, 5, 6, 7, 8], 0.25f, true);
-            runner.AnimationGenerator.ConfigureAnimation((int)Animations.CatIdle, (int)Sprites.Cat, 1, [1], 0.25f, false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Cat, 
+                assetName: "images/cat_0", 
+                regionSize: new(112, 112));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatWalk,
+                spriteId: (int)Sprites.Cat, 
+                spriteAnimationId: 0, 
+                indices: [3, 4, 5, 6, 7, 8], 
+                period: 0.25f, 
+                repeat: true);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatIdle,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 1,
+                indices: [1],
+                period: 0.25f,
+                repeat: false);
             // entities
-            runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(new StatusComponent(), new GOCustomComponent<DuoRunner>()));
-            runner.AddEntityType((int)EntityTypes.Cat, world => world.Create(new StatusComponent(), new AnimationComponent(), new PhysicsComponent(), new GOCustomComponent<Cat>()));
-            runner.AddEntityType((int)EntityTypes.Surface, world => world.Create(new StatusComponent(), new PhysicsComponent(), new GOCustomComponent<Surface>()));
+            runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
+                new StatusComponent(), 
+                new GOCustomComponent<DuoRunner>()));
+            runner.AddEntityType((int)EntityTypes.Cat, world => world.Create(
+                new StatusComponent(), 
+                new AnimationComponent(),
+                new PhysicsComponent(),
+                new ControlComponent(),
+                new GOCustomComponent<Cat>()));
+            runner.AddEntityType((int)EntityTypes.Surface, world => world.Create(
+                new StatusComponent(), 
+                new PhysicsComponent(), 
+                new GOCustomComponent<Surface>()));
+            // custom GO managers.
+            runner.AddGOCustomManager<DuoRunner>();
+            runner.AddGOCustomManager<Cat>();
+            runner.AddGOCustomManager<Surface>();
         }
         public void Initialize(DuoRunner duoRunner)
         {

@@ -18,20 +18,28 @@ namespace Pow.Systems
         private readonly QueryDescription _queryDescription = new QueryDescription().WithAll<ControlComponent>();
         private readonly ForEach _updateControl;
         private KeyboardState _keyboardState;
+        private Dictionary<Keys, ButtonStates> _keyPrevStates = [];
         private void UpdateControl(in Entity entity)
         {
             var controlManager = World.Get<ControlComponent>(entity).Manager;
             foreach (var key in controlManager.Control.ControlKeys)
-                if (_keyboardState.IsKeyDown(key))
+            {
+                var keyUp = _keyboardState.IsKeyUp(key);
+                var keyDown = _keyboardState.IsKeyDown(key);
+                var keyCurrState = (keyDown) ? ButtonStates.Pressed : ButtonStates.Released;
+                Debug.Assert((keyUp && !keyDown) || (!keyUp && keyDown));
+                var keyPrevState = _keyPrevStates.GetValueOrDefault(key, ButtonStates.Released);
+                _keyPrevStates[key] = keyCurrState;
+
+                if (keyCurrState == ButtonStates.Pressed && keyPrevState == ButtonStates.Released)
                     controlManager.Control.UpdateControl(
-                        input: Inputs.Keyboard,
                         buttonState: ButtonStates.Pressed,
                         key: key);
-                else if (_keyboardState.IsKeyDown(key))
+                else if (keyCurrState == ButtonStates.Released && keyPrevState == ButtonStates.Pressed)
                     controlManager.Control.UpdateControl(
-                        input: Inputs.Keyboard,
-                        buttonState: ButtonStates.Pressed,
+                        buttonState: ButtonStates.Released,
                         key: key);
+            }
         }
         public ControlSystem(World world) : base(world)
         {

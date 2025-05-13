@@ -57,7 +57,7 @@ namespace Duo.Managers
                 var node = _polygonNodes.Dequeue();
                 var entityType = Enum.Parse<EntityTypes>(node.Parameters["EntityType"]);
                 Debug.Assert(_entityTypeGetEnvironments.ContainsKey(entityType));
-                _entityTypeGetEnvironments[entityType].GetEnvironment(entity).Initialize(entity);
+                _entityTypeGetEnvironments[entityType].GetEnvironment(entity).Initialize(node);
             }
             base.Update();
         }

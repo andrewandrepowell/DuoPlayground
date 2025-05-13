@@ -7,12 +7,11 @@ using Pow.Utilities.GO;
 
 namespace Pow.Utilities.Control
 {
-    public enum Inputs { Keyboard }
     public enum ButtonStates { Pressed, Released }
     public interface IControl
     {
         public IList<Keys> ControlKeys { get; }
-        public void UpdateControl(Inputs input, ButtonStates buttonState, Keys? key = null);
+        public void UpdateControl(ButtonStates buttonState, Keys key);
     }
     public class ControlManager(ControlGenerator parent) : IGOManager
     {
