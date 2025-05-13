@@ -22,7 +22,7 @@ namespace Duo.Managers
             { Actions.Walk, Animations.CatWalk },
         });
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
-        public IList<Keys> ControlKeys => _controlKeys;
+        public Keys[] ControlKeys => _controlKeys;
         public void UpdateControl(ButtonStates buttonState, Keys key)
         {
             if (buttonState == ButtonStates.Pressed && key == Keys.Left)

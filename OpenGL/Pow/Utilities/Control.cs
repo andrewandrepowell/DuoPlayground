@@ -10,7 +10,7 @@ namespace Pow.Utilities.Control
     public enum ButtonStates { Pressed, Released }
     public interface IControl
     {
-        public IList<Keys> ControlKeys { get; }
+        public Keys[] ControlKeys { get; }
         public void UpdateControl(ButtonStates buttonState, Keys key);
     }
     public class ControlManager(ControlGenerator parent) : IGOManager

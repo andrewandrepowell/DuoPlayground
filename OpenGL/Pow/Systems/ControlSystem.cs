@@ -22,7 +22,7 @@ namespace Pow.Systems
         private void UpdateControl(in Entity entity)
         {
             var controlManager = World.Get<ControlComponent>(entity).Manager;
-            foreach (var key in controlManager.Control.ControlKeys)
+            foreach (ref var key in controlManager.Control.ControlKeys.AsSpan())
             {
                 var keyUp = _keyboardState.IsKeyUp(key);
                 var keyDown = _keyboardState.IsKeyDown(key);
