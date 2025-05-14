@@ -1,4 +1,5 @@
 ﻿using Duo.Managers;
+using Microsoft.Xna.Framework.Graphics;
 using Pow.Components;
 using Pow.Utilities;
 using System;
@@ -29,7 +30,12 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Cat, 
                 assetName: "images/cat_0", 
-                regionSize: new(112, 112));
+                regionSize: new(112, 112),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>() 
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.CatWalk,
                 spriteId: (int)Sprites.Cat, 

@@ -17,15 +17,12 @@ namespace Duo.Managers
     {
         private AnimationManager _animationManager;
         private PhysicsManager _physicsManager;
-        private Directions _direction;
         protected AnimationManager AnimationManager => _animationManager;
         protected PhysicsManager PhysicsManager => _physicsManager;
-        public virtual Directions Direction { get => _direction; set => _direction = value; }
         public override void Initialize(Map.PolygonNode node)
         {
             _animationManager = Entity.Get<AnimationComponent>().Manager;
             _physicsManager = Entity.Get<PhysicsComponent>().Manager;
-            _direction = Directions.Left;
         }
     }
 }

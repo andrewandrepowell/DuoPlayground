@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Pow.Utilities.GO;
+using System.Collections.ObjectModel;
 
 
 namespace Pow.Utilities.Animations
@@ -20,7 +21,8 @@ namespace Pow.Utilities.Animations
         private int? _animationId = null;
         private Vector2 _position;
         private float _rotation;
-        private record SpriteNode(Sprite Sprite);
+        private Directions _direction;
+        private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
         private void UpdateSpritePosition()
         {
@@ -33,6 +35,13 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_animationId != null);
             var sprite = _animationNode.SpriteNode.Sprite;
             sprite.Rotation = _rotation;
+        }
+        private void UpdateSpriteSpriteEffect()
+        {
+            Debug.Assert(_animationId != null);
+            var spriteNode = _animationNode.SpriteNode;
+            var sprite = spriteNode.Sprite;
+            sprite.SpriteEffect = spriteNode.DirectionSpriteEffects[_direction];
         }
         public int AnimationId
         {
@@ -72,6 +81,17 @@ namespace Pow.Utilities.Animations
                 UpdateSpriteRotation();
             }
         }
+        public Directions Direction
+        {
+            get => _direction;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_direction == value) return;
+                _direction = value;
+                UpdateSpriteSpriteEffect();
+            }
+        }
         public Layers Layer = Layers.Ground;
         public void LoadSprite(int spriteId)
         {
@@ -79,7 +99,7 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_parent.SpriteConfigNodes.ContainsKey(spriteId));
             var spriteConfigNode = _parent.SpriteConfigNodes[spriteId];
             var sprite = new Sprite(spriteConfigNode.AssetName, spriteConfigNode.RegionSize);
-            var spriteNode = new SpriteNode(sprite);
+            var spriteNode = new SpriteNode(sprite, spriteConfigNode.DirectionSpriteEffects);
             _spriteNodes.Add(spriteId, spriteNode);
         }
         public void LoadAnimation(int animationId)
@@ -109,6 +129,7 @@ namespace Pow.Utilities.Animations
             _animationNode.SpriteNode.Sprite.Play(_animationNode.SpriteAnimationId);
             UpdateSpritePosition();
             UpdateSpriteRotation();
+            UpdateSpriteSpriteEffect();
         }
         public void Stop()
         {
@@ -146,16 +167,16 @@ namespace Pow.Utilities.Animations
         private Dictionary<int, SpriteConfigNode> _spriteConfigNodes = [];
         private Dictionary<int, AnimationConfigNode> _animationConfigNodes = [];
         private bool _initialized = false;
-        internal record SpriteConfigNode(string AssetName, Size RegionSize);
+        internal record SpriteConfigNode(string AssetName, Size RegionSize, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         internal record AnimationConfigNode(int SpriteId, int SpriteAnimationId, int[] Indices, float Period = 0, bool Repeat = false);
         internal Dictionary<int, SpriteConfigNode> SpriteConfigNodes =>  _spriteConfigNodes;
         internal Dictionary<int, AnimationConfigNode> AnimationConfigNodes => _animationConfigNodes;
         private void Create() => _managerPool.Push(new(this));
-        public void ConfigureSprite(int spriteId, string assetName, Size regionSize)
+        public void ConfigureSprite(int spriteId, string assetName, Size regionSize, ReadOnlyDictionary<Directions, SpriteEffects> directionSpriteEffects)
         {
             Debug.Assert(!_initialized);
             Debug.Assert(!_spriteConfigNodes.ContainsKey(spriteId));
-            _spriteConfigNodes.Add(spriteId, new(assetName, regionSize));
+            _spriteConfigNodes.Add(spriteId, new(assetName, regionSize, directionSpriteEffects));
         }
         public void ConfigureAnimation(int animationId, int spriteId, int spriteAnimationId, int[] indices, float period = 0, bool repeat = false)
         {

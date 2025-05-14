@@ -17,8 +17,9 @@ namespace Duo.Managers
         public override void Initialize(Map.PolygonNode node)
         {
             base.Initialize(node);
-            InitializeMovement(node);
             UpdateAction(Actions.Idle);
+            InitializeDirection();
+            InitializeMovement(node);
         }
         public override void Update()
         {
