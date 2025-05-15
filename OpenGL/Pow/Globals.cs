@@ -18,31 +18,37 @@ namespace Pow
     {
         private static States _state = States.WaitingForInitMG;
         private static SpriteBatch _spriteBatch;
-        private static ContentManager _contentManager;
+        private static GraphicsDeviceManager _graphicsDeviceManager;
+        private static Game _game;
         private static GameTime _gameTime = new();
         private static Runner _runner;
         public enum States { WaitingForInitMG, WaitingForInitPow, GameRunning, Disposed }
         public static SpriteBatch SpriteBatch
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 Debug.Assert(_state > States.WaitingForInitMG);
                 return _spriteBatch;
             }
         }
-        public static ContentManager ContentManager
+        public static GraphicsDeviceManager GraphicsDeviceManager
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 Debug.Assert(_state > States.WaitingForInitMG);
-                return _contentManager;
+                return _graphicsDeviceManager;
+            }
+        }
+        public static Game Game
+        {
+            get
+            {
+                Debug.Assert(_state > States.WaitingForInitMG);
+                return _game;
             }
         }
         public static GameTime GameTime
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 Debug.Assert(_state == States.GameRunning);
@@ -51,7 +57,6 @@ namespace Pow
         }
         public static Runner Runner
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 Debug.Assert(_state == States.GameRunning);
@@ -59,11 +64,15 @@ namespace Pow
             }
         }
         public static States State => _state;
-        public static void InitializeMonoGame(SpriteBatch spriteBatch, ContentManager contentManager)
+        public static void InitializeMonoGame(
+            SpriteBatch spriteBatch,
+            GraphicsDeviceManager graphicsDeviceManager,
+            Game game)
         {
             Debug.Assert(_state == States.WaitingForInitMG);
             _spriteBatch = spriteBatch;
-            _contentManager = contentManager;
+            _graphicsDeviceManager = graphicsDeviceManager;
+            _game = game;
             _state = States.WaitingForInitPow;
         }
         public static void InitializePow(IRunnerParent runnerParent)

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Pow.Components;
 using Pow.Utilities;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,8 @@ namespace Duo.Data
     public enum EntityTypes { DuoRunner, Surface, Cat }
     public class DataInitializer : IRunnerParent, IDuoRunnerParent
     {
-        public DataInitializer()
-        {
-            DuoRunner.Initialize(this);
-        }
+        public DataInitializer() => DuoRunner.Initialize(this);
+        public SizeF GameWindowSize => new(width: 640, height: 480);
         public void Initialize(Runner runner)
         {
             // maps
@@ -71,14 +70,14 @@ namespace Duo.Data
         }
         public void Initialize(DuoRunner duoRunner)
         {
-            duoRunner.Add<Cat>(EntityTypes.Cat);
-            duoRunner.Add<Surface>(EntityTypes.Surface);
+            duoRunner.AddEnvironment<Cat>(EntityTypes.Cat);
+            duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
         }
         public void Initialize(Map.MapNode node)
         {
             var duoRunner = Globals.DuoRunner;
             foreach (ref var polygonNode in node.PolygonNodes.AsSpan())
-                duoRunner.Add(polygonNode);
+                duoRunner.AddEnvironment(polygonNode);
             
         }
     }

@@ -225,7 +225,7 @@ namespace Pow.Utilities.Animations
         private record Node(int[] Indices, float Period, bool Repeat);
         public Sprite(string assetName, Size regionSize)
         {
-            _texture = Globals.ContentManager.Load<Texture2D>(assetName);
+            _texture = Globals.Game.Content.Load<Texture2D>(assetName);
             Debug.Assert(_texture.Width % regionSize.Width == 0);
             Debug.Assert(_texture.Height % regionSize.Height == 0);
             var xRegions = _texture.Width / regionSize.Width;

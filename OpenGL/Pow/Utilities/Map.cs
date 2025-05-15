@@ -39,7 +39,7 @@ namespace Pow.Utilities
             if (!_mapNodes.ContainsKey(id))
             {
                 var configNode = _configNodes[id];
-                var map = Globals.ContentManager.Load<TiledMap>(configNode.AssetName);
+                var map = Globals.Game.Content.Load<TiledMap>(configNode.AssetName);
                 var renderer = new TiledMapRenderer(Globals.SpriteBatch.GraphicsDevice, map);
                 var renderTargets = Enum
                     .GetValues<Layers>()

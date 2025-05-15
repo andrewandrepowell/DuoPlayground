@@ -13,11 +13,13 @@ using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 using Pow.Utilities.Physics;
 using Pow.Utilities.Control;
+using MonoGame.Extended;
 
 namespace Pow.Utilities
 {
     public interface IRunnerParent
     {
+        public SizeF GameWindowSize { get; }
         public void Initialize(Runner runner);
         public void Initialize(Map.MapNode node);
     }
@@ -76,7 +78,11 @@ namespace Pow.Utilities
             EcsWorld.SharedJobScheduler = _jobScheduler;
             _camera = new();
             _map = new(this);
-            _renderDrawSystem = new(_ecsWorld, _map, _camera);
+            _renderDrawSystem = new(
+                world: _ecsWorld, 
+                map: _map, 
+                camera: _camera, 
+                gameWindowSize: parent.GameWindowSize);
             _goCustomSystem = new(_ecsWorld);
             _initializeSystem = new InitializeSystem(_ecsWorld);
             _destroySystem = new DestroySystem(_ecsWorld);
@@ -134,6 +140,10 @@ namespace Pow.Utilities
             _goCustomSystem.Add<T>();
             _initializeSystem.Add<GOCustomComponent<T>>();
             _destroySystem.Add<GOCustomComponent<T>>();
+        }
+        public void InitializeGameWindow(Size size)
+        {
+            Debug.Assert(!_initialized);
         }
         public unsafe void CreateEntity(int id, Queue<Entity> responseQueue = null)
         {

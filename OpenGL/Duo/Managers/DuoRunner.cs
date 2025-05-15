@@ -4,12 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Duo.Data;
-using System.Diagnostics;
 using Pow.Components;
+using System.Diagnostics;
+using DuoGlobals = Duo.Globals;
+using PowGlobals = Pow.Globals;
+using System.Drawing;
 
 namespace Duo.Managers
 {
@@ -33,6 +35,17 @@ namespace Duo.Managers
         {
             public T GetEnvironment(in Entity entity) => entity.Get<GOCustomComponent<T>>().Manager;
         }
+        private void EnvironmentUpdate()
+        {
+            Debug.Assert(_initialized);
+            while (_polygonEntities.TryDequeue(out var entity))
+            {
+                var node = _polygonNodes.Dequeue();
+                var entityType = Enum.Parse<EntityTypes>(node.Parameters["EntityType"]);
+                Debug.Assert(_entityTypeGetEnvironments.ContainsKey(entityType));
+                _entityTypeGetEnvironments[entityType].GetEnvironment(entity).Initialize(node);
+            }
+        }
         public static void Initialize(IDuoRunnerParent parent)
         {
             Debug.Assert(!_parentInitialized);
@@ -46,28 +59,22 @@ namespace Duo.Managers
             Debug.Assert(!_initialized);
             _parent.Initialize(this);
             _initialized = true;
-            Globals.Initialize(this);
+            DuoGlobals.Initialize(this);
         }
         public override void Update()
         {
 
             Debug.Assert(_initialized);
-            while (_polygonEntities.TryDequeue(out var entity))
-            { 
-                var node = _polygonNodes.Dequeue();
-                var entityType = Enum.Parse<EntityTypes>(node.Parameters["EntityType"]);
-                Debug.Assert(_entityTypeGetEnvironments.ContainsKey(entityType));
-                _entityTypeGetEnvironments[entityType].GetEnvironment(entity).Initialize(node);
-            }
+            EnvironmentUpdate();
             base.Update();
         }
-        public void Add(Map.PolygonNode node)
+        public void AddEnvironment(Map.PolygonNode node)
         {
             Debug.Assert(_initialized);
-            Pow.Globals.Runner.CreateEntity((int)Enum.Parse<EntityTypes>(node.Parameters["EntityType"]), _polygonEntities);
+            PowGlobals.Runner.CreateEntity((int)Enum.Parse<EntityTypes>(node.Parameters["EntityType"]), _polygonEntities);
             _polygonNodes.Enqueue(node);
         }
-        public void Add<T>(EntityTypes entityType) where T : Environment
+        public void AddEnvironment<T>(EntityTypes entityType) where T : Environment
         {
             Debug.Assert(!_initialized);
             Debug.Assert(!_entityTypeGetEnvironments.ContainsKey(entityType));

@@ -16,7 +16,7 @@ namespace Pow.Utilities
     {
         void Initialize(in Entity entity);
     }
-    public enum Layers { Background, Ground, Foreground }
+    public enum Layers { Background, Ground, Foreground, Interface, Dimmer, Menu, Box }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }
     public enum Directions { Left, Right, Up, Down }
 }

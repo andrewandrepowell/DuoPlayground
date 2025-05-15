@@ -33,7 +33,10 @@ namespace OpenGLGame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            Globals.InitializeMonoGame(spriteBatch: _spriteBatch, contentManager: Content);
+            Globals.InitializeMonoGame(
+                spriteBatch: _spriteBatch,
+                graphicsDeviceManager: _graphics,
+                game: this);
             Globals.InitializePow(new DataInitializer());
 
             Globals.Runner.Camera.Zoom = 2f;
@@ -45,8 +48,8 @@ namespace OpenGLGame
         }
         protected override void EndRun()
         {
-            base.EndRun();
             Globals.Dispose();
+            base.EndRun();
         }
         protected override void Update(GameTime gameTime)
         {
