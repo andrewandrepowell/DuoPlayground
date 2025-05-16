@@ -14,10 +14,6 @@ namespace Duo.Managers
         private static IDuoRunnerParent _parent;
         private static bool _parentInitialized = false;
         private bool _initialized = false;
-        public DuoRunner()
-        {
-            _returnEnvironment = (Environment environment) => _environments.Remove(environment);
-        }
         public static void Initialize(IDuoRunnerParent parent)
         {
             Debug.Assert(!_parentInitialized);

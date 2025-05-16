@@ -18,9 +18,9 @@ namespace Duo.Managers
     {
         private readonly Queue<Map.PolygonNode> _polygonNodes = [];
         private readonly Queue<Entity> _polygonEntities = [];
+        private readonly Queue<Environment> _removeEnvironments = [];
         private readonly Dictionary<EntityTypes, IGetEnvironment<Environment>> _entityTypeGetEnvironments = [];
         private readonly List<Environment> _environments = [];
-        private readonly Action<Environment> _returnEnvironment;
         private interface IGetEnvironment<out T> where T : Environment
         {
             public T GetEnvironment(in Entity entity);
@@ -32,27 +32,37 @@ namespace Duo.Managers
         private void EnvironmentUpdate()
         {
             Debug.Assert(_initialized);
+            while (_removeEnvironments.TryDequeue(out var environment))
+            {
+                _environments.Remove(environment);
+            }
             while (_polygonEntities.TryDequeue(out var entity))
             {
                 var node = _polygonNodes.Dequeue();
                 var entityType = Enum.Parse<EntityTypes>(node.Parameters["EntityType"]);
                 var environment = _entityTypeGetEnvironments[entityType].GetEnvironment(entity);
                 _environments.Add(environment);
-                environment.Initialize(node, _returnEnvironment);
+                environment.Initialize(node);
             }
         }
         public ReadOnlyCollection<Environment> Environments => _environments.AsReadOnly();
+        public void AddEnvironment<T>(EntityTypes entityType) where T : Environment
+        {
+            Debug.Assert(!_initialized);
+            Debug.Assert(!_entityTypeGetEnvironments.ContainsKey(entityType));
+            _entityTypeGetEnvironments.Add(entityType, new EnvironmentGetter<T>());
+        }
         public void AddEnvironment(Map.PolygonNode node)
         {
             Debug.Assert(_initialized);
             PowGlobals.Runner.CreateEntity((int)Enum.Parse<EntityTypes>(node.Parameters["EntityType"]), _polygonEntities);
             _polygonNodes.Enqueue(node);
         }
-        public void AddEnvironment<T>(EntityTypes entityType) where T : Environment
+        public void RemoveEnvironment(Environment environment)
         {
-            Debug.Assert(!_initialized);
-            Debug.Assert(!_entityTypeGetEnvironments.ContainsKey(entityType));
-            _entityTypeGetEnvironments.Add(entityType, new EnvironmentGetter<T>());
+            Debug.Assert(_initialized);
+            PowGlobals.Runner.DestroyEntity(in environment.Entity);
+            _removeEnvironments.Enqueue(environment);
         }
     }
 }
