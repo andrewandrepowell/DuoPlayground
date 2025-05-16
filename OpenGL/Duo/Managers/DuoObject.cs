@@ -21,6 +21,7 @@ namespace Duo.Managers
         protected PhysicsManager PhysicsManager => _physicsManager;
         public override void Initialize(Map.PolygonNode node)
         {
+            base.Initialize(node);
             _animationManager = Entity.Get<AnimationComponent>().Manager;
             _physicsManager = Entity.Get<PhysicsComponent>().Manager;
         }

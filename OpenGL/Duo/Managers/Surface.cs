@@ -16,6 +16,7 @@ namespace Duo.Managers
     {
         public override void Initialize(Map.PolygonNode node)
         {
+            base.Initialize(node);
             var body = Entity.Get<PhysicsComponent>().Manager.Body;
             body.BodyType = BodyType.Static;
             body.Mass = 1;
