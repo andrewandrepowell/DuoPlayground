@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="17">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="18">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
- <layer id="1" name="ground_0" width="15" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
-0,1,1,0,0,0,1,1,1,1,0,0,0,0,0,
-0,0,1,1,1,1,1,0,0,1,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
-0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,
-0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,
-0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,
-0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,
-0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-</data>
- </layer>
  <objectgroup id="3" name="objects_surfaces_0">
   <object id="12" x="144" y="160">
    <properties>
@@ -50,11 +31,39 @@
   <object id="9" x="192" y="80">
    <properties>
     <property name="EntityType" value="Cat"/>
-    <property name="ID" value="I_Love_Cats"/>
+    <property name="ID" value="Protag"/>
    </properties>
    <polygon points="0,0 48,0 48,48 0,48"/>
   </object>
  </objectgroup>
+ <objectgroup id="5" name="objects_camera_0">
+  <object id="17" x="0" y="0">
+   <properties>
+    <property name="EntityType" value="Camera"/>
+    <property name="TrackID" value="Protag"/>
+   </properties>
+   <polygon points="0,0 16,0 16,16 0,16"/>
+  </object>
+ </objectgroup>
+ <layer id="1" name="ground_0" width="15" height="15">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
+0,1,1,0,0,0,1,1,1,1,0,0,0,0,0,
+0,0,1,1,1,1,1,0,0,1,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
+0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,
+0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,
+0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,
+0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
  <layer id="2" name="foreground_0" width="15" height="15">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

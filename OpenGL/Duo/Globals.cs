@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Duo.Managers;
+using MonoGame.Extended;
 
 namespace Duo
 {
@@ -13,7 +13,8 @@ namespace Duo
     {
         private static States _state = States.WaitingForInit;
         private static DuoRunner _duoRunner;
-        public enum States { WaitingForInit, GameRunning, Disposed }
+        internal static readonly SizeF GameWindowSize = new(640, 480);
+        internal enum States { WaitingForInit, GameRunning, Disposed }
         internal static DuoRunner DuoRunner
         {
             get

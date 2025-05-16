@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Arch.Core.Extensions;
 using Pow.Components;
+using Microsoft.Xna.Framework;
 
 namespace Duo.Managers
 {
@@ -19,6 +20,7 @@ namespace Duo.Managers
         private PhysicsManager _physicsManager;
         protected AnimationManager AnimationManager => _animationManager;
         protected PhysicsManager PhysicsManager => _physicsManager;
+        public Vector2 Position => _physicsManager.Body.Position;
         public override void Initialize(Map.PolygonNode node)
         {
             base.Initialize(node);

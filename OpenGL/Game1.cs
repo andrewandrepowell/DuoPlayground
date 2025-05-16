@@ -37,10 +37,10 @@ namespace OpenGLGame
                 spriteBatch: _spriteBatch,
                 graphicsDeviceManager: _graphics,
                 game: this);
-            Globals.InitializePow(new DataInitializer());
+            Globals.InitializePow(new Data());
 
-            Globals.Runner.Camera.Zoom = 2f;
-            Globals.Runner.Camera.Position = new Vector2(-32, -32);
+            //Globals.Runner.Camera.Zoom = 2f;
+            //Globals.Runner.Camera.Position = new Vector2(-32, -32);
             //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
 
             Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);

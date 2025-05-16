@@ -17,22 +17,27 @@ namespace Pow.Utilities
         private float _zoom;
         private float _pitch;
         private Matrix _view;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateView()
         {
             _view = 
                 Matrix.CreateTranslation(new Vector3(-_position, 0f)) * 
+                Matrix.CreateRotationZ(_rotation) * 
+                Matrix.CreateScale(_zoom, _zoom * _pitch, 1f) *
+                Matrix.CreateTranslation(new Vector3(-_origin, 0f));
+
+            /*
+             *             _view = 
+                Matrix.CreateTranslation(new Vector3(-_position, 0f)) * 
                 Matrix.CreateTranslation(new Vector3(-_origin, 0f)) * 
                 Matrix.CreateRotationZ(_rotation) * 
                 Matrix.CreateScale(_zoom, _zoom * _pitch, 1f) * 
-                Matrix.CreateTranslation(new Vector3(_origin, 0f));
+                Matrix.CreateTranslation(new Vector3(_origin / _zoom, 0f));
+            */
         }
         public ref Matrix View => ref _view;
         public Vector2 Position
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _position;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (_position == value) return;
@@ -42,9 +47,7 @@ namespace Pow.Utilities
         }
         public Vector2 Origin
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _origin;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (_origin == value) return;
@@ -54,9 +57,7 @@ namespace Pow.Utilities
         }
         public float Rotation
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _rotation;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (_rotation == value) return;
@@ -66,9 +67,7 @@ namespace Pow.Utilities
         }
         public float Zoom
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _zoom;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (_zoom == value) return;
@@ -78,9 +77,7 @@ namespace Pow.Utilities
         }
         public float Pitch
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _pitch;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (_pitch == value) return;
