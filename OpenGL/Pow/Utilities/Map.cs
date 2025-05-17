@@ -63,7 +63,6 @@ namespace Pow.Utilities
             _loaded = true;
         }
         public record ConfigNode(string AssetName);
-        public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
         public record MapNode(
             ConfigNode Config,
             TiledMap Map,

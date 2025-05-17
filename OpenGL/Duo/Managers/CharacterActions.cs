@@ -25,6 +25,5 @@ namespace Duo.Managers
         }
 
         public enum Actions { Walk, Idle }
-        protected abstract IReadOnlyDictionary<Actions, Animations> ActionAnimationMap { get; }
     }
 }

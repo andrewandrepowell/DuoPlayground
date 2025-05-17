@@ -16,6 +16,7 @@ namespace Duo.Managers
 {
     internal partial class Character
     {
+        private static Boxes.Node _boxesNode = null;
         private const float _movementGravity = 200000;
         private const float _movementBaseSpeed = 200000;
         private bool _movingLeft;
@@ -37,7 +38,26 @@ namespace Duo.Managers
             }
             return System.Math.Min(max.X - min.X, max.Y - min.Y) / 2;
         }
-        private void InitializeMovement(Map.PolygonNode node)
+        private void InitializeBoxes()
+        {
+            var body = PhysicsManager.Body;
+            if (_boxesNode == null) 
+                _boxesNode = Boxes.Load(BoxesAssetName);
+            static void CreateFixture(Body body, Vector2[] vertices, bool isSensor)
+            {
+                var shape = new PolygonShape(
+                    vertices: new(vertices),
+                    density: 1);
+                var fixture = new Fixture(shape);
+                fixture.IsSensor = isSensor;
+                body.Add(fixture);
+            }
+            CreateFixture(body, _boxesNode.Collide, false);
+            CreateFixture(body, _boxesNode.Ground, true);
+            CreateFixture(body, _boxesNode.Walls[Directions.Left], true);
+            CreateFixture(body, _boxesNode.Walls[Directions.Right], true);
+        }
+        private void InitializeMovement(PolygonNode node)
         {
             _movingLeft = false;
             _movingRight = false;
@@ -47,9 +67,7 @@ namespace Duo.Managers
             body.BodyType = BodyType.Dynamic;
             body.Mass = 1;
             body.Position = node.Vertices.Average() + node.Position;
-            body.CreateCircle(
-                radius: GetRadius(node.Vertices), 
-                density: 1);
+            InitializeBoxes();
             body.World.ContactManager.PostSolve += MovementPostSolve;
         }
         private void CleanupMovement()

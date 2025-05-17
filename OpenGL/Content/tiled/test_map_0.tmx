@@ -35,7 +35,7 @@
    <polygon points="0,0 16,0 16,16 0,16"/>
   </object>
  </objectgroup>
- <layer id="1" name="ground_0" width="15" height="15" opacity="0.15">
+ <layer id="1" name="ground_0" width="15" height="15">
   <data encoding="csv">
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -54,7 +54,7 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
  </layer>
- <layer id="2" name="foreground_0" width="15" height="15" visible="0">
+ <layer id="2" name="foreground_0" width="15" height="15">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

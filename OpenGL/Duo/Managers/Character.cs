@@ -14,12 +14,17 @@ namespace Duo.Managers
         {
             base.Initialize();
         }
-        public override void Initialize(Map.PolygonNode node)
+        public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             InitializeAction();
             InitializeDirection();
             InitializeMovement(node);
+        }
+        public override void Cleanup()
+        {
+            CleanupMovement();
+            base.Cleanup();
         }
         public override void Update()
         {

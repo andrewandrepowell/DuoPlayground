@@ -21,7 +21,9 @@ namespace Duo.Managers
             { Actions.Idle, Animations.CatIdle },
             { Actions.Walk, Animations.CatWalk },
         });
+        private static readonly string _boxesAssetName = "tiled/cat_boxes_0";
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
+        protected override string BoxesAssetName => _boxesAssetName;
         public Keys[] ControlKeys => _controlKeys;
         public void UpdateControl(ButtonStates buttonState, Keys key)
         {
@@ -34,7 +36,7 @@ namespace Duo.Managers
             if (buttonState == ButtonStates.Released && key == Keys.Right)
                 ReleaseRight();
         }
-        public override void Initialize(Map.PolygonNode node)
+        public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             Entity.Get<ControlComponent>().Manager.Initialize(this);

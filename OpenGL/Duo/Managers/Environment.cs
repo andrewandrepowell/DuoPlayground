@@ -15,7 +15,7 @@ namespace Duo.Managers
         private bool _initialized = false;
         private string _id = null;
         public string ID => _id;
-        public virtual void Initialize(Map.PolygonNode node)
+        public virtual void Initialize(PolygonNode node)
         {
             Debug.Assert(!_initialized);
             _id = node.Parameters.GetValueOrDefault("ID", null);

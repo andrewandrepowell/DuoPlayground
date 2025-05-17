@@ -51,6 +51,16 @@
 /processorParam:TextureFormat=Color
 /build:images/test_tileset_0.png
 
+#begin tiled/cat_boxes_0.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/cat_boxes_0.tmx
+
+#begin tiled/cat_tileset_0.tsx
+/importer:TiledMapTilesetImporter
+/processor:TiledMapTilesetProcessor
+/build:tiled/cat_tileset_0.tsx
+
 #begin tiled/test_map_0.tmx
 /importer:TiledMapImporter
 /processor:TiledMapProcessor

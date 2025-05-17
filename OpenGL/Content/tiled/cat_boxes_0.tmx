@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="7" height="7" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
+ <tileset firstgid="1" source="cat_tileset_0.tsx"/>
+ <layer id="1" name="sprite_0" width="7" height="7">
+  <data encoding="csv">
+1,2,3,4,5,6,7,
+22,23,24,25,26,27,28,
+43,44,45,46,47,48,49,
+64,65,66,67,68,69,70,
+85,86,87,88,89,90,91,
+106,107,108,109,110,111,112,
+127,128,129,130,131,132,133
+</data>
+ </layer>
+ <objectgroup id="2" name="objects_0">
+  <object id="1" x="32" y="32">
+   <properties>
+    <property name="BoxType" value="Collide"/>
+   </properties>
+   <polygon points="0,0 48,0 48,48 0,48"/>
+  </object>
+  <object id="2" x="16" y="32">
+   <properties>
+    <property name="BoxType" value="Wall"/>
+    <property name="Direction" value="Left"/>
+   </properties>
+   <polygon points="0,0 16,0 16,48 0,48"/>
+  </object>
+  <object id="3" x="80" y="32">
+   <properties>
+    <property name="BoxType" value="Wall"/>
+    <property name="Direction" value="Right"/>
+   </properties>
+   <polygon points="0,0 16,0 16,48 0,48"/>
+  </object>
+  <object id="4" x="32" y="80">
+   <properties>
+    <property name="BoxType" value="Ground"/>
+   </properties>
+   <polygon points="0,0 48,0 48,16 0,16"/>
+  </object>
+ </objectgroup>
+</map>

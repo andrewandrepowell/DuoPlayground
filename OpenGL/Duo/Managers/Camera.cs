@@ -14,7 +14,7 @@ namespace Duo.Managers
     {
         private DuoObject _duoObjectTracked;
         public DuoObject DuoObjectTracked => _duoObjectTracked;
-        public override void Initialize(Map.PolygonNode node)
+        public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             var camera = PowGlobals.Runner.Camera;

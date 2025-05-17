@@ -16,7 +16,7 @@ namespace Duo.Managers
 {
     public partial class DuoRunner
     {
-        private readonly Queue<Map.PolygonNode> _polygonNodes = [];
+        private readonly Queue<PolygonNode> _polygonNodes = [];
         private readonly Queue<Entity> _polygonEntities = [];
         private readonly Queue<Environment> _removeEnvironments = [];
         private readonly Dictionary<EntityTypes, IGetEnvironment<Environment>> _entityTypeGetEnvironments = [];
@@ -52,7 +52,7 @@ namespace Duo.Managers
             Debug.Assert(!_entityTypeGetEnvironments.ContainsKey(entityType));
             _entityTypeGetEnvironments.Add(entityType, new EnvironmentGetter<T>());
         }
-        public void AddEnvironment(Map.PolygonNode node)
+        public void AddEnvironment(PolygonNode node)
         {
             Debug.Assert(_initialized);
             PowGlobals.Runner.CreateEntity((int)Enum.Parse<EntityTypes>(node.Parameters["EntityType"]), _polygonEntities);

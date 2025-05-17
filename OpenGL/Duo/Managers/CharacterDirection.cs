@@ -14,7 +14,6 @@ namespace Duo.Managers
         {
             AnimationManager.Direction = _direction;
         }
-
         private void InitializeDirection()
         {
             _direction = Directions.Left;

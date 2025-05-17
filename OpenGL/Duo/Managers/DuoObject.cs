@@ -21,7 +21,7 @@ namespace Duo.Managers
         protected AnimationManager AnimationManager => _animationManager;
         protected PhysicsManager PhysicsManager => _physicsManager;
         public Vector2 Position => _physicsManager.Body.Position;
-        public override void Initialize(Map.PolygonNode node)
+        public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             _animationManager = Entity.Get<AnimationComponent>().Manager;

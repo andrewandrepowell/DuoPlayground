@@ -17,7 +17,7 @@ namespace Duo.Managers
 {
     internal class Surface : Environment
     {
-        public override void Initialize(Map.PolygonNode node)
+        public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             var body = Entity.Get<PhysicsComponent>().Manager.Body;
