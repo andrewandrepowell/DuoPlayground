@@ -26,6 +26,7 @@ namespace Duo.Managers
             Debug.Assert(_parentInitialized);
             Debug.Assert(!_initialized);
             _parent.Initialize(this);
+            InitializeGenerators();
             _initialized = true;
             DuoGlobals.Initialize(this);
         }

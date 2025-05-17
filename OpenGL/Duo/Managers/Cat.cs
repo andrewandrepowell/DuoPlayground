@@ -23,7 +23,7 @@ namespace Duo.Managers
         });
         private static readonly string _boxesAssetName = "tiled/cat_boxes_0";
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
-        protected override string BoxesAssetName => _boxesAssetName;
+        protected override Boxes Boxes => Boxes.Cat;
         public Keys[] ControlKeys => _controlKeys;
         public void UpdateControl(ButtonStates buttonState, Keys key)
         {

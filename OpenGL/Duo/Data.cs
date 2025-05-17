@@ -16,6 +16,7 @@ namespace Duo.Data
     internal enum Maps { LevelDebug0 }
     internal enum Sprites { Cat }
     internal enum Animations { CatWalk, CatIdle }
+    internal enum Boxes { Cat }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -74,16 +75,20 @@ namespace Duo.Data
         }
         public void Initialize(DuoRunner duoRunner)
         {
+            // Environment
             duoRunner.AddEnvironment<Managers.Camera>(EntityTypes.Camera);
             duoRunner.AddEnvironment<Cat>(EntityTypes.Cat);
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
+            // Boxes
+            duoRunner.BoxesGenerator.Configure(
+                id: (int)Boxes.Cat, 
+                assetName: "tiled/cat_boxes_0");
         }
         public void Initialize(Map.MapNode node)
         {
             var duoRunner = Globals.DuoRunner;
             foreach (ref var polygonNode in node.PolygonNodes.AsSpan())
                 duoRunner.AddEnvironment(polygonNode);
-            
         }
     }
 }

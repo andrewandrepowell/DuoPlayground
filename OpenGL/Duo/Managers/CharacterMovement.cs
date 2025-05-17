@@ -16,7 +16,6 @@ namespace Duo.Managers
 {
     internal partial class Character
     {
-        private static Boxes.Node _boxesNode = null;
         private const float _movementGravity = 200000;
         private const float _movementBaseSpeed = 200000;
         private bool _movingLeft;
@@ -41,8 +40,7 @@ namespace Duo.Managers
         private void InitializeBoxes()
         {
             var body = PhysicsManager.Body;
-            if (_boxesNode == null) 
-                _boxesNode = Boxes.Load(BoxesAssetName);
+            var node = Globals.DuoRunner.BoxesGenerator.GetNode((int)Boxes);
             static void CreateFixture(Body body, Vector2[] vertices, bool isSensor)
             {
                 var shape = new PolygonShape(
@@ -52,10 +50,10 @@ namespace Duo.Managers
                 fixture.IsSensor = isSensor;
                 body.Add(fixture);
             }
-            CreateFixture(body, _boxesNode.Collide, false);
-            CreateFixture(body, _boxesNode.Ground, true);
-            CreateFixture(body, _boxesNode.Walls[Directions.Left], true);
-            CreateFixture(body, _boxesNode.Walls[Directions.Right], true);
+            CreateFixture(body, node.Collide, false);
+            CreateFixture(body, node.Ground, true);
+            CreateFixture(body, node.Walls[Directions.Left], true);
+            CreateFixture(body, node.Walls[Directions.Right], true);
         }
         private void InitializeMovement(PolygonNode node)
         {

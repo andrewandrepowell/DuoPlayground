@@ -7,17 +7,22 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended;
+using System.Diagnostics;
 
 namespace Pow.Utilities
 {
-    public static class Boxes
+    public class BoxesGenerator
     {
+        private bool _initialized = false;
+        private readonly Dictionary<int, ConfigNode> _configNodes = [];
+        private readonly Dictionary<int, Node> _nodes = [];
         public enum BoxTypes { Collide, Ground, Wall };
+        private record ConfigNode(string AssetName);
         public record Node(
             Vector2[] Collide,
             Vector2[] Ground,
             ReadOnlyDictionary<Directions, Vector2[]> Walls);
-        public static Node Load(string assetName)
+        private static Node Load(string assetName)
         {
             var map = Globals.Game.Content.Load<TiledMap>(assetName);
             var size = new SizeF(
@@ -61,6 +66,27 @@ namespace Pow.Utilities
                 Ground: groundBox,
                 Walls: new(wallBoxes));
             return node;
+        }
+        public void Configure(int id, string assetName)
+        {
+            Debug.Assert(!_initialized);
+            Debug.Assert(!_configNodes.ContainsKey(id));
+            _configNodes.Add(id, new(assetName));
+        }
+        public void Initialize()
+        {
+            Debug.Assert(!_initialized);
+            _initialized = true;
+        }
+        public Node GetNode(int id)
+        {
+            Debug.Assert(_initialized);
+            if (!_nodes.ContainsKey(id))
+            {
+                Debug.Assert(_configNodes.ContainsKey(id));
+                _nodes.Add(id, Load(_configNodes[id].AssetName));
+            }
+            return _nodes[id];
         }
     }
 }
