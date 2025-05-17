@@ -5,12 +5,14 @@
   <object id="37" x="0" y="0">
    <properties>
     <property name="EntityType" value="Surface"/>
+    <property name="GhostVertices" value="7, 8"/>
    </properties>
    <polygon points="0,0 16,0 16,128 32,160 48,176 80,192 128,192 128,240 0,240"/>
   </object>
   <object id="38" x="128" y="192">
    <properties>
     <property name="EntityType" value="Surface"/>
+    <property name="GhostVertices" value="4, 5"/>
    </properties>
    <polygon points="0,0 96,0 96,-192 112,-192 112,48 0,48"/>
   </object>

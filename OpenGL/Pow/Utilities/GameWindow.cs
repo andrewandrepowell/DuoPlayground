@@ -89,29 +89,29 @@ namespace Pow.Utilities
                             letterBoxNode.Update(new(
                                 x: 0,
                                 y: 0,
-                                width: (int)Math.Ceiling(_screenWindowSize.Width),
-                                height: (int)Math.Ceiling(_offset.Y)));
+                                width: (int)System.Math.Ceiling(_screenWindowSize.Width),
+                                height: (int)System.Math.Ceiling(_offset.Y)));
                             break;
                         case Directions.Down:
                             letterBoxNode.Update(new(
                                 x: 0,
-                                y: (int)Math.Ceiling(_offset.Y + scaledGameWindowSize.Height),
-                                width: (int)Math.Ceiling(_screenWindowSize.Width),
-                                height: (int)Math.Ceiling(_offset.Y)));
+                                y: (int)System.Math.Ceiling(_offset.Y + scaledGameWindowSize.Height),
+                                width: (int)System.Math.Ceiling(_screenWindowSize.Width),
+                                height: (int)System.Math.Ceiling(_offset.Y)));
                             break;
                         case Directions.Left:
                             letterBoxNode.Update(new(
                                 x: 0,
                                 y: 0,
-                                width: (int)Math.Ceiling(_offset.X),
-                                height: (int)Math.Ceiling(_screenWindowSize.Height)));
+                                width: (int)System.Math.Ceiling(_offset.X),
+                                height: (int)System.Math.Ceiling(_screenWindowSize.Height)));
                             break;
                         case Directions.Right:
                             letterBoxNode.Update(new(
-                                x: (int)Math.Ceiling(_offset.X + scaledGameWindowSize.Width),
+                                x: (int)System.Math.Ceiling(_offset.X + scaledGameWindowSize.Width),
                                 y: 0,
-                                width: (int)Math.Ceiling(_offset.X),
-                                height: (int)Math.Ceiling(_screenWindowSize.Height)));
+                                width: (int)System.Math.Ceiling(_offset.X),
+                                height: (int)System.Math.Ceiling(_screenWindowSize.Height)));
                             break; 
                     }
                 }

@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Pow.Utilities;
 using Microsoft.Xna.Framework;
-using nkast.Aether.Physics2D.Dynamics;
 using System.Xml.Linq;
 using nkast.Aether.Physics2D.Common;
+using nkast.Aether.Physics2D.Dynamics;
+using nkast.Aether.Physics2D.Dynamics.Contacts;
+using nkast.Aether.Physics2D.Collision.Shapes;
+using System.Diagnostics;
 
 namespace Duo.Managers
 {
@@ -32,7 +35,7 @@ namespace Duo.Managers
                 if (v.Y > max.Y)
                     max.Y = v.Y;
             }
-            return Math.Min(max.X - min.X, max.Y - min.Y) / 2;
+            return System.Math.Min(max.X - min.X, max.Y - min.Y) / 2;
         }
         private void InitializeMovement(Map.PolygonNode node)
         {
@@ -47,6 +50,31 @@ namespace Duo.Managers
             body.CreateCircle(
                 radius: GetRadius(node.Vertices), 
                 density: 1);
+            body.World.ContactManager.PostSolve += MovementPostSolve;
+        }
+        private void CleanupMovement()
+        {
+            var body = PhysicsManager.Body;
+            body.World.ContactManager.PostSolve -= MovementPostSolve;
+        }
+        private void MovementPostSolve(Contact contact, ContactVelocityConstraint impulse)
+        {
+            var body = PhysicsManager.Body;
+            if (contact.FixtureA.Body == body)
+            {
+                Console.WriteLine("Character is A");
+            }
+            if (contact.FixtureB.Body == body)
+            {
+                Console.WriteLine("Character is B");
+                if (contact.FixtureA.Body.Tag is Surface)
+                {
+                    var surfaceShape = (EdgeShape)contact.FixtureA.Shape;
+                    //Console.WriteLine($"Surface Shape: {surfaceShape.Vertex1}, {surfaceShape.Vertex2}");
+                    //Debug.Assert(surfaceShape.Vertex1.Y == surfaceShape.Vertex2.Y);
+                    //Debug.Assert(surfaceShape.Vertex1.X != surfaceShape.Vertex2.X);
+                }
+            }
         }
         private void MovementUpdate()
         {

@@ -26,6 +26,8 @@ namespace Duo.Managers
             base.Initialize(node);
             _animationManager = Entity.Get<AnimationComponent>().Manager;
             _physicsManager = Entity.Get<PhysicsComponent>().Manager;
+            var body = _physicsManager.Body;
+            body.Tag = this;
         }
     }
 }

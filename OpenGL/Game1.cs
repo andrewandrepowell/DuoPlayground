@@ -3,15 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Pow.Utilities;
 using Pow;
-using System;
-using MonoGame.Extended;
-using System.Collections;
-using System.Diagnostics;
-using System.Text;
-using System.Xml.Linq;
-using System.Linq;
 using Duo.Data;
 
+#if DEBUG
+using System.Runtime.InteropServices;
+#endif
 
 namespace OpenGLGame
 {
@@ -19,11 +15,17 @@ namespace OpenGLGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+#if DEBUG
+        [DllImport("kernel32")]
+        static extern bool AllocConsole();
+#endif
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+#if DEBUG
+            AllocConsole();
+#endif
         }
 
         protected override void Initialize()
