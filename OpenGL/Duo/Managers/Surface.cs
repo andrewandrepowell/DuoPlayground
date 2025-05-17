@@ -20,7 +20,7 @@ namespace Duo.Managers
             var body = Entity.Get<PhysicsComponent>().Manager.Body;
             body.BodyType = BodyType.Static;
             body.Mass = 1;
-            body.CreatePolygon(vertices: new(node.Vertices), density: 1);
+            body.CreateChainShape(vertices: new(node.Vertices));
             body.Position = node.Position;
         }
     }

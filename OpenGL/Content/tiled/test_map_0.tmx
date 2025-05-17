@@ -1,60 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="34">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="39">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <objectgroup id="3" name="objects_surfaces_0">
-  <object id="19" x="0" y="0">
+  <object id="37" x="0" y="0">
    <properties>
     <property name="EntityType" value="Surface"/>
    </properties>
-   <polygon points="0,0 16,0 16,128 0,128"/>
+   <polygon points="0,0 16,0 16,128 32,160 48,176 80,192 128,192 128,240 0,240"/>
   </object>
-  <object id="24" x="208" y="144">
+  <object id="38" x="128" y="192">
    <properties>
     <property name="EntityType" value="Surface"/>
    </properties>
-   <polygon points="0,0 16,-32 32,-32 32,96 0,96"/>
-  </object>
-  <object id="25" x="224" y="112">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 0,-112 16,-112 16,0"/>
-  </object>
-  <object id="27" x="0" y="176">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 48,0 80,16 80,64 0,64"/>
-  </object>
-  <object id="29" x="0" y="128">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 16,0 32,32 0,32"/>
-  </object>
-  <object id="30" x="0" y="160">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 32,0 48,16 0,16"/>
-  </object>
-  <object id="31" x="80" y="192">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 48,0 48,48 0,48"/>
-  </object>
-  <object id="32" x="128" y="192">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 64,-32 64,48 0,48"/>
-  </object>
-  <object id="33" x="192" y="160">
-   <properties>
-    <property name="EntityType" value="Surface"/>
-   </properties>
-   <polygon points="0,0 16,-16 16,80 0,80"/>
+   <polygon points="0,0 96,0 96,-192 112,-192 112,48 0,48"/>
   </object>
  </objectgroup>
  <objectgroup id="4" name="objects_cat_0">
@@ -84,11 +42,11 @@
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-2147483649,0,0,0,0,0,0,0,0,0,0,0,0,7,1,
-2147483649,2147483655,0,0,0,0,0,0,0,0,0,0,0,6,1,
-2147483649,2147483654,0,0,0,0,0,0,0,0,0,0,5,1,1,
-2147483649,2147483649,2147483653,0,0,0,0,0,0,0,3,4,1,1,1,
-2147483649,2147483649,2147483649,2147483652,2147483651,0,0,0,3,4,1,1,1,1,1,
+2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+2147483649,2147483655,0,0,0,0,0,0,0,0,0,0,0,0,1,
+2147483649,2147483654,0,0,0,0,0,0,0,0,0,0,0,0,1,
+2147483649,2147483649,2147483653,0,0,0,0,0,0,0,0,0,0,0,1,
+2147483649,2147483649,2147483649,2147483652,2147483651,0,0,0,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
