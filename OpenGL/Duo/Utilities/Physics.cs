@@ -25,8 +25,8 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _defaultGravityForce = 4e5f;
-        private const float _defaultMovementForce = 2e5f;
+        private const float _defaultGravityForce = 16e5f;
+        private const float _defaultMovementForce = 8e5f;
         private readonly static Vector2 _defaultGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -34,6 +34,7 @@ namespace Duo.Utilities.Physics
         private Body _body;
         private readonly record struct BoxNode(BoxTypes BoxType, Directions? Direction);
         private readonly Dictionary<Fixture, BoxNode> _fixtureToBoxNodeMap = [];
+        private readonly Dictionary<BoxNode, Fixture> _boxNodeToFixtureMap = [];
         private readonly record struct ContactNode(BoxNode BoxNode, Fixture OtherFixture);
         private readonly Dictionary<BoxNode, List<Fixture>> _fixtureBins = _boxNodes
             .Select(node => (node, new List<Fixture>()))
@@ -97,7 +98,7 @@ namespace Duo.Utilities.Physics
                 _body = body;
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
-                body.Mass = 1;
+                body.Mass = 0.1f;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -105,28 +106,28 @@ namespace Duo.Utilities.Physics
             {
                 Debug.Assert(body.FixtureList.Count == 0);
                 var node = Globals.DuoRunner.BoxesGenerator.GetNode((int)boxes);
-                static void CreateFixture(
-                    Body body, 
+                void CreateFixture(
                     BoxTypes boxType,
                     Directions? direction,
                     Vector2[] vertices, 
-                    bool isSensor,
-                    Dictionary<Fixture, BoxNode> fixtureToBoxNodeMap)
+                    bool isSensor)
                 {
                     var shape = new PolygonShape(
                         vertices: new(vertices),
                         density: 1);
                     var fixture = new Fixture(shape);
                     fixture.IsSensor = isSensor;
-                    fixtureToBoxNodeMap.Add(fixture, new(
-                        BoxType: boxType, 
-                        Direction: direction));
-                    body.Add(fixture);
+                    var boxNode = new BoxNode(
+                        BoxType: boxType,
+                        Direction: direction);
+                    _fixtureToBoxNodeMap[fixture] = boxNode;
+                    _boxNodeToFixtureMap[boxNode] = fixture;
+                    _body.Add(fixture);
                 }
-                CreateFixture(body, BoxTypes.Collide, null, node.Collide, false, _fixtureToBoxNodeMap);
-                CreateFixture(body, BoxTypes.Ground, null, node.Ground, true, _fixtureToBoxNodeMap);
-                CreateFixture(body, BoxTypes.Wall, Directions.Left, node.Walls[Directions.Left], true, _fixtureToBoxNodeMap);
-                CreateFixture(body, BoxTypes.Wall, Directions.Right, node.Walls[Directions.Right], true, _fixtureToBoxNodeMap);
+                CreateFixture(BoxTypes.Collide, null, node.Collide, false);
+                CreateFixture(BoxTypes.Ground, null, node.Ground, true);
+                CreateFixture(BoxTypes.Wall, Directions.Left, node.Walls[Directions.Left], true);
+                CreateFixture(BoxTypes.Wall, Directions.Right, node.Walls[Directions.Right], true);
             }
             {
                 _groundNormal = _defaultGroundNormal;
@@ -236,6 +237,7 @@ namespace Duo.Utilities.Physics
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
             var collideBoxNode = new BoxNode(BoxTypes.Collide, null);
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
+            var speed = _body.LinearVelocity.Length();
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -282,13 +284,27 @@ namespace Duo.Utilities.Physics
                             count++;
                             total += normal;
                         }
-                        Console.WriteLine($"Product: {product}");
                     }
                     if (count > 0)
                     {
                         var average = total / count;
-                        var targetNormal = Vector2.Normalize(average); // maybe optimize later? We could change this such that it only does this if the previous total is different.
-                        _groundNormal = targetNormal;
+                        var targetNormal = Vector2.Normalize(average);
+                        {
+                            var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
+                            var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
+                            var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
+                            var updRads = difRads * timeElapsed * (speed * 0.1f + (difRads.EqualsWithTolerance(0) ? 0 : 2f));
+                            var newRads = curRads + updRads;
+                            var newNorm = new Vector2(
+                                x: (float)System.Math.Cos(newRads),
+                                y: (float)System.Math.Sin(newRads));
+                            _groundNormal = newNorm;
+                            //Console.WriteLine($"curDegrees: {curRads * 180 / System.Math.PI}");
+                            //Console.WriteLine($"tarDegrees: {tarRads * 180 / System.Math.PI}");
+                            //Console.WriteLine($"difDegrees: {difRads * 180 / System.Math.PI}");
+                            //Console.WriteLine($"speedSquared: {speedSquared}");
+                        }
+                        //_groundNormal = targetNormal;
                     }
                 }
             }

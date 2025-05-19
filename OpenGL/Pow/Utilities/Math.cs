@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,12 @@ namespace Pow.Utilities
             // https://stackoverflow.com/a/51018529
             int r = x % m;
             return r < 0 ? r + m : r;
+        }
+        public static float AngleDifference(float angle1, float angle2)
+        {
+            // https://stackoverflow.com/a/28037434
+            float diff = (angle2 - angle1 + MathHelper.Pi) % MathHelper.TwoPi - MathHelper.Pi;
+            return diff < -MathHelper.Pi ? diff + MathHelper.TwoPi : diff;
         }
     }
 }

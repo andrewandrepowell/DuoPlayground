@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="39">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="40">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <objectgroup id="3" name="objects_surfaces_0">
   <object id="37" x="0" y="0">
@@ -9,16 +9,16 @@
    </properties>
    <polygon points="0,0 16,0 16,128 32,160 48,176 80,192 128,192 128,240 0,240"/>
   </object>
-  <object id="38" x="128" y="192">
+  <object id="39" x="128" y="192">
    <properties>
     <property name="EntityType" value="Surface"/>
-    <property name="GhostVertices" value="4, 5"/>
+    <property name="GhostVertices" value="7, 8"/>
    </properties>
-   <polygon points="0,0 96,0 96,-192 112,-192 112,48 0,48"/>
+   <polygon points="0,0 32,0 64,-16 80,-32 96,-64 96,-192 112,-192 112,48 0,48"/>
   </object>
  </objectgroup>
  <objectgroup id="4" name="objects_cat_0">
-  <object id="9" x="80" y="144">
+  <object id="9" x="96" y="144">
    <properties>
     <property name="EntityType" value="Cat"/>
     <property name="ID" value="Protag"/>
@@ -37,7 +37,7 @@
  </objectgroup>
  <layer id="1" name="ground_0" width="15" height="15" opacity="0.17">
   <data encoding="csv">
-1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483649,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -45,13 +45,13 @@
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 2147483649,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-2147483649,2147483655,0,0,0,0,0,0,0,0,0,0,0,0,1,
-2147483649,2147483654,0,0,0,0,0,0,0,0,0,0,0,0,1,
-2147483649,2147483649,2147483653,0,0,0,0,0,0,0,0,0,0,0,1,
-2147483649,2147483649,2147483649,2147483652,2147483651,0,0,0,0,0,0,0,0,0,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+2147483649,2147483655,0,0,0,0,0,0,0,0,0,0,0,7,1,
+2147483649,2147483654,0,0,0,0,0,0,0,0,0,0,0,6,1,
+2147483649,2147483649,2147483653,0,0,0,0,0,0,0,0,0,5,1,1,
+2147483649,2147483649,2147483649,2147483652,2147483651,0,0,0,0,0,3,4,1,1,1,
+1,1,1,1,1,1,1,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,
+1,1,1,1,1,1,1,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,
+1,1,1,1,1,1,1,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649,2147483649
 </data>
  </layer>
  <layer id="2" name="foreground_0" width="15" height="15">
