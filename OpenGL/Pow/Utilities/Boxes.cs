@@ -16,7 +16,6 @@ namespace Pow.Utilities
         private bool _initialized = false;
         private readonly Dictionary<int, ConfigNode> _configNodes = [];
         private readonly Dictionary<int, Node> _nodes = [];
-        public enum BoxTypes { Collide, Ground, Wall };
         private record ConfigNode(string AssetName);
         public record Node(
             Vector2[] Collide,

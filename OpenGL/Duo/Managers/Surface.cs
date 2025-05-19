@@ -12,11 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MonoGame.Extended;
+using System.Collections.ObjectModel;
 
 namespace Duo.Managers
 {
     internal class Surface : Environment
     {
+        public record FixtureNode(Vector2 Normal);
+        private readonly Dictionary<Fixture, FixtureNode> _fixtureNodes = [];
+        public FixtureNode GetFixtureNode(Fixture fixture) => _fixtureNodes[fixture];
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -30,14 +34,17 @@ namespace Duo.Managers
                 .Where(token => !string.IsNullOrEmpty(token))
                 .Select(token => int.Parse(token))
                 .ToList();
+            _fixtureNodes.Clear();
             for (var i = 0; i < node.Vertices.Length; i++)
             {
-                
                 var vertex1Index = i;
                 var vertex2Index = Pow.Utilities.Math.Mod(i + 1, node.Vertices.Length);
                 if (ghostVertices.Contains(vertex1Index) || ghostVertices.Contains(vertex2Index))
                     continue;
-                var edgeShape = new EdgeShape(node.Vertices[vertex1Index], node.Vertices[vertex2Index]);
+                var vertex1 = node.Vertices[vertex1Index];
+                var vertex2 = node.Vertices[vertex2Index];
+                var edgeShape = new EdgeShape(vertex1, vertex2);
+                var normal = Vector2.Normalize((vertex2 - vertex1).PerpendicularClockwise());
                 var vertex0Index = Pow.Utilities.Math.Mod(i - 1, node.Vertices.Length);
                 if (ghostVertices.Contains(vertex0Index))
                 {
@@ -50,7 +57,10 @@ namespace Duo.Managers
                     edgeShape.Vertex3 = node.Vertices[vertex3Index];
                     edgeShape.HasVertex3 = true;
                 }
-                body.Add(new(edgeShape));
+                var fixture = new Fixture(edgeShape);
+                var fixtureNode = new FixtureNode(Normal: normal);
+                _fixtureNodes.Add(fixture, fixtureNode);
+                body.Add(fixture);
             }
             body.Position = node.Position;
             body.Tag = this;

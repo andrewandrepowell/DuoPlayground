@@ -28,12 +28,20 @@ namespace Duo.Managers
         public void UpdateControl(ButtonStates buttonState, Keys key)
         {
             if (buttonState == ButtonStates.Pressed && key == Keys.Left)
+            {
+                if (MovingRight)
+                    ReleaseRight();
                 MoveLeft();
-            if (buttonState == ButtonStates.Released && key == Keys.Left)
+            }
+            if (buttonState == ButtonStates.Released && key == Keys.Left && MovingLeft)
                 ReleaseLeft();
             if (buttonState == ButtonStates.Pressed && key == Keys.Right)
+            {
+                if (MovingLeft)
+                    ReleaseLeft();
                 MoveRight();
-            if (buttonState == ButtonStates.Released && key == Keys.Right)
+            }
+            if (buttonState == ButtonStates.Released && key == Keys.Right && MovingRight)
                 ReleaseRight();
         }
         public override void Initialize(PolygonNode node)

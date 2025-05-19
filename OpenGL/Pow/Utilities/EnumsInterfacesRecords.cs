@@ -21,5 +21,6 @@ namespace Pow.Utilities
     public enum Layers { Background, Ground, Foreground, Interface, Dimmer, Menu, Box }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }
     public enum Directions { Left, Right, Up, Down }
+    public enum BoxTypes { Collide, Ground, Wall }
     public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
 }

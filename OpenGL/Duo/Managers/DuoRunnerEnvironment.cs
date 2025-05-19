@@ -45,7 +45,7 @@ namespace Duo.Managers
                 environment.Initialize(node);
             }
         }
-        public ReadOnlyCollection<Environment> Environments => _environments.AsReadOnly();
+        public ReadOnlyCollection<Environment> Environments => _environments.AsReadOnly(); // AsReadOnly allocates so beware.
         public void AddEnvironment<T>(EntityTypes entityType) where T : Environment
         {
             Debug.Assert(!_initialized);
