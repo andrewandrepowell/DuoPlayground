@@ -25,9 +25,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _defaultGravityForce = 16e5f;
-        private const float _defaultMovementForce = 8e5f;
-        private readonly static Vector2 _defaultGroundNormal = -Vector2.UnitY;
+        private const float _baseGravity = 32e5f;
+        private const float _baseMovement = 32e5f;
+        private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
         private const float _groundNormalUpdateThreshold = 0.80f; // dot product of normals
@@ -46,6 +46,8 @@ namespace Duo.Utilities.Physics
         private bool _moveRight;
         private const float _groundTimerMax = 0.25f; // seconds
         private float _groundedTimerValue;
+        private const float _resetGroundNormalTimerMax = 0.5f; // seconds
+        private float _resetGroundNormalTimerValue;
         public Vector2 Position
         {
             get
@@ -98,7 +100,7 @@ namespace Duo.Utilities.Physics
                 _body = body;
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
-                body.Mass = 0.1f;
+                body.Mass = 1e-10f;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -130,7 +132,7 @@ namespace Duo.Utilities.Physics
                 CreateFixture(BoxTypes.Wall, Directions.Right, node.Walls[Directions.Right], true);
             }
             {
-                _groundNormal = _defaultGroundNormal;
+                _groundNormal = _baseGroundNormal;
             }
             {
                 var collideBoxNode = new BoxNode(BoxTypes.Collide, null);
@@ -144,6 +146,7 @@ namespace Duo.Utilities.Physics
                 _moveLeft = false;
                 _moveRight = false;
                 _groundedTimerValue = _groundTimerMax;
+                _resetGroundNormalTimerValue = _resetGroundNormalTimerMax;
             }
             _initialized = true;
         }
@@ -220,7 +223,7 @@ namespace Duo.Utilities.Physics
         public void Airborn()
         {
             _groundedTimerValue = 0;
-            _groundNormal = _defaultGroundNormal;
+            _groundNormal = _baseGroundNormal;
         }
         public void Jump()
         {
@@ -237,7 +240,8 @@ namespace Duo.Utilities.Physics
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
             var collideBoxNode = new BoxNode(BoxTypes.Collide, null);
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
-            var speed = _body.LinearVelocity.Length();
+            var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
+            var horizontalSpeed = System.Math.Abs(rightSpeed);
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -273,7 +277,7 @@ namespace Duo.Utilities.Physics
                 {
                     var count = 0;
                     var total = Vector2.Zero;
-                    foreach (var fixture in _fixtureCollideBins[groundBoxNode])
+                    foreach (var fixture in _fixtureBins[groundBoxNode])
                     {
                         var surface = (Surface)fixture.Body.Tag;
                         var fixtureNode = surface.GetFixtureNode(fixture);
@@ -293,18 +297,13 @@ namespace Duo.Utilities.Physics
                             var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
                             var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
                             var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
-                            var updRads = difRads * timeElapsed * (speed * 0.1f + (difRads.EqualsWithTolerance(0) ? 0 : 2f));
+                            var updRads = difRads * timeElapsed * horizontalSpeed * 0.25f;
                             var newRads = curRads + updRads;
                             var newNorm = new Vector2(
                                 x: (float)System.Math.Cos(newRads),
                                 y: (float)System.Math.Sin(newRads));
                             _groundNormal = newNorm;
-                            //Console.WriteLine($"curDegrees: {curRads * 180 / System.Math.PI}");
-                            //Console.WriteLine($"tarDegrees: {tarRads * 180 / System.Math.PI}");
-                            //Console.WriteLine($"difDegrees: {difRads * 180 / System.Math.PI}");
-                            //Console.WriteLine($"speedSquared: {speedSquared}");
-                        }
-                        //_groundNormal = targetNormal;
+                        }  
                     }
                 }
             }
@@ -315,22 +314,24 @@ namespace Duo.Utilities.Physics
             {
                 // gravity
                 {
-                    var direction = -_groundNormal;
-                    var force = direction * _defaultGravityForce;
+                    var speedValue = System.Math.Min(1, horizontalSpeed / 200);
+                    var weightedDir = -(speedValue * _groundNormal + (1 - speedValue) * _baseGroundNormal);
+                    var direction = weightedDir.EqualsWithTolerence(Vector2.Zero) ? Vector2.Zero : weightedDir.NormalizedCopy();
+                    var force = direction * _baseGravity;
                     _body.ApplyForce(force);
                 }
 
                 if (_moveLeft)
                 {
                     var direction = _groundNormal.PerpendicularClockwise();
-                    var force = direction * _defaultMovementForce;
+                    var force = direction * _baseMovement;
                     _body.ApplyForce(force);
                 }
 
                 if (_moveRight)
                 {
                     var direction = _groundNormal.PerpendicularCounterClockwise();
-                    var force = direction * _defaultMovementForce;
+                    var force = direction * _baseMovement;
                     _body.ApplyForce(force);
                 }
             }
