@@ -14,6 +14,7 @@ namespace Duo
         private static States _state = States.WaitingForInit;
         private static DuoRunner _duoRunner;
         internal static readonly SizeF GameWindowSize = new(640, 480);
+        internal const float PixelsPerMeter = 100;
         internal enum States { WaitingForInit, GameRunning, Disposed }
         internal static DuoRunner DuoRunner
         {

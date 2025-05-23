@@ -12,6 +12,7 @@ namespace Duo.Managers
 {
     internal class Camera : Environment
     {
+        private bool _debugSet;
         private DuoObject _duoObjectTracked;
         public DuoObject DuoObjectTracked => _duoObjectTracked;
         public override void Initialize(PolygonNode node)
@@ -22,11 +23,20 @@ namespace Duo.Managers
             _duoObjectTracked = Globals.DuoRunner.Environments.OfType<DuoObject>().Where(duoObject => duoObject.ID == trackID).First();
             camera.Origin = -(Vector2)(Globals.GameWindowSize / 2);
             camera.Zoom = 2f;
+            _debugSet = false;
         }
         public override void Update()
         {
             var camera = PowGlobals.Runner.Camera;
-            camera.Position = _duoObjectTracked.Position;
+            //if (!_debugSet)
+            //{
+                camera.Position = _duoObjectTracked.Position;
+                //_debugSet = true;
+            //}
+            //else
+            //{
+            //    camera.Position = new(_duoObjectTracked.Position.X, camera.Position.Y);
+            //}
             base.Update();
         }
     }

@@ -8,8 +8,7 @@ namespace Pow.Systems
 {
     internal class PhysicsSystem : BaseSystem<EcsWorld, GameTime>
     {
-        private const float _period = (float)1 / 120;
-        private float _time = _period;
+        private const float _maxPeriod = (float)1 / 15;
         private readonly PhysicsWorld _physicsWorld;
         public PhysicsSystem(EcsWorld ecsWorld, PhysicsWorld physicsWorld) : base(ecsWorld) 
         {
@@ -17,12 +16,8 @@ namespace Pow.Systems
         }
         public override void Update(in GameTime t)
         {
-            while (_time < 0)
-            {
-                _physicsWorld.Step(_period);
-                _time += _period;
-            }
-            _time -= t.GetElapsedSeconds();
+            var timeElapsed = System.Math.Min(_maxPeriod, t.GetElapsedSeconds());
+            _physicsWorld.Step(t.GetElapsedSeconds());
             base.Update(t);
         }
     }

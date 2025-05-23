@@ -43,18 +43,20 @@ namespace Duo.Managers
                     continue;
                 var vertex1 = node.Vertices[vertex1Index];
                 var vertex2 = node.Vertices[vertex2Index];
-                var edgeShape = new EdgeShape(vertex1, vertex2);
+                var edgeShape = new EdgeShape(
+                    start: vertex1 / Globals.PixelsPerMeter, 
+                    end: vertex2 / Globals.PixelsPerMeter);
                 var normal = Vector2.Normalize((vertex2 - vertex1).PerpendicularClockwise());
                 var vertex0Index = Pow.Utilities.Math.Mod(i - 1, node.Vertices.Length);
                 if (ghostVertices.Contains(vertex0Index))
                 {
-                    edgeShape.Vertex0 = node.Vertices[vertex0Index];
+                    edgeShape.Vertex0 = node.Vertices[vertex0Index] / Globals.PixelsPerMeter;
                     edgeShape.HasVertex0 = true;
                 }
                 var vertex3Index = Pow.Utilities.Math.Mod(i + 2, node.Vertices.Length);
                 if (ghostVertices.Contains(vertex3Index))
                 {
-                    edgeShape.Vertex3 = node.Vertices[vertex3Index];
+                    edgeShape.Vertex3 = node.Vertices[vertex3Index] / Globals.PixelsPerMeter;
                     edgeShape.HasVertex3 = true;
                 }
                 var fixture = new Fixture(edgeShape);
@@ -62,7 +64,7 @@ namespace Duo.Managers
                 _fixtureNodes.Add(fixture, fixtureNode);
                 body.Add(fixture);
             }
-            body.Position = node.Position;
+            body.Position = node.Position / Globals.PixelsPerMeter;
             body.Tag = this;
         }
     }

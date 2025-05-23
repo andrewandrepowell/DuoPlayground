@@ -19,6 +19,7 @@ namespace Pow.Utilities
 {
     public interface IRunnerParent
     {
+        public float PixelsPerMeter { get; }
         public SizeF GameWindowSize { get; }
         public void Initialize(Runner runner);
         public void Initialize(Map.MapNode node);
@@ -91,7 +92,7 @@ namespace Pow.Utilities
                 _goCustomSystem,
                 new ControlSystem(_ecsWorld),
                 new PhysicsSystem(_ecsWorld, _physicsWorld),
-                new PositionSystem(_ecsWorld),
+                new PositionSystem(_ecsWorld, _parent.PixelsPerMeter),
                 new RenderUpdateSystem(_ecsWorld));
             _animationGenerator = new();
             _goGeneratorContainer = new();

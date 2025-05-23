@@ -15,13 +15,12 @@ namespace Duo.Managers
 {
     internal class Cat : Character, IControl
     {
-        private static readonly Keys[] _controlKeys = [Keys.Left, Keys.Right];
+        private static readonly Keys[] _controlKeys = [Keys.Left, Keys.Right, Keys.Space];
         private static readonly ReadOnlyDictionary<Actions, Animations> _actionAnimationMap = new(new Dictionary<Actions, Animations>()
         {
             { Actions.Idle, Animations.CatIdle },
             { Actions.Walk, Animations.CatWalk },
         });
-        private static readonly string _boxesAssetName = "tiled/cat_boxes_0";
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;
         public Keys[] ControlKeys => _controlKeys;
@@ -43,6 +42,10 @@ namespace Duo.Managers
             }
             if (buttonState == ButtonStates.Released && key == Keys.Right && MovingRight)
                 ReleaseRight();
+            if (buttonState == ButtonStates.Pressed && key == Keys.Space && Grounded && !Jumping)
+                Jump();
+            if (buttonState == ButtonStates.Released && key == Keys.Space && Jumping)
+                ReleaseJump();
         }
         public override void Initialize(PolygonNode node)
         {

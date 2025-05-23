@@ -21,7 +21,7 @@ namespace Duo.Managers
         private void InitializeMovement(PolygonNode node)
         {
             var body = PhysicsManager.Body;
-            _characterPhysics.Initialize(body: body, Boxes);
+            _characterPhysics.Initialize(body: body, boxes: Boxes);
             _characterPhysics.Position = node.Vertices.Average() + node.Position;
         }
         private void CleanupMovement()
@@ -35,6 +35,8 @@ namespace Duo.Managers
         public bool MovingLeft => _characterPhysics.MovingLeft;
         public bool MovingRight => _characterPhysics.MovingRight;
         public bool Moving => _characterPhysics.Moving;
+        public bool Jumping => _characterPhysics.Jumping;
+        public bool Grounded => _characterPhysics.Grounded;
         public void MoveLeft()
         {
             _characterPhysics.MoveLeft();
@@ -55,6 +57,16 @@ namespace Duo.Managers
         public void ReleaseRight()
         {
             _characterPhysics.ReleaseMoveRight();
+            UpdateAction(Actions.Idle);
+        }
+        public void Jump()
+        {
+            _characterPhysics.Jump();
+            UpdateAction(Actions.Idle);
+        }
+        public void ReleaseJump()
+        {
+            _characterPhysics.ReleaseJump();
             UpdateAction(Actions.Idle);
         }
     }

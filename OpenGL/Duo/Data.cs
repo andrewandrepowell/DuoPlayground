@@ -22,6 +22,7 @@ namespace Duo.Data
     {
         public Data() => DuoRunner.Initialize(this);
         public SizeF GameWindowSize => Globals.GameWindowSize;
+        public float PixelsPerMeter => Globals.PixelsPerMeter;
         public void Initialize(Runner runner)
         {
             // maps

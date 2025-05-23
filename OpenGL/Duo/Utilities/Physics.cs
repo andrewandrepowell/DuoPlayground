@@ -25,8 +25,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _baseGravity = 32e5f;
-        private const float _baseMovement = 32e5f;
+        private const float _baseGravity = 4f;
+        private const float _baseMovement = 3f;
+        private const float _baseJump = 1.25f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -46,19 +47,20 @@ namespace Duo.Utilities.Physics
         private bool _moveRight;
         private const float _groundTimerMax = 0.25f; // seconds
         private float _groundedTimerValue;
-        private const float _resetGroundNormalTimerMax = 0.5f; // seconds
-        private float _resetGroundNormalTimerValue;
+        private Vector2 _jumpNormal;
+        private float _jumpTimerValue;
+        private const float _jumpTimerMax = 0.25f;
         public Vector2 Position
         {
             get
             {
                 Debug.Assert(_initialized);
-                return _body.Position;
+                return _body.Position * Globals.PixelsPerMeter;
             }
             set
             {
                 Debug.Assert(_initialized);
-                _body.Position = value;
+                _body.Position = value / Globals.PixelsPerMeter;
             }
         }
         public bool Grounded
@@ -93,6 +95,14 @@ namespace Duo.Utilities.Physics
                 return _moveLeft || _moveRight;
             }
         }
+        public bool Jumping
+        {
+            get
+            {
+                Debug.Assert(_initialized);
+                return _jumpTimerValue > 0;
+            }
+        }
         public void Initialize(Body body, Boxes boxes)
         {
             Debug.Assert(!_initialized);
@@ -100,7 +110,7 @@ namespace Duo.Utilities.Physics
                 _body = body;
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
-                body.Mass = 1e-10f;
+                body.Mass = 1f;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -115,7 +125,8 @@ namespace Duo.Utilities.Physics
                     bool isSensor)
                 {
                     var shape = new PolygonShape(
-                        vertices: new(vertices),
+                        vertices: new(vertices.Select(
+                            pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
                     fixture.IsSensor = isSensor;
@@ -146,7 +157,7 @@ namespace Duo.Utilities.Physics
                 _moveLeft = false;
                 _moveRight = false;
                 _groundedTimerValue = _groundTimerMax;
-                _resetGroundNormalTimerValue = _resetGroundNormalTimerMax;
+                _jumpTimerValue = 0;
             }
             _initialized = true;
         }
@@ -228,10 +239,17 @@ namespace Duo.Utilities.Physics
         public void Jump()
         {
             Debug.Assert(_initialized);
+            Debug.Assert(Grounded);
+            Debug.Assert(!Jumping);
+            _jumpTimerValue = _jumpTimerMax;
+            _jumpNormal = _groundNormal;
+            var force = _jumpNormal * _baseJump;
+            _body.ApplyLinearImpulse(force);
         }
         public void ReleaseJump()
         {
             Debug.Assert(_initialized);
+            _jumpTimerValue = 0;
         }
         public void Update()
         {
@@ -272,7 +290,9 @@ namespace Duo.Utilities.Physics
                         Airborn();
                 }
 
-                // Ground normal logic.
+                // Determine targert normal.
+                // By default, the target normal is the base ground normal.
+                var targetNormal = _baseGroundNormal;
                 if (Grounded)
                 {
                     var count = 0;
@@ -292,19 +312,21 @@ namespace Duo.Utilities.Physics
                     if (count > 0)
                     {
                         var average = total / count;
-                        var targetNormal = Vector2.Normalize(average);
-                        {
-                            var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
-                            var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
-                            var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
-                            var updRads = difRads * timeElapsed * horizontalSpeed * 0.25f;
-                            var newRads = curRads + updRads;
-                            var newNorm = new Vector2(
-                                x: (float)System.Math.Cos(newRads),
-                                y: (float)System.Math.Sin(newRads));
-                            _groundNormal = newNorm;
-                        }  
+                        targetNormal = Vector2.Normalize(average);
                     }
+                }
+            
+                // Gradually update the ground normal to the target.
+                {
+                    var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
+                    var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
+                    var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
+                    var updRads = difRads * timeElapsed * System.Math.Max(horizontalSpeed, 0.5f) * 20f;
+                    var newRads = curRads + updRads;
+                    var newNorm = new Vector2(
+                        x: (float)System.Math.Cos(newRads),
+                        y: (float)System.Math.Sin(newRads));
+                    _groundNormal = newNorm;
                 }
             }
 
@@ -314,11 +336,19 @@ namespace Duo.Utilities.Physics
             {
                 // gravity
                 {
-                    var speedValue = System.Math.Min(1, horizontalSpeed / 200);
+                    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
                     var weightedDir = -(speedValue * _groundNormal + (1 - speedValue) * _baseGroundNormal);
                     var direction = weightedDir.EqualsWithTolerence(Vector2.Zero) ? Vector2.Zero : weightedDir.NormalizedCopy();
                     var force = direction * _baseGravity;
                     _body.ApplyForce(force);
+                }
+
+                if (Jumping)
+                {
+                    var direction = _jumpNormal; ;
+                    var force = direction * _baseJump;
+                    _body.ApplyForce(force);
+                    _jumpTimerValue -= timeElapsed;
                 }
 
                 if (_moveLeft)
