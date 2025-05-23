@@ -46,7 +46,7 @@ namespace OpenGLGame
             //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
 
             Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);
-            Globals.Runner.Map.Load((int)Maps.LevelDebug0);
+            Globals.Runner.Map.Load((int)Maps.LevelDebug1);
         }
         protected override void EndRun()
         {

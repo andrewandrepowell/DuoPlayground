@@ -66,6 +66,11 @@
 /processor:TiledMapProcessor
 /build:tiled/test_map_0.tmx
 
+#begin tiled/test_map_1.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/test_map_1.tmx
+
 #begin tiled/test_tileset_0.tsx
 /importer:TiledMapTilesetImporter
 /processor:TiledMapTilesetProcessor

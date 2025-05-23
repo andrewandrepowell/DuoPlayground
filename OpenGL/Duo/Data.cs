@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace Duo.Data
 {
-    internal enum Maps { LevelDebug0 }
+    internal enum Maps { LevelDebug0, LevelDebug1 }
     internal enum Sprites { Cat }
     internal enum Animations { CatWalk, CatIdle }
     internal enum Boxes { Cat }
@@ -27,6 +27,7 @@ namespace Duo.Data
         {
             // maps
             runner.Map.Configure((int)Maps.LevelDebug0, "tiled/test_map_0");
+            runner.Map.Configure((int)Maps.LevelDebug1, "tiled/test_map_1");
             // sprites / animations.
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Cat, 

@@ -26,7 +26,7 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Right) 
         ];
         private const float _baseGravity = 4f;
-        private const float _baseMovement = 3f;
+        private const float _baseMovement = 1f;
         private const float _baseJump = 1.25f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
@@ -129,6 +129,7 @@ namespace Duo.Utilities.Physics
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
+                    fixture.Friction = 0.001f;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
@@ -245,6 +246,7 @@ namespace Duo.Utilities.Physics
             _jumpNormal = _groundNormal;
             var force = _jumpNormal * _baseJump;
             _body.ApplyLinearImpulse(force);
+            Airborn();
         }
         public void ReleaseJump()
         {
@@ -253,6 +255,7 @@ namespace Duo.Utilities.Physics
         }
         public void Update()
         {
+            // https://info.sonicretro.org/Sonic_Physics_Guide
             Debug.Assert(_initialized);
 
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
@@ -321,7 +324,7 @@ namespace Duo.Utilities.Physics
                     var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
                     var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
                     var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
-                    var updRads = difRads * timeElapsed * System.Math.Max(horizontalSpeed, 0.5f) * 20f;
+                    var updRads = difRads * timeElapsed * System.Math.Max(horizontalSpeed, 0.5f) * 10f;
                     var newRads = curRads + updRads;
                     var newNorm = new Vector2(
                         x: (float)System.Math.Cos(newRads),
@@ -334,18 +337,44 @@ namespace Duo.Utilities.Physics
 
             // Apply the constant forces
             {
-                // gravity
+                //// gravity
+                //{
+                //    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
+                //    var force = Vector2.Zero;
+                //    if (!Grounded)
+                //        force = -_baseGroundNormal * _baseGravity;
+                //    else
+                //        force = -(speedValue * _groundNormal * 16 + (1 - speedValue) * _baseGroundNormal * _baseGravity);
+                //    Console.WriteLine(speedValue);
+                //    //var direction = weightedDir.EqualsWithTolerence(Vector2.Zero) ? Vector2.Zero : weightedDir.NormalizedCopy();
+                //    _body.ApplyForce(force);
+                //}
+                //{
+                //    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
+                //    var force = -speedValue * _groundNormal * 2;
+                //    _body.ApplyLinearImpulse(force);
+                //}
+
+                //{
+                //    _body.ApplyForce(-_baseGroundNormal * _baseGravity);
+                //}
                 {
                     var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
-                    var weightedDir = -(speedValue * _groundNormal + (1 - speedValue) * _baseGroundNormal);
-                    var direction = weightedDir.EqualsWithTolerence(Vector2.Zero) ? Vector2.Zero : weightedDir.NormalizedCopy();
-                    var force = direction * _baseGravity;
+                    var force = Vector2.Zero;
+                    if (Grounded)
+                    {
+                        force += -_groundNormal * 4f;
+                    }
+                    else
+                    {
+                        force += -_baseGroundNormal * _baseGravity;
+                    }
                     _body.ApplyForce(force);
                 }
 
                 if (Jumping)
                 {
-                    var direction = _jumpNormal; ;
+                    var direction = _jumpNormal;
                     var force = direction * _baseJump;
                     _body.ApplyForce(force);
                     _jumpTimerValue -= timeElapsed;

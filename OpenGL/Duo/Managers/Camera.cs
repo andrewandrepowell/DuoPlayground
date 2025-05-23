@@ -12,31 +12,35 @@ namespace Duo.Managers
 {
     internal class Camera : Environment
     {
-        private bool _debugSet;
+        private string _trackID;
         private DuoObject _duoObjectTracked;
         public DuoObject DuoObjectTracked => _duoObjectTracked;
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             var camera = PowGlobals.Runner.Camera;
-            var trackID = node.Parameters["TrackID"];
-            _duoObjectTracked = Globals.DuoRunner.Environments.OfType<DuoObject>().Where(duoObject => duoObject.ID == trackID).First();
+            _trackID = node.Parameters["TrackID"];
+            _duoObjectTracked = null;
+            
             camera.Origin = -(Vector2)(Globals.GameWindowSize / 2);
             camera.Zoom = 2f;
-            _debugSet = false;
+        }
+        public override void Cleanup()
+        {
+            _duoObjectTracked = null;
+            base.Cleanup();
         }
         public override void Update()
         {
             var camera = PowGlobals.Runner.Camera;
-            //if (!_debugSet)
-            //{
-                camera.Position = _duoObjectTracked.Position;
-                //_debugSet = true;
-            //}
-            //else
-            //{
-            //    camera.Position = new(_duoObjectTracked.Position.X, camera.Position.Y);
-            //}
+            if (_duoObjectTracked == null)
+            {
+                _duoObjectTracked = Globals.DuoRunner.Environments
+                    .OfType<DuoObject>()
+                    .Where(duoObject => duoObject.ID == _trackID)
+                    .First();
+            }
+            camera.Position = _duoObjectTracked.Position;
             base.Update();
         }
     }
