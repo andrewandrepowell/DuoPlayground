@@ -26,7 +26,7 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Right) 
         ];
         private const float _baseGravity = 4f;
-        private const float _baseMovement = 1f;
+        private const float _baseMovement = 1.75f;
         private const float _baseJump = 1.25f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
@@ -129,7 +129,7 @@ namespace Duo.Utilities.Physics
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
-                    fixture.Friction = 0.001f;
+                    fixture.Friction = 0.5f;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
@@ -263,6 +263,7 @@ namespace Duo.Utilities.Physics
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
             var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
             var horizontalSpeed = System.Math.Abs(rightSpeed);
+            var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -278,7 +279,7 @@ namespace Duo.Utilities.Physics
             // Handle the ground state.
             {
                 // Reset logic.
-                var resetOccurred = _fixtureCollideBins[groundBoxNode].Count > 0;
+                var resetOccurred = (_fixtureCollideBins[groundBoxNode].Count > 0);
                 if (resetOccurred)
                 {
                     _groundedTimerValue = _groundTimerMax;
@@ -337,37 +338,12 @@ namespace Duo.Utilities.Physics
 
             // Apply the constant forces
             {
-                //// gravity
-                //{
-                //    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
-                //    var force = Vector2.Zero;
-                //    if (!Grounded)
-                //        force = -_baseGroundNormal * _baseGravity;
-                //    else
-                //        force = -(speedValue * _groundNormal * 16 + (1 - speedValue) * _baseGroundNormal * _baseGravity);
-                //    Console.WriteLine(speedValue);
-                //    //var direction = weightedDir.EqualsWithTolerence(Vector2.Zero) ? Vector2.Zero : weightedDir.NormalizedCopy();
-                //    _body.ApplyForce(force);
-                //}
-                //{
-                //    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
-                //    var force = -speedValue * _groundNormal * 2;
-                //    _body.ApplyLinearImpulse(force);
-                //}
-
-                //{
-                //    _body.ApplyForce(-_baseGroundNormal * _baseGravity);
-                //}
                 {
-                    var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
-                    var force = Vector2.Zero;
+                    
+                    var force = -_baseGroundNormal * 8f * (1 - speedValue);
                     if (Grounded)
                     {
-                        force += -_groundNormal * 4f;
-                    }
-                    else
-                    {
-                        force += -_baseGroundNormal * _baseGravity;
+                        force += -_groundNormal * 8f * speedValue;
                     }
                     _body.ApplyForce(force);
                 }
@@ -383,14 +359,14 @@ namespace Duo.Utilities.Physics
                 if (_moveLeft)
                 {
                     var direction = _groundNormal.PerpendicularClockwise();
-                    var force = direction * _baseMovement;
+                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
                     _body.ApplyForce(force);
                 }
 
                 if (_moveRight)
                 {
                     var direction = _groundNormal.PerpendicularCounterClockwise();
-                    var force = direction * _baseMovement;
+                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
                     _body.ApplyForce(force);
                 }
             }
