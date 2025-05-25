@@ -209,7 +209,6 @@ namespace Duo.Utilities.Physics
                 var bin = _fixtureBins[boxNode];
                 Debug.Assert(bin.Contains(otherFixture));
                 _fixtureBins[boxNode].Remove(otherFixture);
-                Console.WriteLine("Removed fixed from bin.");
             }
             Debug.Assert(_initialized);
         }
@@ -243,14 +242,12 @@ namespace Duo.Utilities.Physics
             _groundedTimerValue = 0;
             var impulse = _jumpNormal * _baseJump * ((float)1 / 8);
             _body.ApplyLinearImpulse(impulse);
-            Console.WriteLine("Jump occurred.");
         }
         public void ReleaseJump()
         {
             Debug.Assert(_initialized);
             Debug.Assert(Jumping);
             _jumpTimerValue = 0;
-            Console.WriteLine("Jump released.");
         }
         public void Update()
         {
