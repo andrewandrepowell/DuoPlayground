@@ -25,9 +25,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _baseGravity = 4f;
-        private const float _baseMovement = 1.75f;
-        private const float _baseJump = 1.25f;
+        private const float _baseGravity = 8f;
+        private const float _baseMovement = 2.5f;
+        private const float _baseJump = 8f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -129,7 +129,7 @@ namespace Duo.Utilities.Physics
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
-                    fixture.Friction = 0.5f;
+                    fixture.Friction = 1f;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
@@ -209,6 +209,7 @@ namespace Duo.Utilities.Physics
                 var bin = _fixtureBins[boxNode];
                 Debug.Assert(bin.Contains(otherFixture));
                 _fixtureBins[boxNode].Remove(otherFixture);
+                Console.WriteLine("Removed fixed from bin.");
             }
             Debug.Assert(_initialized);
         }
@@ -232,11 +233,6 @@ namespace Duo.Utilities.Physics
             Debug.Assert(_initialized);
             _moveRight = false;
         }
-        public void Airborn()
-        {
-            _groundedTimerValue = 0;
-            _groundNormal = _baseGroundNormal;
-        }
         public void Jump()
         {
             Debug.Assert(_initialized);
@@ -244,14 +240,17 @@ namespace Duo.Utilities.Physics
             Debug.Assert(!Jumping);
             _jumpTimerValue = _jumpTimerMax;
             _jumpNormal = _groundNormal;
-            var force = _jumpNormal * _baseJump;
-            _body.ApplyLinearImpulse(force);
-            Airborn();
+            _groundedTimerValue = 0;
+            var impulse = _jumpNormal * _baseJump * ((float)1 / 8);
+            _body.ApplyLinearImpulse(impulse);
+            Console.WriteLine("Jump occurred.");
         }
         public void ReleaseJump()
         {
             Debug.Assert(_initialized);
+            Debug.Assert(Jumping);
             _jumpTimerValue = 0;
+            Console.WriteLine("Jump released.");
         }
         public void Update()
         {
@@ -278,20 +277,14 @@ namespace Duo.Utilities.Physics
 
             // Handle the ground state.
             {
-                // Reset logic.
-                var resetOccurred = (_fixtureCollideBins[groundBoxNode].Count > 0);
-                if (resetOccurred)
+                // Update ground timer.
+                if (_fixtureCollideBins[groundBoxNode].Count > 0 && !Jumping)
                 {
                     _groundedTimerValue = _groundTimerMax;
-                    resetOccurred = true;
                 }
- 
-                // Ground timer logic.
-                if (!resetOccurred && Grounded)
+                else if (Grounded)
                 {
                     _groundedTimerValue -= timeElapsed;
-                    if (!Grounded)
-                        Airborn();
                 }
 
                 // Determine targert normal.
@@ -322,10 +315,11 @@ namespace Duo.Utilities.Physics
             
                 // Gradually update the ground normal to the target.
                 {
+                    var maxRadsPerSec = 1 / MathHelper.TwoPi * 64f;
                     var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
                     var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
                     var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
-                    var updRads = difRads * timeElapsed * System.Math.Max(horizontalSpeed, 0.5f) * 10f;
+                    var updRads = System.Math.Min(difRads * System.Math.Max(horizontalSpeed, 0.5f) * 10f, maxRadsPerSec) * timeElapsed;
                     var newRads = curRads + updRads;
                     var newNorm = new Vector2(
                         x: (float)System.Math.Cos(newRads),
@@ -338,13 +332,13 @@ namespace Duo.Utilities.Physics
 
             // Apply the constant forces
             {
+                // Gravity and stick forces.
                 {
-                    
-                    var force = -_baseGroundNormal * 8f * (1 - speedValue);
-                    if (Grounded)
-                    {
-                        force += -_groundNormal * 8f * speedValue;
-                    }
+                    Vector2 force;
+                    if (Grounded && Moving && speedValue > 0.60f)
+                        force = -_groundNormal * _baseGravity;
+                    else
+                        force = -_baseGroundNormal * _baseGravity;
                     _body.ApplyForce(force);
                 }
 
@@ -359,19 +353,17 @@ namespace Duo.Utilities.Physics
                 if (_moveLeft)
                 {
                     var direction = _groundNormal.PerpendicularClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
+                    var force = direction * _baseMovement * MathHelper.Lerp(10, 1, speedValue);
                     _body.ApplyForce(force);
                 }
 
                 if (_moveRight)
                 {
                     var direction = _groundNormal.PerpendicularCounterClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
+                    var force = direction * _baseMovement * MathHelper.Lerp(10, 1, speedValue);
                     _body.ApplyForce(force);
                 }
-            }
-
-            
+            } 
         }
     }
 }
