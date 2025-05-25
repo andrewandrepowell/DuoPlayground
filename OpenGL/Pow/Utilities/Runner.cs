@@ -14,6 +14,7 @@ using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 using Pow.Utilities.Physics;
 using Pow.Utilities.Control;
 using MonoGame.Extended;
+using nkast.Aether.Physics2D;
 
 namespace Pow.Utilities
 {
@@ -128,6 +129,14 @@ namespace Pow.Utilities
         public PhysicsGenerator PhysicsGenerator => _physicsGenerator;
         public ControlGenerator ControlGenerator => _controlGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
+        public PhysicsWorld PhysicsWorld
+        {
+            get
+            {
+                Debug.Assert(!_initialized);
+                return _physicsWorld;
+            }
+        }
         public void AddEntityType(int id, Func<EcsWorld, Entity> createEntity)
         {
             Debug.Assert(!_initialized);

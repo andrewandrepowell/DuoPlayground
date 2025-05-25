@@ -70,6 +70,7 @@ namespace Pow.Utilities
             PolygonNode[] PolygonNodes);
         public bool Loaded => _loaded;
         public bool Loading => _idQueue.Count > 0;
+        public MapNode Node => _mapNode;
         public void Configure(int id, string assetName)
         {
             Debug.Assert(!_loaded);

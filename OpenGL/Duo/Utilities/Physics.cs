@@ -25,9 +25,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _baseGravity = 6f;
-        private const float _baseMovement = 2.5f;
-        private const float _baseJump = 7f;
+        private const float _baseGravity = 14;
+        private const float _baseMovement = 12f;
+        private const float _baseJump = 24;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -49,7 +49,7 @@ namespace Duo.Utilities.Physics
         private float _groundedTimerValue;
         private Vector2 _jumpNormal;
         private float _jumpTimerValue;
-        private const float _jumpTimerMax = 0.25f;
+        private const float _jumpTimerMax = 1.25f;
         public Vector2 Position
         {
             get
@@ -111,6 +111,7 @@ namespace Duo.Utilities.Physics
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
                 body.Mass = 1f;
+                body.LinearDamping = 15f;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -129,7 +130,7 @@ namespace Duo.Utilities.Physics
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
-                    fixture.Friction = 2f;
+                    fixture.Friction = 0;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
@@ -240,7 +241,7 @@ namespace Duo.Utilities.Physics
             _jumpTimerValue = _jumpTimerMax;
             _jumpNormal = _groundNormal;
             _groundedTimerValue = 0;
-            var impulse = _jumpNormal * _baseJump * ((float)1 / 8);
+            var impulse = _jumpNormal * _baseJump * 0.10f;
             _body.ApplyLinearImpulse(impulse);
         }
         public void ReleaseJump()
@@ -259,7 +260,9 @@ namespace Duo.Utilities.Physics
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
             var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
             var horizontalSpeed = System.Math.Abs(rightSpeed);
-            var speedValue = System.Math.Min(1, horizontalSpeed / 2.5f);
+            var speedValue = System.Math.Min(1, horizontalSpeed / 1.5f);
+
+            Console.WriteLine($"{horizontalSpeed} {speedValue}");
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -332,7 +335,7 @@ namespace Duo.Utilities.Physics
                 // Gravity and stick forces.
                 {
                     Vector2 force;
-                    if (Grounded && Moving && speedValue > 0.60f)
+                    if (Grounded && Moving && speedValue > 0.40f)
                         force = -_groundNormal * _baseGravity;
                     else
                         force = -_baseGroundNormal * _baseGravity;
@@ -342,7 +345,7 @@ namespace Duo.Utilities.Physics
                 if (Jumping)
                 {
                     var direction = _jumpNormal;
-                    var force = direction * _baseJump;
+                    var force = direction * MathHelper.Lerp(0, _baseJump, _jumpTimerValue / _jumpTimerMax);
                     _body.ApplyForce(force);
                     _jumpTimerValue -= timeElapsed;
                 }
@@ -350,14 +353,14 @@ namespace Duo.Utilities.Physics
                 if (_moveLeft)
                 {
                     var direction = _groundNormal.PerpendicularClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(10, 1, speedValue);
+                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
                     _body.ApplyForce(force);
                 }
 
                 if (_moveRight)
                 {
                     var direction = _groundNormal.PerpendicularCounterClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(10, 1, speedValue);
+                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
                     _body.ApplyForce(force);
                 }
             } 

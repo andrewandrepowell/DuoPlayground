@@ -24,15 +24,6 @@ namespace Pow.Utilities
                 Matrix.CreateRotationZ(_rotation) * 
                 Matrix.CreateScale(_zoom, _zoom * _pitch, 1f) *
                 Matrix.CreateTranslation(new Vector3(-_origin, 0f));
-
-            /*
-             *             _view = 
-                Matrix.CreateTranslation(new Vector3(-_position, 0f)) * 
-                Matrix.CreateTranslation(new Vector3(-_origin, 0f)) * 
-                Matrix.CreateRotationZ(_rotation) * 
-                Matrix.CreateScale(_zoom, _zoom * _pitch, 1f) * 
-                Matrix.CreateTranslation(new Vector3(_origin / _zoom, 0f));
-            */
         }
         public ref Matrix View => ref _view;
         public Vector2 Position

@@ -1,6 +1,7 @@
 ﻿using Arch.System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using nkast.Aether.Physics2D.Dynamics;
 using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 
