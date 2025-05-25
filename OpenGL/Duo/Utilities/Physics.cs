@@ -25,9 +25,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Left), 
             new(BoxTypes.Wall, Directions.Right) 
         ];
-        private const float _baseGravity = 8f;
+        private const float _baseGravity = 6f;
         private const float _baseMovement = 2.5f;
-        private const float _baseJump = 8f;
+        private const float _baseJump = 7f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -129,7 +129,7 @@ namespace Duo.Utilities.Physics
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
                         density: 1);
                     var fixture = new Fixture(shape);
-                    fixture.Friction = 1f;
+                    fixture.Friction = 2f;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
