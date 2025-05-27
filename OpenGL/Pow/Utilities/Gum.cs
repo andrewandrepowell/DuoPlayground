@@ -93,6 +93,7 @@ namespace Pow.Utilities.Gum
         {
             Debug.Assert(!_initialized);
             _gumRuntime = gumRuntime;
+            gumRuntime.AddToRoot(); // needed for ui events.
             UpdateRenderTarget();
             UpdateSizeOrigin();
             _initialized = true;
@@ -132,6 +133,7 @@ namespace Pow.Utilities.Gum
         {
             Debug.Assert(_initialized);
             _renderTarget.Dispose();
+            _gumRuntime.Parent = null;
             _initialized = false;
         }
     }

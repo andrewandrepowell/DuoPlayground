@@ -182,6 +182,237 @@
         "ElementType": "Screens",
         "EventType": 1,
         "TimestampUtc": "2025-05-27T19:37:05.8475853Z"
+      },
+      {
+        "NewName": "Containers/main_button",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T20:11:03.4238922Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/main_button",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2025-05-27T20:11:15.1124814Z"
+      },
+      {
+        "NewName": "Containers/Main/button",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T20:11:42.0013042Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/button",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2025-05-27T20:14:57.5291078Z"
+      },
+      {
+        "NewName": "Containers/Main/button",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T20:15:01.9063525Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).NineSliceInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:07:53.6552523Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.011525Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0125256Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0182304Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0233547Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0273621Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0323546Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0366657Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:39.0410774Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:10:47.1048145Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6276781Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6286807Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6346779Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6406778Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6456785Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6506771Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.6546716Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:10:50.658677Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:15:56.9861909Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/button (Container).Container ContainerInstance in Containers/Main/button (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T21:19:16.1568108Z"
+      },
+      {
+        "NewName": "Containers/Main/panel",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T21:30:23.1269272Z"
+      },
+      {
+        "NewName": "Containers/Main/menu",
+        "OldName": "Containers/Main/panel",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T21:31:59.7243421Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/button",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2025-05-27T21:34:41.9227585Z"
+      },
+      {
+        "NewName": "Containers/Main/button",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T21:34:46.6489776Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).NineSliceInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:34:52.2550234Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).background",
+        "OldName": "Containers/Main/button (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:34:57.0006416Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:36:34.0060546Z"
+      },
+      {
+        "NewName": "Containers/Main/button (Container).text",
+        "OldName": "Containers/Main/button (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:36:45.9635081Z"
       }
     ]
   }
