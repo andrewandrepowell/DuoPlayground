@@ -262,8 +262,6 @@ namespace Duo.Utilities.Physics
             var horizontalSpeed = System.Math.Abs(rightSpeed);
             var speedValue = System.Math.Min(1, horizontalSpeed / 1.5f);
 
-            Console.WriteLine($"{horizontalSpeed} {speedValue}");
-
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
             {

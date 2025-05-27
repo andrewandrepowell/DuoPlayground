@@ -13,6 +13,7 @@ using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
 using Pow.Utilities.Physics;
 using Pow.Utilities.Control;
+using Pow.Utilities.Gum;
 
 namespace Pow.Components
 {
@@ -46,6 +47,12 @@ namespace Pow.Components
             Manager = Globals.Runner.GOGeneratorContainer.Acquire<T>();
             Manager.Initialize(entity);
         }
+        public readonly void Dispose() => Manager.Return();
+    }
+    public struct GumComponent : IDisposable, IEntityInitialize
+    {
+        public GumManager Manager;
+        public void Initialize(in Entity entity) => Manager = Globals.Runner.GumGenerator.Acquire();
         public readonly void Dispose() => Manager.Return();
     }
     public record struct PositionComponent(Vector2 Vector);

@@ -11,7 +11,7 @@ namespace Duo.Managers
 {
     internal class Camera : Environment
     {
-        private const float _trackBoxPercent = 0.40f;
+        private const float _trackBoxPercent = 0.20f;
         private string _trackID;
         private DuoObject _duoObjectTracked;
         private Modes _mode;
@@ -40,7 +40,7 @@ namespace Duo.Managers
             _mode = Modes.BoxTrack;
             _updateMode = true;
             camera.Origin = -(Vector2)(Globals.GameWindowSize / 2);
-            camera.Zoom = 2f;
+            camera.Zoom = 1f;
         }
         public override void Cleanup()
         {

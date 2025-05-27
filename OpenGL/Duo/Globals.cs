@@ -15,6 +15,7 @@ namespace Duo
         private static DuoRunner _duoRunner;
         internal static readonly SizeF GameWindowSize = new(640, 480);
         internal const float PixelsPerMeter = 100;
+        internal const string GumProjectFile = "gum/GumProject.gumx";
         internal enum States { WaitingForInit, GameRunning, Disposed }
         internal static DuoRunner DuoRunner
         {

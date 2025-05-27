@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using System.Collections.ObjectModel;
+using Pow.Utilities.Gum;
+using MonoGameGum;
 
 namespace Pow.Systems
 {
@@ -22,6 +24,7 @@ namespace Pow.Systems
         }
         public override void Update(in GameTime t)
         {
+            GumService.Default.Update(t);
             World.ParallelQuery(_allAnimationComponents, _updateAnimationComponents);
             base.Update(t);
         }
@@ -30,11 +33,16 @@ namespace Pow.Systems
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly static Directions[] _directions = Enum.GetValues<Directions>();
+        private readonly static GumManager.PositionModes[] _gumPositionModes = Enum.GetValues<GumManager.PositionModes>();
         private readonly QueryDescription _allAnimationComponents;
         private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawAnimationComponents;
+        private readonly QueryDescription _allGumComponents;
+        private readonly Dictionary<Layers, ForEach<GumComponent>> _gumDrawGumComponents;
+        private readonly Dictionary<(Layers, GumManager.PositionModes), ForEach<GumComponent>> _monoDrawGumComponents;
         private readonly Map _map;
         private readonly Camera _camera;
         private readonly ReadOnlyDictionary<Layers, RenderTarget2D> _pixelArtRenderTargets;
+        private readonly ReadOnlyDictionary<Layers, RenderTarget2D> _smoothArtRenderTargets;
         private readonly RenderTargetBinding[] _prevRenderTargets;
         private readonly Utilities.GameWindow _gameWindow;
         private record LetterBoxNode(RenderTarget2D RenderTarget, Utilities.GameWindow.LetterBoxNode GameWindowNode);
@@ -72,6 +80,20 @@ namespace Pow.Systems
                         usage: RenderTargetUsage.DiscardContents));
                 _pixelArtRenderTargets = new(pixelArtRenderTargets);
             }
+            {
+                var smoothArtRenderTargets = new Dictionary<Layers, RenderTarget2D>();
+                foreach (var layer in _layers)
+                    smoothArtRenderTargets.Add(layer, new RenderTarget2D(
+                        graphicsDevice: Globals.Game.GraphicsDevice,
+                        width: (int)gameWindowSize.Width,
+                        height: (int)gameWindowSize.Height,
+                        mipMap: false,
+                        preferredFormat: SurfaceFormat.Color,
+                        preferredDepthFormat: DepthFormat.None,
+                        preferredMultiSampleCount: 0,
+                        usage: RenderTargetUsage.DiscardContents));
+                _smoothArtRenderTargets = new(smoothArtRenderTargets);
+            }
             _prevRenderTargets = new RenderTargetBinding[graphicsDevice.RenderTargetCount];
             _gameWindow = new(gameWindowSize);
             {
@@ -95,10 +117,31 @@ namespace Pow.Systems
                 }
                 _letterBoxNodes = new(letterBoxNodes);
             }
+            _allGumComponents = new QueryDescription().WithAny<GumComponent>();
+            {
+                _gumDrawGumComponents = [];
+                _monoDrawGumComponents = [];
+                foreach (var layer in _layers)
+                {
+                    _gumDrawGumComponents.Add(layer, new((ref GumComponent component) =>
+                    {
+                        if (component.Manager.Layer == layer)
+                            component.Manager.GumDraw();
+                    }));
+                    foreach (var positionMode in _gumPositionModes)
+                        _monoDrawGumComponents.Add((layer, positionMode), new((ref GumComponent component) =>
+                        {
+                            if (component.Manager.Layer == layer && component.Manager.PositionMode == positionMode)
+                                component.Manager.MonoDraw();
+                        }));
+                }
+            }
         }
         public override void Dispose()
         {
             foreach (var renderTarget in _pixelArtRenderTargets.Values)
+                renderTarget.Dispose();
+            foreach (var renderTarget in _smoothArtRenderTargets.Values)
                 renderTarget.Dispose();
             foreach (var letterBoxNode in _letterBoxNodes.Values)
                 letterBoxNode.RenderTarget.Dispose();
@@ -110,22 +153,45 @@ namespace Pow.Systems
             var graphicsDevice = Globals.Game.GraphicsDevice;
             var spriteBatch = Globals.SpriteBatch;
 
+            // Perform mono draw step of all gum components.
+            foreach (var layer in _layers.AsSpan())
+                World.Query(_allGumComponents, _gumDrawGumComponents[layer]);
+
             // Draw all layers to either pixel art or smooth art targets.
             graphicsDevice.GetRenderTargets(_prevRenderTargets);
             foreach (var layer in _layers.AsSpan())
             {
-                graphicsDevice.SetRenderTarget(_pixelArtRenderTargets[layer]);
-                graphicsDevice.Clear(Color.Transparent);
+                // pixel art drawing.
+                {
+                    graphicsDevice.SetRenderTarget(_pixelArtRenderTargets[layer]);
+                    graphicsDevice.Clear(Color.Transparent);
 
-                // Draw map.
-                spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
-                _map.Draw(layer);
-                spriteBatch.End();
+                    // Draw map.
+                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
+                    _map.Draw(layer);
+                    spriteBatch.End();
 
-                // Draw animations.
-                spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
-                World.Query(_allAnimationComponents, _drawAnimationComponents[layer]);
-                spriteBatch.End();
+                    // Draw animations.
+                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
+                    World.Query(_allAnimationComponents, _drawAnimationComponents[layer]);
+                    spriteBatch.End();
+                }
+
+                // smooth art drawing.
+                {
+                    graphicsDevice.SetRenderTarget(_smoothArtRenderTargets[layer]);
+                    graphicsDevice.Clear(Color.Transparent);
+
+                    // Draw gum components with respect to view matrix.
+                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.LinearClamp);
+                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, GumManager.PositionModes.Map)]);
+                    spriteBatch.End();
+
+                    // Draw gum components directly to screen.
+                    spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, GumManager.PositionModes.Screen)]);
+                    spriteBatch.End();
+                }
             }
 
             // Update game window related properties, such as game window sizing and letter box sizes.
@@ -140,6 +206,20 @@ namespace Pow.Systems
                 spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 spriteBatch.Draw(
                     texture: _pixelArtRenderTargets[layer],
+                    position: _gameWindow.Offset,
+                    sourceRectangle: null,
+                    color: Color.White,
+                    rotation: 0,
+                    origin: Vector2.Zero,
+                    scale: _gameWindow.Scalar,
+                    effects: SpriteEffects.None,
+                    layerDepth: 0);
+                spriteBatch.End();
+
+                // Draw smooth art.
+                spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+                spriteBatch.Draw(
+                    texture: _smoothArtRenderTargets[layer],
                     position: _gameWindow.Offset,
                     sourceRectangle: null,
                     color: Color.White,

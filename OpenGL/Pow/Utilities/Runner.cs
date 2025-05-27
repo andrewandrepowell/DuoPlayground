@@ -15,6 +15,7 @@ using Pow.Utilities.Physics;
 using Pow.Utilities.Control;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D;
+using Pow.Utilities.Gum;
 
 namespace Pow.Utilities
 {
@@ -22,6 +23,7 @@ namespace Pow.Utilities
     {
         public float PixelsPerMeter { get; }
         public SizeF GameWindowSize { get; }
+        public string GumProjectFile { get; }
         public void Initialize(Runner runner);
         public void Initialize(Map.MapNode node);
     }
@@ -44,6 +46,7 @@ namespace Pow.Utilities
         private readonly AnimationGenerator _animationGenerator;
         private readonly PhysicsGenerator _physicsGenerator;
         private readonly ControlGenerator _controlGenerator;
+        private readonly GumGenerator _gumGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
         private record EntityTypeNode(Func<EcsWorld, Entity> CreateEntity);
@@ -99,14 +102,17 @@ namespace Pow.Utilities
             _goGeneratorContainer = new();
             _physicsGenerator = new(_physicsWorld);
             _controlGenerator = new();
+            _gumGenerator = new(_parent.GumProjectFile);
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
             _initializeSystem.Add<PhysicsComponent>();
             _initializeSystem.Add<ControlComponent>();
+            _initializeSystem.Add<GumComponent>();
             _destroySystem.Add<AnimationComponent>();
             _destroySystem.Add<PhysicsComponent>();
             _destroySystem.Add<ControlComponent>();
+            _destroySystem.Add<GumComponent>();
 
             // Let the parent initialize.
             _parent.Initialize(this);
@@ -119,6 +125,7 @@ namespace Pow.Utilities
             _goGeneratorContainer.Initialize();
             _physicsGenerator.Initialize();
             _controlGenerator.Initialize();
+            _gumGenerator.Initialize();
 
             _initialized = true;
         }
@@ -128,6 +135,7 @@ namespace Pow.Utilities
         public AnimationGenerator AnimationGenerator => _animationGenerator;
         public PhysicsGenerator PhysicsGenerator => _physicsGenerator;
         public ControlGenerator ControlGenerator => _controlGenerator;
+        public GumGenerator GumGenerator => _gumGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
         public PhysicsWorld PhysicsWorld
         {
