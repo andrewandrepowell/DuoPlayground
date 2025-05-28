@@ -413,6 +413,272 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2025-05-27T21:36:45.9635081Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2025-05-27T21:41:27.3838561Z"
+      },
+      {
+        "NewName": "Containers/Main/menu",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T21:41:31.5181277Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).buttonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:43:02.4234934Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).resume",
+        "OldName": "Containers/Main/menu (Container).buttonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:43:39.0009913Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).buttonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:44:01.4307267Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).exit",
+        "OldName": "Containers/Main/menu (Container).buttonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:44:21.770722Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).buttonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:53:59.2785138Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).Options",
+        "OldName": "Containers/Main/menu (Container).exit",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:54:41.1851055Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).options",
+        "OldName": "Containers/Main/menu (Container).Options",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:54:44.5321679Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).exit",
+        "OldName": "Containers/Main/menu (Container).buttonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:55:24.5635711Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:55:37.7632458Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).buttons",
+        "OldName": "Containers/Main/menu (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:55:44.2520266Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).NineSliceInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:56:28.7120595Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu (Container).NineSlice NineSliceInstance in Containers/Main/menu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T21:56:47.6140565Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).NineSliceInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T21:56:51.8527892Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).background",
+        "OldName": "Containers/Main/menu (Container).NineSliceInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T21:56:57.3595326Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu (Container).Containers/Main/button resume in Containers/Main/menu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T22:01:58.3308086Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu (Container).Containers/Main/button options in Containers/Main/menu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T22:01:58.4260807Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu (Container).Containers/Main/button exit in Containers/Main/menu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T22:01:58.4893579Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/menu (Container).Container buttons in Containers/Main/menu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T22:01:58.5844882Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).resume",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:02:20.5615588Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).options",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:02:20.6409022Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).exit",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:02:20.7039865Z"
+      },
+      {
+        "NewName": "Containers/Main/menu (Container).buttons",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:02:20.7989279Z"
+      },
+      {
+        "NewName": "Containers/hud (Container).menuInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:08:45.5284062Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/hud (Container).Containers/Main/menu menuInstance in Containers/hud (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-27T22:09:32.4077006Z"
+      },
+      {
+        "NewName": "Containers/hudsdf",
+        "OldName": "Containers/hud",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:16:11.4797291Z"
+      },
+      {
+        "NewName": "Containers/HUD/hudsdf",
+        "OldName": "Containers/hudsdf",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:16:23.5465039Z"
+      },
+      {
+        "NewName": "Containers/hudsdf",
+        "OldName": "Containers/HUD/hudsdf",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:16:44.7018558Z"
+      },
+      {
+        "NewName": "Containers/Hud/hudsdf",
+        "OldName": "Containers/hudsdf",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:16:55.5962516Z"
+      },
+      {
+        "NewName": "Containers/Hud/view",
+        "OldName": "Containers/Hud/hudsdf",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:17:10.6674493Z"
+      },
+      {
+        "NewName": "Containers/Main/view",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-27T22:18:36.226151Z"
+      },
+      {
+        "NewName": "Containers/Main/view (Container).menuInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-27T22:20:51.3371312Z"
+      },
+      {
+        "NewName": "Containers/Main/view (Container).menu",
+        "OldName": "Containers/Main/view (Container).menuInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-27T22:20:55.4966704Z"
+      },
+      {
+        "NewName": "Containers/Hud/hudView",
+        "OldName": "Containers/Hud/view",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:33:39.7190215Z"
+      },
+      {
+        "NewName": "Containers/Main/mainButton",
+        "OldName": "Containers/Main/button",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:36:51.7748871Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu",
+        "OldName": "Containers/Main/menu",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:36:58.5922839Z"
+      },
+      {
+        "NewName": "Containers/Main/mainView",
+        "OldName": "Containers/Main/view",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-27T22:37:09.0277847Z"
       }
     ]
   }

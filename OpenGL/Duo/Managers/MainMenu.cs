@@ -1,9 +1,4 @@
-﻿using DuoGum;
-using DuoGum.Components;
-using Gum.Managers;
-using GumRuntime;
-using MonoGameGum;
-using MonoGameGum.GueDeriving;
+﻿using DuoGum.Components;
 using Pow.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace Duo.Managers
 {
-    internal class HUD : GumObject
+    internal class MainMenu : GumObject
     {
+        private mainView _view;
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
-            var hud = new hudView();
-            GumManager.Initialize(hud.Visual);
+            _view = new mainView();
+            GumManager.Initialize(_view.Visual);
             GumManager.Position = GumManager.Origin;
-            GumManager.Layer = Layers.Interface;
+            GumManager.Layer = Layers.Menu;
             GumManager.PositionMode = Pow.Utilities.Gum.GumManager.PositionModes.Screen;
         }
     }

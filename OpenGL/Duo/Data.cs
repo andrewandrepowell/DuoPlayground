@@ -18,7 +18,7 @@ namespace Duo.Data
     internal enum Sprites { Cat }
     internal enum Animations { CatWalk, CatIdle }
     internal enum Boxes { Cat }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD }
+    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -75,12 +75,17 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<HUD>()));
+            runner.AddEntityType((int)EntityTypes.MainMenu, world => world.Create(
+                new StatusComponent(),
+                new GumComponent(),
+                new GOCustomComponent<MainMenu>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
             runner.AddGOCustomManager<Cat>();
             runner.AddGOCustomManager<Surface>();
             runner.AddGOCustomManager<HUD>();
+            runner.AddGOCustomManager<MainMenu>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -89,6 +94,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Cat>(EntityTypes.Cat);
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
+            duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
