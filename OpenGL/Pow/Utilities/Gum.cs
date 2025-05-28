@@ -1,19 +1,20 @@
-﻿using Gum.Wireframe;
+﻿using Gum.DataTypes;
+using Gum.Wireframe;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using MonoGameGum;
+using MonoGameGum.Forms.Controls;
 using Pow.Utilities.Animations;
 using Pow.Utilities.GO;
-using Microsoft.Xna.Framework;
+using RenderingLibrary;
+using RenderingLibrary.Graphics;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RenderingLibrary.Graphics;
-using MonoGameGum;
-using MonoGame.Extended;
-using RenderingLibrary;
-using Gum.DataTypes;
 
 namespace Pow.Utilities.Gum
 {
@@ -163,6 +164,7 @@ namespace Pow.Utilities.Gum
             _initialized = false;
             _gumProject = GumService.Default.Initialize(Globals.Game, gumProjectFile);
             _gumBatch = new GumBatch();
+            FrameworkElement.GamePadsForUiControl.Add(GumService.Default.Gamepads[0]);
         }
         public GumManager Acquire()
         {

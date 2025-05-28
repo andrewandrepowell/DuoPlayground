@@ -14,6 +14,7 @@ namespace DuoGum.Components
     {
         partial void CustomInitialize()
         {
+            Click += (_, _) => IsFocused = true;
             KeyDown += HandleKeyDown;
         }
         private void HandleKeyDown(object sender, KeyEventArgs e)
@@ -28,6 +29,7 @@ namespace DuoGum.Components
                     HandleTab(TabDirection.Down, loop: true);
                     break;
                 case Microsoft.Xna.Framework.Input.Keys.Enter:
+                    PerformClick(GumService.Default.Keyboard);
                     break;
             }
         }

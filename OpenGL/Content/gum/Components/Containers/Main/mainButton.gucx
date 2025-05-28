@@ -243,6 +243,7 @@
       <Variable>
         <Type>int</Type>
         <Name>background.TextureLeft</Name>
+        <Value xsi:type="xsd:int">96</Value>
         <ExposedAsName>BackgroundTextureLeft</ExposedAsName>
         <SetsValue>true</SetsValue>
       </Variable>
