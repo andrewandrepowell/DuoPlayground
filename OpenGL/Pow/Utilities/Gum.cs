@@ -2,6 +2,7 @@
 using Gum.Wireframe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGameGum;
 using MonoGameGum.Forms.Controls;
@@ -165,6 +166,9 @@ namespace Pow.Utilities.Gum
             _gumProject = GumService.Default.Initialize(Globals.Game, gumProjectFile);
             _gumBatch = new GumBatch();
             FrameworkElement.GamePadsForUiControl.Add(GumService.Default.Gamepads[0]);
+            FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+            FrameworkElement.TabKeyCombos.Add(new() { PushedKey = Keys.Down });
+            FrameworkElement.TabReverseKeyCombos.Add(new() { PushedKey = Keys.Up });
         }
         public GumManager Acquire()
         {
