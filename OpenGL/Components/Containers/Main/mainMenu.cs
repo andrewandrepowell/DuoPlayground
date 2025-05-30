@@ -13,7 +13,7 @@ namespace DuoGum.Components
     {
         partial void CustomInitialize()
         {
-            resume.IsFocused = true;
+
         }
     }
 }

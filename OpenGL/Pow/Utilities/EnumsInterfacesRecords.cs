@@ -22,5 +22,7 @@ namespace Pow.Utilities
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }
     public enum Directions { Left, Right, Up, Down }
     public enum BoxTypes { Collide, Ground, Wall }
+    public enum PositionModes { Screen, Map }
+    public enum RunningStates { Waiting, Holding, Starting, Running, Stopping }
     public record PolygonNode(Vector2 Position, Vector2[] Vertices, ReadOnlyDictionary<string, string> Parameters);
 }

@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="16">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="20">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
- <objectgroup id="4" name="objects_camera_0">
-  <object id="5" x="288" y="496">
+ <objectgroup id="7" name="objects_game_0">
+  <object id="16" x="208" y="464">
+   <properties>
+    <property name="EntityType" value="HUD"/>
+   </properties>
+   <polygon points="0,0 16,0 16,16 0,16"/>
+  </object>
+  <object id="17" x="240" y="480">
+   <properties>
+    <property name="DimmerID" value="MainMenuDimmer"/>
+    <property name="EntityType" value="MainMenu"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="18" x="272" y="464">
    <properties>
     <property name="EntityType" value="Camera"/>
     <property name="TrackID" value="Protag"/>
    </properties>
    <polygon points="0,0 16,0 16,16 0,16"/>
   </object>
- </objectgroup>
- <objectgroup id="6" name="objects_main_menu_0">
-  <object id="15" x="368" y="512">
+  <object id="19" x="304" y="480">
    <properties>
-    <property name="EntityType" value="MainMenu"/>
+    <property name="EntityType" value="Dimmer"/>
+    <property name="ID" value="MainMenuDimmer"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="objects_hud_0">
-  <object id="14" x="320" y="496">
-   <properties>
-    <property name="EntityType" value="HUD"/>
-   </properties>
-   <polygon points="0,0 16,0 16,16 0,16"/>
   </object>
  </objectgroup>
  <objectgroup id="3" name="objects_cat_0">

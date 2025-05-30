@@ -15,10 +15,10 @@ using System.Xml.Linq;
 namespace Duo.Data
 {
     internal enum Maps { LevelDebug0, LevelDebug1 }
-    internal enum Sprites { Cat }
-    internal enum Animations { CatWalk, CatIdle }
+    internal enum Sprites { Cat, Pixel }
+    internal enum Animations { CatWalk, CatIdle, Pixel }
     internal enum Boxes { Cat }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu }
+    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -54,6 +54,22 @@ namespace Duo.Data
                 indices: [1],
                 period: 0.25f,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Pixel,
+                assetName: "images/pixel_0",
+                regionSize: new(1, 1),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.Pixel,
+                spriteId: (int)Sprites.Pixel,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -79,6 +95,10 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<MainMenu>()));
+            runner.AddEntityType((int)EntityTypes.Dimmer, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<Dimmer>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -86,6 +106,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Surface>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<MainMenu>();
+            runner.AddGOCustomManager<Dimmer>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -95,6 +116,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
+            duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 

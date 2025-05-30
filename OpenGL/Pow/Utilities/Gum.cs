@@ -31,6 +31,8 @@ namespace Pow.Utilities.Gum
         private Vector2 _position;
         private SizeF _size;
         private Vector2 _origin;
+        private float _visibility;
+        private Color _drawColor;
         private void UpdateRenderTarget()
         {
             _renderTarget = new RenderTarget2D(
@@ -50,7 +52,10 @@ namespace Pow.Utilities.Gum
             _origin.X = _size.Width / 2;
             _origin.Y = _size.Height / 2;
         }
-        public enum PositionModes { Screen, Map }
+        private void UpdateDrawColor()
+        {
+            _drawColor = Color.White * _visibility;
+        }
         public PositionModes PositionMode 
         {
             get => _positionMode;
@@ -82,6 +87,15 @@ namespace Pow.Utilities.Gum
                 return _origin;
             }
         }
+        public float Visibility
+        {
+            get => _visibility;
+            set
+            {
+                _visibility = value;
+                UpdateDrawColor();
+            }
+        }
         public GumProjectSave GumProject => _parent.GumProject;
         public GumManager(GumGenerator parent)
         {
@@ -89,6 +103,7 @@ namespace Pow.Utilities.Gum
             _parent = parent;
             _prevRenderTargets = new RenderTargetBinding[graphicsDevice.RenderTargetCount];
             _positionMode = PositionModes.Screen;
+            _visibility = 1;
             _initialized = false;
         }
         public void Initialize(InteractiveGue gumRuntime)
@@ -98,6 +113,7 @@ namespace Pow.Utilities.Gum
             gumRuntime.AddToRoot(); // needed for ui events.
             UpdateRenderTarget();
             UpdateSizeOrigin();
+            UpdateDrawColor();
             _initialized = true;
         }
         public void GumDraw()
@@ -124,7 +140,7 @@ namespace Pow.Utilities.Gum
                 texture: _renderTarget,
                 position: _position,
                 sourceRectangle: null,
-                color: Color.White,
+                color: _drawColor,
                 rotation: 0,
                 origin: _origin,
                 scale: 1,

@@ -22,6 +22,11 @@ namespace Pow.Utilities.Animations
         private Vector2 _position;
         private float _rotation;
         private Directions _direction;
+        private Vector2 _scale;
+        private Layers _layer;
+        private PositionModes _positionMode;
+        private Color _spriteColor, _color;
+        private float _visibility;
         private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
         private void UpdateSpritePosition()
@@ -42,6 +47,20 @@ namespace Pow.Utilities.Animations
             var spriteNode = _animationNode.SpriteNode;
             var sprite = spriteNode.Sprite;
             sprite.SpriteEffect = spriteNode.DirectionSpriteEffects[_direction];
+        }
+        private void UpdateSpriteScale()
+        {
+            Debug.Assert(_animationId != null);
+            var spriteNode = _animationNode.SpriteNode;
+            var sprite = spriteNode.Sprite;
+            sprite.Scale = _scale;
+        }
+        private void UpdateSpriteColor()
+        {
+            Debug.Assert(_animationId != null);
+            var spriteNode = _animationNode.SpriteNode;
+            var sprite = spriteNode.Sprite;
+            sprite.Color = _color * _visibility;
         }
         public int AnimationId
         {
@@ -92,7 +111,41 @@ namespace Pow.Utilities.Animations
                 UpdateSpriteSpriteEffect();
             }
         }
-        public Layers Layer = Layers.Ground;
+        public Vector2 Scale
+        {
+            get => _scale;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_scale == value) return;
+                _scale = value;
+                UpdateSpriteScale();
+            }
+        }
+        public float Visibility
+        {
+            get => _visibility;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_visibility == value) return;
+                _visibility = value;
+                UpdateSpriteColor();
+            }
+        }
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_color == value) return;
+                _color = value;
+                UpdateSpriteColor();
+            }
+        }
+        public Layers Layer { get => _layer; set => _layer = value; }
+        public PositionModes PositionMode { get => _positionMode; set => _positionMode = value; }
         public void LoadSprite(int spriteId)
         {
             Debug.Assert(!_spriteNodes.ContainsKey(spriteId));
@@ -130,6 +183,8 @@ namespace Pow.Utilities.Animations
             UpdateSpritePosition();
             UpdateSpriteRotation();
             UpdateSpriteSpriteEffect();
+            UpdateSpriteScale();
+            UpdateSpriteColor();
         }
         public void Stop()
         {
@@ -140,6 +195,14 @@ namespace Pow.Utilities.Animations
         internal void Acquire()
         {
             Debug.Assert(!_acquired);
+            _position = Vector2.Zero;
+            _rotation = 0;
+            _direction = Directions.Left;
+            _layer = Layers.Ground;
+            _scale = new(1, 1);
+            _positionMode = PositionModes.Map;
+            _visibility = 1;
+            _color = Color.White;
             _acquired = true;
         }
         public void Return()
@@ -275,7 +338,7 @@ namespace Pow.Utilities.Animations
         public ref Vector2 Origin => ref _origin;
         public Color Color = Color.White;
         public Vector2 Position;
-        public float Scale = 1;
+        public Vector2 Scale = new(1, 1);
         public float Rotation = 0;
         public SpriteEffects SpriteEffect = SpriteEffects.None;
         public void Update()

@@ -33,12 +33,12 @@ namespace Pow.Systems
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly static Directions[] _directions = Enum.GetValues<Directions>();
-        private readonly static GumManager.PositionModes[] _gumPositionModes = Enum.GetValues<GumManager.PositionModes>();
+        private readonly static PositionModes[] _gumPositionModes = Enum.GetValues<PositionModes>();
         private readonly QueryDescription _allAnimationComponents;
-        private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawAnimationComponents;
+        private readonly Dictionary<(Layers, PositionModes), ForEach<AnimationComponent>> _drawAnimationComponents;
         private readonly QueryDescription _allGumComponents;
         private readonly Dictionary<Layers, ForEach<GumComponent>> _gumDrawGumComponents;
-        private readonly Dictionary<(Layers, GumManager.PositionModes), ForEach<GumComponent>> _monoDrawGumComponents;
+        private readonly Dictionary<(Layers, PositionModes), ForEach<GumComponent>> _monoDrawGumComponents;
         private readonly Map _map;
         private readonly Camera _camera;
         private readonly ReadOnlyDictionary<Layers, RenderTarget2D> _pixelArtRenderTargets;
@@ -60,11 +60,13 @@ namespace Pow.Systems
             {
                 _drawAnimationComponents = [];
                 foreach (var layer in _layers)
-                    _drawAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
-                    {
-                        if (component.Manager.Layer == layer)
-                            component.Manager.Draw();
-                    }));
+                    foreach (var positionMode in _gumPositionModes)
+                        _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
+                        {
+                            var manager = component.Manager;
+                            if (manager.Layer == layer && manager.PositionMode == positionMode)
+                                manager.Draw();
+                        }));
             }
             {
                 var pixelArtRenderTargets = new Dictionary<Layers, RenderTarget2D>();
@@ -171,9 +173,14 @@ namespace Pow.Systems
                     _map.Draw(layer);
                     spriteBatch.End();
 
-                    // Draw animations.
+                    // Draw animations with respect to view matrix.
                     spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
-                    World.Query(_allAnimationComponents, _drawAnimationComponents[layer]);
+                    World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, PositionModes.Map)]);
+                    spriteBatch.End();
+
+                    // Draw animations directly to screen.
+                    spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                    World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, PositionModes.Screen)]);
                     spriteBatch.End();
                 }
 
@@ -184,12 +191,12 @@ namespace Pow.Systems
 
                     // Draw gum components with respect to view matrix.
                     spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.LinearClamp);
-                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, GumManager.PositionModes.Map)]);
+                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Map)]);
                     spriteBatch.End();
 
                     // Draw gum components directly to screen.
                     spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
-                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, GumManager.PositionModes.Screen)]);
+                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Screen)]);
                     spriteBatch.End();
                 }
             }

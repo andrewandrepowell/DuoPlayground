@@ -22,7 +22,7 @@ namespace Duo.Managers
             GumManager.Initialize(hud.Visual);
             GumManager.Position = GumManager.Origin;
             GumManager.Layer = Layers.Interface;
-            GumManager.PositionMode = Pow.Utilities.Gum.GumManager.PositionModes.Screen;
+            GumManager.PositionMode = PositionModes.Screen;
         }
     }
 }
