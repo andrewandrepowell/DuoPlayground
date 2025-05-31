@@ -36,6 +36,7 @@ namespace Duo.Managers
             _view = new mainView();
             var menu = _view.menu;
             menu.resume.Click += (object? sender, EventArgs e) => Close();
+            menu.exit.Click += (object? sender, EventArgs e) => Pow.Globals.Game.Exit();
             GumManager.Initialize(_view.Visual);
             GumManager.Position = GumManager.Origin;
             GumManager.Layer = Layers.Menu;
@@ -53,6 +54,7 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
+
             if (_dimmer == null)
                 _dimmer = Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
             if (_dimmer != null && !_initialized)

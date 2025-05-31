@@ -5,9 +5,6 @@ using Pow.Utilities;
 using Pow;
 using Duo.Data;
 
-#if DEBUG
-using System.Runtime.InteropServices;
-#endif
 
 namespace OpenGLGame
 {
@@ -15,17 +12,10 @@ namespace OpenGLGame
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-#if DEBUG
-        [DllImport("kernel32")]
-        static extern bool AllocConsole();
-#endif
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-#if DEBUG
-            AllocConsole();
-#endif
         }
 
         protected override void Initialize()
@@ -40,11 +30,6 @@ namespace OpenGLGame
                 graphicsDeviceManager: _graphics,
                 game: this);
             Globals.InitializePow(new Data());
-
-            //Globals.Runner.Camera.Zoom = 2f;
-            //Globals.Runner.Camera.Position = new Vector2(-32, -32);
-            //Globals.Runner.Camera.Rotation = (float)Math.PI * 0.05f;
-
             Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);
             Globals.Runner.Map.Load((int)Maps.LevelDebug1);
         }
@@ -55,8 +40,6 @@ namespace OpenGLGame
         }
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
             Globals.Update(gameTime);
             base.Update(gameTime);
         }

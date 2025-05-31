@@ -133,7 +133,7 @@ namespace Duo.Data
             // Controls - keyboard
             duoRunner.UAGenerator.Configure(
                 actionId: (int)Controls.Menu,
-                key: Keys.Q);
+                key: Keys.Escape);
             duoRunner.UAGenerator.Configure(
                 actionId: (int)Controls.Jump,
                 key: Keys.Space);
