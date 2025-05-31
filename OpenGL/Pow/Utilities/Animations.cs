@@ -25,7 +25,7 @@ namespace Pow.Utilities.Animations
         private Vector2 _scale;
         private Layers _layer;
         private PositionModes _positionMode;
-        private Color _spriteColor, _color;
+        private Color _color;
         private float _visibility;
         private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);

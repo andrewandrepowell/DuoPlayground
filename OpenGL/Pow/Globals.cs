@@ -21,6 +21,7 @@ namespace Pow
         private static GraphicsDeviceManager _graphicsDeviceManager;
         private static Game _game;
         private static GameTime _gameTime = new();
+        private static bool _gamePaused = false;
         private static Runner _runner;
         public enum States { WaitingForInitMG, WaitingForInitPow, GameRunning, Disposed }
         public static SpriteBatch SpriteBatch
@@ -63,6 +64,14 @@ namespace Pow
                 return _runner;
             }
         }
+        public static bool GamePaused
+        {
+            get
+            {
+                Debug.Assert(_state == States.GameRunning);
+                return _gamePaused;
+            }
+        }
         public static States State => _state;
         public static void InitializeMonoGame(
             SpriteBatch spriteBatch,
@@ -80,6 +89,18 @@ namespace Pow
             Debug.Assert(_state == States.WaitingForInitPow);
             _runner = new(runnerParent);
             _state = States.GameRunning;
+        }
+        public static void Pause()
+        {
+            Debug.Assert(_state == States.GameRunning); 
+            Debug.Assert(!_gamePaused);
+            _gamePaused = true;
+        }
+        public static void Resume()
+        {
+            Debug.Assert(_state == States.GameRunning);
+            Debug.Assert(_gamePaused);
+            _gamePaused = false;
         }
         public static void Update(GameTime gameTime)
         {

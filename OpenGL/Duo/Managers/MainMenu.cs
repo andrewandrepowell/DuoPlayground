@@ -76,6 +76,8 @@ namespace Duo.Managers
             var control = (Controls)actionId;
             if (control == Controls.Menu && buttonState == ButtonStates.Pressed && _state == RunningStates.Waiting)
                 Open();
+            if (control == Controls.Menu && buttonState == ButtonStates.Pressed && _state == RunningStates.Running)
+                Close();
         }
         public RunningStates State => _state;
         public void Open()
