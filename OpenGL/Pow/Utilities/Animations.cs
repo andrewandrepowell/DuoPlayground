@@ -27,6 +27,7 @@ namespace Pow.Utilities.Animations
         private PositionModes _positionMode;
         private Color _color;
         private float _visibility;
+        private bool _pauseable;
         private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
         private void UpdateSpritePosition()
@@ -146,6 +147,7 @@ namespace Pow.Utilities.Animations
         }
         public Layers Layer { get => _layer; set => _layer = value; }
         public PositionModes PositionMode { get => _positionMode; set => _positionMode = value; }
+        public bool Pauseable { get => _pauseable; set => _pauseable = value; }
         public void LoadSprite(int spriteId)
         {
             Debug.Assert(!_spriteNodes.ContainsKey(spriteId));
@@ -203,6 +205,7 @@ namespace Pow.Utilities.Animations
             _positionMode = PositionModes.Map;
             _visibility = 1;
             _color = Color.White;
+            _pauseable = true;
             _acquired = true;
         }
         public void Return()
@@ -215,6 +218,7 @@ namespace Pow.Utilities.Animations
         {
             Debug.Assert(_acquired);
             Debug.Assert(_animationId != null);
+            if (_pauseable && Globals.GamePaused) return;
             _animationNode.SpriteNode.Sprite.Update();
         }
         public void Draw()

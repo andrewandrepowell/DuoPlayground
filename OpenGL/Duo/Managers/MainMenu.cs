@@ -85,6 +85,9 @@ namespace Duo.Managers
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Waiting);
             Debug.Assert(_dimmer.State == RunningStates.Waiting);
+            Debug.Assert(!Pow.Globals.GamePaused);
+            Debug.Assert(!_view.menu.ButtonFocused);
+            Pow.Globals.GamePause();
             GumManager.Visibility = 0;
             _dimmer.Start();
             _period = _dimmer.Period;
@@ -96,6 +99,8 @@ namespace Duo.Managers
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Running);
             Debug.Assert(_dimmer.State == RunningStates.Running);
+            Debug.Assert(Pow.Globals.GamePaused);
+            Debug.Assert(_view.menu.ButtonFocused);
             var menu = _view.menu;
             menu.ResetFocus();
             GumManager.Visibility = 1;
@@ -115,6 +120,7 @@ namespace Duo.Managers
         }
         private void ForceClose()
         {
+            Pow.Globals.GameResume();
             var menu = _view.menu;
             menu.ResetFocus();
             GumManager.Visibility = 0;

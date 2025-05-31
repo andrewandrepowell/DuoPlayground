@@ -30,6 +30,7 @@ namespace Duo.Managers
         }
         private void MovementUpdate()
         {
+            if (Pow.Globals.GamePaused) return;
             _characterPhysics.Update();
         }
         public bool MovingLeft => _characterPhysics.MovingLeft;

@@ -29,6 +29,8 @@ namespace Duo.Managers
         public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
         public void UpdateUserAction(int actionId, ButtonStates buttonState)
         {
+            if (Pow.Globals.GamePaused) return;
+
             var control = (Controls)actionId;
             var left = control == Controls.MoveLeft;
             var right = control == Controls.MoveRight;

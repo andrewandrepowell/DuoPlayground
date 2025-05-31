@@ -1,7 +1,6 @@
 ﻿using Arch.System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using nkast.Aether.Physics2D.Dynamics;
 using EcsWorld = Arch.Core.World;
 using PhysicsWorld = nkast.Aether.Physics2D.Dynamics.World;
 
@@ -17,9 +16,10 @@ namespace Pow.Systems
         }
         public override void Update(in GameTime t)
         {
+            base.Update(t);
+            if (Globals.GamePaused) return;
             var timeElapsed = System.Math.Min(_maxPeriod, t.GetElapsedSeconds());
             _physicsWorld.Step(t.GetElapsedSeconds());
-            base.Update(t);
         }
     }
 }

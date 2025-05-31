@@ -90,13 +90,13 @@ namespace Pow
             _runner = new(runnerParent);
             _state = States.GameRunning;
         }
-        public static void Pause()
+        public static void GamePause()
         {
             Debug.Assert(_state == States.GameRunning); 
             Debug.Assert(!_gamePaused);
             _gamePaused = true;
         }
-        public static void Resume()
+        public static void GameResume()
         {
             Debug.Assert(_state == States.GameRunning);
             Debug.Assert(_gamePaused);
