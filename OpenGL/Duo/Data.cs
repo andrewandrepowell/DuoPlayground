@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Input;
 
 
 namespace Duo.Data
@@ -121,6 +122,38 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
                 assetName: "tiled/cat_boxes_0");
+            // Controls - keyboard
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Menu,
+                key: Keys.Escape);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Jump,
+                key: Keys.Space);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.MoveLeft,
+                key: Keys.Left);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.MoveRight,
+                key: Keys.Right);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Interact,
+                key: Keys.Z);
+            // Controls - Gamepad
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Menu,
+                button: Buttons.Start);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Jump,
+                button: Buttons.A);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.MoveLeft,
+                button: Buttons.DPadLeft);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.MoveRight,
+                button: Buttons.DPadRight);
+            duoRunner.ControlGenerator.Configure(
+                control: Utilities.Controls.Interact,
+                button: Buttons.X);
         }
         public void Initialize(Map.MapNode node)
         {
