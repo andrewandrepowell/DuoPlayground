@@ -16,7 +16,7 @@ namespace Pow.Systems
     internal class ControlSystem : BaseSystem<World, GameTime>
     {
         private readonly QueryDescription _queryDescription = new QueryDescription().WithAll<ControlComponent>();
-        private readonly ForEach _updateControl;
+        private readonly ForEach _updateControl, _setPrevStates;
         private KeyboardState _keyboardState;
         private Dictionary<Keys, ButtonStates> _keyPrevStates = [];
         private void UpdateControl(in Entity entity)
@@ -29,7 +29,6 @@ namespace Pow.Systems
                 var keyCurrState = (keyDown) ? ButtonStates.Pressed : ButtonStates.Released;
                 Debug.Assert((keyUp && !keyDown) || (!keyUp && keyDown));
                 var keyPrevState = _keyPrevStates.GetValueOrDefault(key, ButtonStates.Released);
-                _keyPrevStates[key] = keyCurrState;
 
                 if (keyCurrState == ButtonStates.Pressed && keyPrevState == ButtonStates.Released)
                     controlManager.Control.UpdateControl(
@@ -41,14 +40,26 @@ namespace Pow.Systems
                         key: key);
             }
         }
+        private void SetPrevStates(in Entity entity)
+        {
+            var controlManager = World.Get<ControlComponent>(entity).Manager;
+            foreach (ref var key in controlManager.Control.ControlKeys.AsSpan())
+            {
+                var keyDown = _keyboardState.IsKeyDown(key);
+                var keyCurrState = (keyDown) ? ButtonStates.Pressed : ButtonStates.Released;
+                _keyPrevStates[key] = keyCurrState;
+            }
+        }
         public ControlSystem(World world) : base(world)
         {
             _updateControl = new((Entity entity) => UpdateControl(in entity));
+            _setPrevStates = new((Entity entity) => SetPrevStates(in entity));
         }
         public override void Update(in GameTime t)
         {
             _keyboardState = Keyboard.GetState();
             World.Query(_queryDescription, _updateControl);
+            World.Query(_queryDescription, _setPrevStates);
             base.Update(t);
         }
     }

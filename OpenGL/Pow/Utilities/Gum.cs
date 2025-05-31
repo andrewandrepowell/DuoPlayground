@@ -121,6 +121,7 @@ namespace Pow.Utilities.Gum
             Debug.Assert(_initialized);
             Debug.Assert(_gumRuntime.Width == _renderTarget.Width); // width and height of gumruntime should fit in float mantissa.
             Debug.Assert(_gumRuntime.Height == _renderTarget.Height);
+            if (_visibility.EqualsWithTolerance(0)) return;
             var gumBatch = _parent.GumBatch;
             var graphicsDevice = Globals.Game.GraphicsDevice;
             var camera = SystemManagers.Default.Renderer.Camera;
@@ -136,6 +137,7 @@ namespace Pow.Utilities.Gum
         }
         public void MonoDraw()
         {
+            if (_visibility.EqualsWithTolerance(0)) return;
             Globals.SpriteBatch.Draw(
                 texture: _renderTarget,
                 position: _position,

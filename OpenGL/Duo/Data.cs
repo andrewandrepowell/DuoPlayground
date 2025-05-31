@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework.Input;
+using Duo.Utilities;
 
 
 namespace Duo.Data
@@ -95,6 +96,7 @@ namespace Duo.Data
             runner.AddEntityType((int)EntityTypes.MainMenu, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
+                new ControlComponent(),
                 new GOCustomComponent<MainMenu>()));
             runner.AddEntityType((int)EntityTypes.Dimmer, world => world.Create(
                 new StatusComponent(),
@@ -122,37 +124,43 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
                 assetName: "tiled/cat_boxes_0");
+            // Controls
+            duoRunner.UAGenerator.Configure((int)Controls.Menu);
+            duoRunner.UAGenerator.Configure((int)Controls.Interact);
+            duoRunner.UAGenerator.Configure((int)Controls.Jump);
+            duoRunner.UAGenerator.Configure((int)Controls.MoveLeft);
+            duoRunner.UAGenerator.Configure((int)Controls.MoveRight);
             // Controls - keyboard
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Menu,
-                key: Keys.Escape);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Jump,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Menu,
+                key: Keys.Q);
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Jump,
                 key: Keys.Space);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.MoveLeft,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.MoveLeft,
                 key: Keys.Left);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.MoveRight,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.MoveRight,
                 key: Keys.Right);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Interact,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Interact,
                 key: Keys.Z);
             // Controls - Gamepad
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Menu,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Menu,
                 button: Buttons.Start);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Jump,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Jump,
                 button: Buttons.A);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.MoveLeft,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.MoveLeft,
                 button: Buttons.DPadLeft);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.MoveRight,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.MoveRight,
                 button: Buttons.DPadRight);
-            duoRunner.ControlGenerator.Configure(
-                control: Utilities.Controls.Interact,
+            duoRunner.UAGenerator.Configure(
+                actionId: (int)Controls.Interact,
                 button: Buttons.X);
         }
         public void Initialize(Map.MapNode node)
