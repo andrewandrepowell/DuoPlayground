@@ -1,5 +1,5 @@
 ﻿using Arch.Core.Extensions;
-using Duo.Utilities;
+using Duo.Data;
 using DuoGum.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;

@@ -6,5 +6,4 @@ using System.Threading.Tasks;
 
 namespace Duo.Utilities
 {
-    internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
 }

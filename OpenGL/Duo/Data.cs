@@ -16,6 +16,7 @@ using Duo.Utilities;
 
 namespace Duo.Data
 {
+    internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1 }
     internal enum Sprites { Cat, Pixel }
     internal enum Animations { CatWalk, CatIdle, Pixel }
