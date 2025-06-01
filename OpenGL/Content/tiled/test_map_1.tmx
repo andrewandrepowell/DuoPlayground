@@ -2,12 +2,6 @@
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="20">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <objectgroup id="7" name="objects_game_0">
-  <object id="16" x="208" y="464">
-   <properties>
-    <property name="EntityType" value="HUD"/>
-   </properties>
-   <polygon points="0,0 16,0 16,16 0,16"/>
-  </object>
   <object id="17" x="240" y="480">
    <properties>
     <property name="DimmerID" value="MainMenuDimmer"/>

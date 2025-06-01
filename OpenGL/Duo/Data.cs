@@ -46,8 +46,8 @@ namespace Duo.Data
                 animationId: (int)Animations.CatWalk,
                 spriteId: (int)Sprites.Cat, 
                 spriteAnimationId: 0, 
-                indices: [3, 4, 5, 6, 7, 8], 
-                period: 0.25f, 
+                indices: [10, 11, 12, 13, 14, 15], 
+                period: 0.15f, 
                 repeat: true);
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.CatIdle,
