@@ -19,7 +19,7 @@ namespace Duo.Data
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1 }
     internal enum Sprites { Cat, Pixel }
-    internal enum Animations { CatWalk, CatIdle, Pixel }
+    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel }
     internal enum Boxes { Cat }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer }
     public class Data : IRunnerParent, IDuoRunnerParent
@@ -37,7 +37,7 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Cat, 
                 assetName: "images/cat_0", 
-                regionSize: new(112, 112),
+                regionSize: new(144, 144),
                 directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>() 
                 {
                     {Directions.Left, SpriteEffects.None},
@@ -47,13 +47,34 @@ namespace Duo.Data
                 animationId: (int)Animations.CatWalk,
                 spriteId: (int)Sprites.Cat, 
                 spriteAnimationId: 0, 
-                indices: [10, 11, 12, 13, 14, 15], 
+                indices: [8, 9, 10, 11, 12, 13], 
                 period: 0.15f, 
                 repeat: true);
             runner.AnimationGenerator.ConfigureAnimation(
-                animationId: (int)Animations.CatIdle,
+                animationId: (int)Animations.CatJump,
                 spriteId: (int)Sprites.Cat,
                 spriteAnimationId: 1,
+                indices: [14, 15, 16, 17],
+                period: 0.15f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatFall,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 4,
+                indices: [18],
+                period: 0.25f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatLand,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 5,
+                indices: [19, 20],
+                period: 0.15f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatIdle,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 6,
                 indices: [1],
                 period: 0.25f,
                 repeat: false);

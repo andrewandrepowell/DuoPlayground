@@ -22,6 +22,9 @@ namespace Duo.Managers
         {
             { Actions.Idle, Animations.CatIdle },
             { Actions.Walk, Animations.CatWalk },
+            { Actions.Jump, Animations.CatJump },
+            { Actions.Land, Animations.CatLand },
+            { Actions.Fall, Animations.CatFall },
         });
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;

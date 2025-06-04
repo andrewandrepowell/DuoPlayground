@@ -23,7 +23,7 @@ namespace Duo.Managers
         {
             UpdateAction(Actions.Idle);
         }
-
-        public enum Actions { Walk, Idle }
+        public enum Actions { Walk, Idle, Jump, Fall, Land }
+        public Actions Action => _action;
     }
 }

@@ -49,7 +49,15 @@ namespace Duo.Utilities.Physics
         private float _groundedTimerValue;
         private Vector2 _jumpNormal;
         private float _jumpTimerValue;
-        private const float _jumpTimerMax = 1.25f;
+        private const float _jumpTimerMax = 0.50f;
+        public float UpSpeed
+        {
+            get
+            {
+                Debug.Assert(_initialized);
+                return _body.LinearVelocity.Dot(_groundNormal);
+            }
+        }
         public Vector2 Position
         {
             get
@@ -343,7 +351,7 @@ namespace Duo.Utilities.Physics
                 if (Jumping)
                 {
                     var direction = _jumpNormal;
-                    var force = direction * MathHelper.Lerp(0, _baseJump, _jumpTimerValue / _jumpTimerMax);
+                    var force = direction * _baseJump * MathHelper.Lerp(0, 1, _jumpTimerValue / _jumpTimerMax);
                     _body.ApplyForce(force);
                     _jumpTimerValue -= timeElapsed;
                 }

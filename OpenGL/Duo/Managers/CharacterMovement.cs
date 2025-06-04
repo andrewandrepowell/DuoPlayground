@@ -32,6 +32,16 @@ namespace Duo.Managers
         {
             if (Pow.Globals.GamePaused) return;
             _characterPhysics.Update();
+            if (!Jumping && Grounded && !Moving && Action != Actions.Idle && Action != Actions.Fall && ((Action != Actions.Land) || !AnimationManager.Running))
+                UpdateAction(Actions.Idle);
+            else if (!Jumping && Grounded && Moving && Action != Actions.Walk && Action != Actions.Fall && (Action != Actions.Land || !AnimationManager.Running))
+                UpdateAction(Actions.Walk);
+            else if (!Jumping && !Grounded && Action != Actions.Fall && _characterPhysics.UpSpeed < 0)
+                UpdateAction(Actions.Fall);
+            else if (!Jumping && Grounded && Action == Actions.Fall && Action != Actions.Land)
+                UpdateAction(Actions.Land);
+            else if (Jumping && Action != Actions.Jump)
+                UpdateAction(Actions.Jump);
         }
         public bool MovingLeft => _characterPhysics.MovingLeft;
         public bool MovingRight => _characterPhysics.MovingRight;
@@ -42,33 +52,32 @@ namespace Duo.Managers
         {
             _characterPhysics.MoveLeft();
             Direction = Directions.Left;
-            UpdateAction(Actions.Walk);
+            //if (Grounded) UpdateAction(Actions.Walk);
         }
         public void ReleaseLeft()
         {
             _characterPhysics.ReleaseMoveLeft();
-            UpdateAction(Actions.Idle);
+            //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void MoveRight()
         {
             _characterPhysics.MoveRight();
             Direction = Directions.Right;
-            UpdateAction(Actions.Walk);
+            //if (Grounded) UpdateAction(Actions.Walk);
         }
         public void ReleaseRight()
         {
             _characterPhysics.ReleaseMoveRight();
-            UpdateAction(Actions.Idle);
+            //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void Jump()
         {
             _characterPhysics.Jump();
-            UpdateAction(Actions.Idle);
+            UpdateAction(Actions.Jump);
         }
         public void ReleaseJump()
         {
             _characterPhysics.ReleaseJump();
-            UpdateAction(Actions.Idle);
         }
     }
 }
