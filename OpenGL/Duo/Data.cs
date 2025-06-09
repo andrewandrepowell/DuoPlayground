@@ -75,9 +75,9 @@ namespace Duo.Data
                 animationId: (int)Animations.CatIdle,
                 spriteId: (int)Sprites.Cat,
                 spriteAnimationId: 6,
-                indices: [1],
-                period: 0.25f,
-                repeat: false);
+                indices: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+                period: 0.7f,
+                repeat: true);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Pixel,
                 assetName: "images/pixel_0",
