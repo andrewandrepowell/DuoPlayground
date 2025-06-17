@@ -56,7 +56,7 @@ namespace Duo.Managers
         }
         public void ReleaseLeft()
         {
-            _characterPhysics.ReleaseMoveLeft();
+            _characterPhysics.ReleaseMove();
             //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void MoveRight()
@@ -67,7 +67,7 @@ namespace Duo.Managers
         }
         public void ReleaseRight()
         {
-            _characterPhysics.ReleaseMoveRight();
+            _characterPhysics.ReleaseMove();
             //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void Jump()

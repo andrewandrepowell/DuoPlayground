@@ -26,8 +26,13 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Wall, Directions.Right) 
         ];
         private const float _baseGravity = 14;
-        private const float _baseMovement = 12f;
+        private const float _baseMovement = 20f;
         private const float _baseJump = 24;
+        private const float _baseMass = 1f;
+        private const float _baseLinearDamping = 15f;
+        private const float _baseDensity = 1f;
+        private const float _stillFriction = 2f;
+        private const float _moveFriction = 0;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -43,8 +48,11 @@ namespace Duo.Utilities.Physics
         private readonly Dictionary<BoxNode, List<Fixture>> _fixtureCollideBins = _boxNodes
             .Select(node => (node, new List<Fixture>()))
             .ToDictionary();
-        private bool _moveLeft;
-        private bool _moveRight;
+        private Directions _moveDirection;
+        private bool _moving;
+        private float _moveForceMagnitude;
+        private float _moveTimer;
+        private float _moveTimerMax = 0.5f;
         private const float _groundTimerMax = 0.25f; // seconds
         private float _groundedTimerValue;
         private Vector2 _jumpNormal;
@@ -84,7 +92,7 @@ namespace Duo.Utilities.Physics
             get
             {
                 Debug.Assert(_initialized);
-                return _moveLeft;
+                return _moving && _moveDirection == Directions.Left;
             }
         }
         public bool MovingRight
@@ -92,7 +100,7 @@ namespace Duo.Utilities.Physics
             get
             {
                 Debug.Assert(_initialized);
-                return _moveRight;
+                return _moving && _moveDirection == Directions.Right;
             }
         }
         public bool Moving
@@ -100,7 +108,7 @@ namespace Duo.Utilities.Physics
             get
             {
                 Debug.Assert(_initialized);
-                return _moveLeft || _moveRight;
+                return _moving;
             }
         }
         public bool Jumping
@@ -118,8 +126,8 @@ namespace Duo.Utilities.Physics
                 _body = body;
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
-                body.Mass = 1f;
-                body.LinearDamping = 15f;
+                body.Mass = _baseMass;
+                body.LinearDamping = _baseLinearDamping;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -136,9 +144,9 @@ namespace Duo.Utilities.Physics
                     var shape = new PolygonShape(
                         vertices: new(vertices.Select(
                             pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
-                        density: 1);
+                        density: _baseDensity);
                     var fixture = new Fixture(shape);
-                    fixture.Friction = 0;
+                    fixture.Friction = (boxType == BoxTypes.Collide)?_stillFriction:0;
                     fixture.IsSensor = isSensor;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
@@ -164,8 +172,10 @@ namespace Duo.Utilities.Physics
                 }
             }
             {
-                _moveLeft = false;
-                _moveRight = false;
+                _moving = false;
+                _moveDirection = Directions.Left;
+                _moveForceMagnitude = 0;
+                _moveTimer = 0;
                 _groundedTimerValue = _groundTimerMax;
                 _jumpTimerValue = 0;
             }
@@ -224,22 +234,28 @@ namespace Duo.Utilities.Physics
         public void MoveLeft()
         {
             Debug.Assert(_initialized);
-            _moveLeft = true;
-        }
-        public void ReleaseMoveLeft()
-        {
-            Debug.Assert(_initialized);
-            _moveLeft = false;
+            Debug.Assert(!Moving);
+            _moving = true;
+            _moveDirection = Directions.Left;
+            _moveTimer = _moveTimerMax;
+            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _moveFriction;
         }
         public void MoveRight()
         {
             Debug.Assert(_initialized);
-            _moveRight = true;
+            Debug.Assert(!Moving);
+            _moving = true;
+            _moveDirection = Directions.Right;
+            _moveTimer = _moveTimerMax;
+            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _moveFriction;
         }
-        public void ReleaseMoveRight()
+        public void ReleaseMove()
         {
             Debug.Assert(_initialized);
-            _moveRight = false;
+            Debug.Assert(Moving);
+            _moving = false;
+            _moveTimer = _moveTimerMax;
+            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _stillFriction;
         }
         public void Jump()
         {
@@ -356,18 +372,27 @@ namespace Duo.Utilities.Physics
                     _jumpTimerValue -= timeElapsed;
                 }
 
-                if (_moveLeft)
-                {
-                    var direction = _groundNormal.PerpendicularClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
-                    _body.ApplyForce(force);
-                }
 
-                if (_moveRight)
                 {
-                    var direction = _groundNormal.PerpendicularCounterClockwise();
-                    var force = direction * _baseMovement * MathHelper.Lerp(6, 1, speedValue);
+                    var direction = (_moveDirection == Directions.Left) ? _groundNormal.PerpendicularClockwise() : _groundNormal.PerpendicularCounterClockwise();
+                    var timerRatio = _moveTimer / _moveTimerMax;
+                    float forceMagnitude;
+                    if (_moving)
+                    {
+                        forceMagnitude = _baseMovement * MathHelper.Lerp(5, 1, speedValue) * (1 - timerRatio);
+                        _moveForceMagnitude = forceMagnitude;
+                    }
+                    else
+                    {
+                        forceMagnitude = _moveForceMagnitude * timerRatio;
+                    }
+                    Debug.Print($"forceMagnitude={forceMagnitude}, timerRatio={timerRatio}, moving={_moving}");
+                    var force = direction * forceMagnitude;
                     _body.ApplyForce(force);
+                    if (_moveTimer > 0)
+                        _moveTimer -= timeElapsed;
+                    if (_moveTimer < 0)
+                        _moveTimer = 0;
                 }
             } 
         }
