@@ -31,7 +31,7 @@ namespace OpenGLGame
                 game: this);
             Globals.InitializePow(new Data());
             Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);
-            Globals.Runner.Map.Load((int)Maps.LevelDebug1);
+            Globals.Runner.Map.Load((int)Maps.LevelDebug2);
         }
         protected override void EndRun()
         {

@@ -52,23 +52,19 @@ namespace Duo.Managers
         {
             _characterPhysics.MoveLeft();
             Direction = Directions.Left;
-            //if (Grounded) UpdateAction(Actions.Walk);
         }
         public void ReleaseLeft()
         {
             _characterPhysics.ReleaseMove();
-            //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void MoveRight()
         {
             _characterPhysics.MoveRight();
             Direction = Directions.Right;
-            //if (Grounded) UpdateAction(Actions.Walk);
         }
         public void ReleaseRight()
         {
             _characterPhysics.ReleaseMove();
-            //if (Grounded) UpdateAction(Actions.Idle);
         }
         public void Jump()
         {

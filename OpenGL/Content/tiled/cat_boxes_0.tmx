@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="7" height="7" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="7" height="7" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
  <tileset firstgid="1" source="cat_tileset_0.tsx"/>
  <layer id="1" name="sprite_0" width="7" height="7">
   <data encoding="csv">
-1,2,3,4,5,6,7,
-22,23,24,25,26,27,28,
-43,44,45,46,47,48,49,
-64,65,66,67,68,69,70,
-85,86,87,88,89,90,91,
-106,107,108,109,110,111,112,
-127,128,129,130,131,132,133
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+55,56,85,86,87,60,61,
+82,83,112,113,114,0,88,
+109,110,139,140,141,0,115,
+136,137,138,0,0,0,142,
+163,164,165,166,167,168,169
 </data>
  </layer>
  <objectgroup id="2" name="objects_0">
@@ -33,11 +33,11 @@
    </properties>
    <polygon points="0,0 16,0 16,40 0,40"/>
   </object>
-  <object id="4" x="40" y="80">
+  <object id="4" x="42" y="80">
    <properties>
     <property name="BoxType" value="Ground"/>
    </properties>
-   <polygon points="0,0 32,0 32,16 0,16"/>
+   <polygon points="0,0 28,0 28,16 0,16"/>
   </object>
  </objectgroup>
 </map>

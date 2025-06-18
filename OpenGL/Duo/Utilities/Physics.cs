@@ -52,18 +52,34 @@ namespace Duo.Utilities.Physics
         private bool _moving;
         private float _moveForceMagnitude;
         private float _moveTimer;
-        private float _moveTimerMax = 0.5f;
+        private float _moveTimerMax;
+        private const float _moveMoveTimerMax = 2f;
+        private const float _moveStillTimerMax = 1f;
         private const float _groundTimerMax = 0.25f; // seconds
         private float _groundedTimerValue;
         private Vector2 _jumpNormal;
         private float _jumpTimerValue;
-        private const float _jumpTimerMax = 0.50f;
+        private const float _jumpTimerMax = 0.75f;
+        private void UpdateCollideFriction(float friction)
+        {
+            var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
+            if (fixture.Friction == friction)
+                return;
+            fixture.Friction = friction;
+            ContactEdge contactEdge = fixture.Body.ContactList;
+            while (contactEdge != null) 
+            {
+                var contact = contactEdge.Contact;
+                contact.ResetFriction();
+                contactEdge = contactEdge.Next;
+            }
+        }
         public float UpSpeed
         {
             get
             {
                 Debug.Assert(_initialized);
-                return _body.LinearVelocity.Dot(_groundNormal);
+                return _body.LinearVelocity.Dot(_groundNormal) * Globals.PixelsPerMeter;
             }
         }
         public Vector2 Position
@@ -176,6 +192,7 @@ namespace Duo.Utilities.Physics
                 _moveDirection = Directions.Left;
                 _moveForceMagnitude = 0;
                 _moveTimer = 0;
+                _moveTimerMax = _moveStillTimerMax;
                 _groundedTimerValue = _groundTimerMax;
                 _jumpTimerValue = 0;
             }
@@ -237,8 +254,8 @@ namespace Duo.Utilities.Physics
             Debug.Assert(!Moving);
             _moving = true;
             _moveDirection = Directions.Left;
+            _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
-            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _moveFriction;
         }
         public void MoveRight()
         {
@@ -246,16 +263,16 @@ namespace Duo.Utilities.Physics
             Debug.Assert(!Moving);
             _moving = true;
             _moveDirection = Directions.Right;
+            _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
-            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _moveFriction;
         }
         public void ReleaseMove()
         {
             Debug.Assert(_initialized);
             Debug.Assert(Moving);
             _moving = false;
+            _moveTimerMax = _moveStillTimerMax;
             _moveTimer = _moveTimerMax;
-            _boxNodeToFixtureMap[new(BoxTypes.Collide, null)].Friction = _stillFriction;
         }
         public void Jump()
         {
@@ -284,7 +301,7 @@ namespace Duo.Utilities.Physics
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
             var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
             var horizontalSpeed = System.Math.Abs(rightSpeed);
-            var speedValue = System.Math.Min(1, horizontalSpeed / 1.5f);
+            var speedValue = System.Math.Min(1, horizontalSpeed / 3f);
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -350,51 +367,57 @@ namespace Duo.Utilities.Physics
                 }
             }
 
+            // Update the rotation of the body.
             _body.Rotation = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X) + MathHelper.PiOver2;
 
-            // Apply the constant forces
+            // Gravity and stick forces.
             {
-                // Gravity and stick forces.
-                {
-                    Vector2 force;
-                    if (Grounded && Moving && speedValue > 0.40f)
-                        force = -_groundNormal * _baseGravity;
-                    else
-                        force = -_baseGroundNormal * _baseGravity;
-                    _body.ApplyForce(force);
-                }
+                Vector2 force;
+                if (Grounded && Moving && speedValue > 0.40f)
+                    force = -_groundNormal * _baseGravity;
+                else
+                    force = -_baseGroundNormal * _baseGravity;
+                _body.ApplyForce(force);
+            }
 
-                if (Jumping)
-                {
-                    var direction = _jumpNormal;
-                    var force = direction * _baseJump * MathHelper.Lerp(0, 1, _jumpTimerValue / _jumpTimerMax);
-                    _body.ApplyForce(force);
-                    _jumpTimerValue -= timeElapsed;
-                }
+            // Update Jumping force.
+            if (Jumping)
+            {
+                var direction = _jumpNormal;
+                var force = direction * _baseJump * MathHelper.Lerp(0, 1, _jumpTimerValue / _jumpTimerMax);
+                _body.ApplyForce(force);
+                _jumpTimerValue -= timeElapsed;
+            }
 
-
+            // Update moving force.
+            {
+                var direction = (_moveDirection == Directions.Left) ? _groundNormal.PerpendicularClockwise() : _groundNormal.PerpendicularCounterClockwise();
+                var timerRatio = _moveTimer / _moveTimerMax;
+                float forceMagnitude;
+                if (Moving)
                 {
-                    var direction = (_moveDirection == Directions.Left) ? _groundNormal.PerpendicularClockwise() : _groundNormal.PerpendicularCounterClockwise();
-                    var timerRatio = _moveTimer / _moveTimerMax;
-                    float forceMagnitude;
-                    if (_moving)
-                    {
-                        forceMagnitude = _baseMovement * MathHelper.Lerp(5, 1, speedValue) * (1 - timerRatio);
-                        _moveForceMagnitude = forceMagnitude;
-                    }
-                    else
-                    {
-                        forceMagnitude = _moveForceMagnitude * timerRatio;
-                    }
-                    Debug.Print($"forceMagnitude={forceMagnitude}, timerRatio={timerRatio}, moving={_moving}");
-                    var force = direction * forceMagnitude;
-                    _body.ApplyForce(force);
-                    if (_moveTimer > 0)
-                        _moveTimer -= timeElapsed;
-                    if (_moveTimer < 0)
-                        _moveTimer = 0;
+                    forceMagnitude = _baseMovement * MathHelper.Lerp(5, 1, speedValue) * (1 - timerRatio);
+                    _moveForceMagnitude = forceMagnitude;
                 }
-            } 
+                else
+                {
+                    forceMagnitude = _moveForceMagnitude * timerRatio;
+                }
+                var force = direction * forceMagnitude;
+                _body.ApplyForce(force);
+                if (_moveTimer > 0)
+                    _moveTimer -= timeElapsed;
+                if (_moveTimer < 0)
+                    _moveTimer = 0;
+            }
+
+            // Update friction
+            {
+                if (Moving || !Grounded)
+                    UpdateCollideFriction(_moveFriction);
+                else
+                    UpdateCollideFriction(_stillFriction);
+            }
         }
     }
 }
