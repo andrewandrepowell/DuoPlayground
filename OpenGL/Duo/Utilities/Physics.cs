@@ -28,11 +28,13 @@ namespace Duo.Utilities.Physics
         private const float _baseGravity = 14;
         private const float _baseMovement = 20f;
         private const float _baseJump = 24;
+        private const float _impulseJumpModifier = 0.15f;
         private const float _baseMass = 1f;
         private const float _baseLinearDamping = 15f;
         private const float _baseDensity = 1f;
         private const float _stillFriction = 2f;
         private const float _moveFriction = 0;
+        private const float _maxHorizontalSpeed = 3;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -60,6 +62,8 @@ namespace Duo.Utilities.Physics
         private Vector2 _jumpNormal;
         private float _jumpTimerValue;
         private const float _jumpTimerMax = 0.75f;
+        private float _fallGravityTimer;
+        private const float _fallGravityTimerMax = 3;
         private void UpdateCollideFriction(float friction)
         {
             var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
@@ -195,6 +199,7 @@ namespace Duo.Utilities.Physics
                 _moveTimerMax = _moveStillTimerMax;
                 _groundedTimerValue = _groundTimerMax;
                 _jumpTimerValue = 0;
+                _fallGravityTimer = 0;
             }
             _initialized = true;
         }
@@ -282,7 +287,7 @@ namespace Duo.Utilities.Physics
             _jumpTimerValue = _jumpTimerMax;
             _jumpNormal = _groundNormal;
             _groundedTimerValue = 0;
-            var impulse = _jumpNormal * _baseJump * 0.10f;
+            var impulse = _jumpNormal * _baseJump * _impulseJumpModifier;
             _body.ApplyLinearImpulse(impulse);
         }
         public void ReleaseJump()
@@ -301,7 +306,7 @@ namespace Duo.Utilities.Physics
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
             var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
             var horizontalSpeed = System.Math.Abs(rightSpeed);
-            var speedValue = System.Math.Min(1, horizontalSpeed / 3f);
+            var speedValue = System.Math.Min(1, horizontalSpeed / _maxHorizontalSpeed);
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -314,17 +319,15 @@ namespace Duo.Utilities.Physics
                             _fixtureCollideBins[boxNode].Add(otherFixture);
             }
 
+            var resetToGroundOccurred = _fixtureCollideBins[groundBoxNode].Count > 0 && !Jumping;
+
             // Handle the ground state.
             {
                 // Update ground timer.
-                if (_fixtureCollideBins[groundBoxNode].Count > 0 && !Jumping)
-                {
+                if (resetToGroundOccurred)
                     _groundedTimerValue = _groundTimerMax;
-                }
                 else if (Grounded)
-                {
                     _groundedTimerValue -= timeElapsed;
-                }
 
                 // Determine targert normal.
                 // By default, the target normal is the base ground normal.
@@ -370,11 +373,27 @@ namespace Duo.Utilities.Physics
             // Update the rotation of the body.
             _body.Rotation = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X) + MathHelper.PiOver2;
 
+            {
+                if (resetToGroundOccurred)
+                {
+                    Debug.Assert(Grounded);
+                    _fallGravityTimer = _fallGravityTimerMax;
+                }
+                else if (!Grounded && !Jumping && _fallGravityTimer > 0)
+                {
+                    _fallGravityTimer -= timeElapsed;
+                    if (_fallGravityTimer < 0)
+                        _fallGravityTimer = 0;
+                }
+            }
+
             // Gravity and stick forces.
             {
                 Vector2 force;
                 if (Grounded && Moving && speedValue > 0.40f)
                     force = -_groundNormal * _baseGravity;
+                else if (!Grounded && !Jumping)
+                    force = -_baseGroundNormal * _baseGravity * MathHelper.Lerp(4, 1, _fallGravityTimer / _fallGravityTimerMax);
                 else
                     force = -_baseGroundNormal * _baseGravity;
                 _body.ApplyForce(force);
