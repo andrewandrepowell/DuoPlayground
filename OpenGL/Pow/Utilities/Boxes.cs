@@ -20,7 +20,8 @@ namespace Pow.Utilities
         public record Node(
             Vector2[] Collide,
             Vector2[] Ground,
-            ReadOnlyDictionary<Directions, Vector2[]> Walls);
+            ReadOnlyDictionary<Directions, Vector2[]> Walls,
+            ReadOnlyDictionary<Directions, Vector2[]> Vaults);
         private static Node Load(string assetName)
         {
             var map = Globals.Game.Content.Load<TiledMap>(assetName);
@@ -38,6 +39,7 @@ namespace Pow.Utilities
             Vector2[] collideBox = null;
             Vector2[] groundBox = null;
             Dictionary<Directions, Vector2[]> wallBoxes = [];
+            Dictionary<Directions, Vector2[]> vaultBoxes = [];
             foreach (var polygonNode in polygonNodes)
             {
                 if (polygonNode.Parameters.TryGetValue("BoxType", out var value))
@@ -57,13 +59,20 @@ namespace Pow.Utilities
                                 wallBoxes.Add(direction, polygonNode.Vertices.Select(vertex => vertex + polygonNode.Position - origin).ToArray());
                             }
                             break;
+                        case BoxTypes.Vault:
+                            {
+                                var direction = Enum.Parse<Directions>(polygonNode.Parameters["Direction"]);
+                                vaultBoxes.Add(direction, polygonNode.Vertices.Select(vertex => vertex + polygonNode.Position - origin).ToArray());
+                            }
+                            break;
                     }
                 }
             }
             var node = new Node(
                 Collide: collideBox,
                 Ground: groundBox,
-                Walls: new(wallBoxes));
+                Walls: new(wallBoxes),
+                Vaults: new(vaultBoxes));
             return node;
         }
         public void Configure(int id, string assetName)

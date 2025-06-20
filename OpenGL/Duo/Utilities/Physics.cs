@@ -23,7 +23,9 @@ namespace Duo.Utilities.Physics
             new(BoxTypes.Collide, null), 
             new(BoxTypes.Ground, null), 
             new(BoxTypes.Wall, Directions.Left), 
-            new(BoxTypes.Wall, Directions.Right) 
+            new(BoxTypes.Wall, Directions.Right),
+            new(BoxTypes.Vault, Directions.Left),
+            new(BoxTypes.Vault, Directions.Right),
         ];
         private const float _baseGravity = 14;
         private const float _baseMovement = 20f;
@@ -64,6 +66,7 @@ namespace Duo.Utilities.Physics
         private const float _jumpTimerMax = 0.75f;
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
+        private bool _vaultReady;
         private void UpdateCollideFriction(float friction)
         {
             var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
@@ -179,6 +182,8 @@ namespace Duo.Utilities.Physics
                 CreateFixture(BoxTypes.Ground, null, node.Ground, true);
                 CreateFixture(BoxTypes.Wall, Directions.Left, node.Walls[Directions.Left], true);
                 CreateFixture(BoxTypes.Wall, Directions.Right, node.Walls[Directions.Right], true);
+                CreateFixture(BoxTypes.Vault, Directions.Left, node.Vaults[Directions.Left], true);
+                CreateFixture(BoxTypes.Vault, Directions.Right, node.Vaults[Directions.Right], true);
             }
             {
                 _groundNormal = _baseGroundNormal;
@@ -200,6 +205,7 @@ namespace Duo.Utilities.Physics
                 _groundedTimerValue = _groundTimerMax;
                 _jumpTimerValue = 0;
                 _fallGravityTimer = 0;
+                _vaultReady = true;
             }
             _initialized = true;
         }
@@ -320,6 +326,9 @@ namespace Duo.Utilities.Physics
             }
 
             var resetToGroundOccurred = _fixtureCollideBins[groundBoxNode].Count > 0 && !Jumping;
+            var runningIntoLeftWall = _fixtureCollideBins[new(BoxTypes.Wall, Directions.Left)].Count > 0 && MovingLeft;
+            var runningIntoRightWall = _fixtureCollideBins[new(BoxTypes.Wall, Directions.Right)].Count > 0 && MovingRight;
+            var runningIntoWall = runningIntoLeftWall || runningIntoRightWall;
 
             // Handle the ground state.
             {
@@ -373,13 +382,16 @@ namespace Duo.Utilities.Physics
             // Update the rotation of the body.
             _body.Rotation = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X) + MathHelper.PiOver2;
 
+            var falling = !Grounded && !Jumping;
+
+            // Update fall timer. Used in the gravity force calculations later.
             {
                 if (resetToGroundOccurred)
                 {
                     Debug.Assert(Grounded);
                     _fallGravityTimer = _fallGravityTimerMax;
                 }
-                else if (!Grounded && !Jumping && _fallGravityTimer > 0)
+                else if (falling && _fallGravityTimer > 0)
                 {
                     _fallGravityTimer -= timeElapsed;
                     if (_fallGravityTimer < 0)
@@ -392,7 +404,7 @@ namespace Duo.Utilities.Physics
                 Vector2 force;
                 if (Grounded && Moving && speedValue > 0.40f)
                     force = -_groundNormal * _baseGravity;
-                else if (!Grounded && !Jumping)
+                else if (falling)
                     force = -_baseGroundNormal * _baseGravity * MathHelper.Lerp(4, 1, _fallGravityTimer / _fallGravityTimerMax);
                 else
                     force = -_baseGroundNormal * _baseGravity;
@@ -408,12 +420,70 @@ namespace Duo.Utilities.Physics
                 _jumpTimerValue -= timeElapsed;
             }
 
+            // Perform vault.
+            {
+                if (resetToGroundOccurred)
+                    _vaultReady = true;
+                if (_vaultReady)
+                {
+                    // Determine if there's a vaultable surface on the left.
+                    bool leftVaultableExists = false;
+                    bool rightVaultableExists = false;
+                    foreach (var fixture in _fixtureCollideBins[new(BoxTypes.Vault, Directions.Left)])
+                    {
+                        var surface = (Surface)fixture.Body.Tag;
+                        var fixtureNode = surface.GetFixtureNode(fixture);
+                        var normal = fixtureNode.Normal;
+                        var product = _groundNormal.Dot(normal);
+                        if (product <= 0.2f)
+                        {
+                            leftVaultableExists = true;
+                            break;
+                        }
+                    }
+
+                    // Determine if there's a vaultable surface on the right.
+                    foreach (var fixture in _fixtureCollideBins[new(BoxTypes.Vault, Directions.Right)])
+                    {
+                        var surface = (Surface)fixture.Body.Tag;
+                        var fixtureNode = surface.GetFixtureNode(fixture);
+                        var normal = fixtureNode.Normal;
+                        var product = _groundNormal.Dot(normal);
+                        if (product <= 0.2f)
+                        {
+                            rightVaultableExists = true;
+                            break;
+                        }
+                    }
+
+                    // Determine if moving into no wall.
+                    var movingLeftIntoNoWall = (_fixtureCollideBins[new(BoxTypes.Wall, Directions.Left)].Count == 0) && MovingLeft;
+                    var movingRightIntoNoWall = (_fixtureCollideBins[new(BoxTypes.Wall, Directions.Right)].Count == 0) && MovingRight;
+
+                    // Perform vault until ground reset occurs.
+                    // Ground timer is reset to 0 to ground the character.
+                    var vaultLeft = movingLeftIntoNoWall && leftVaultableExists;
+                    var vaultRight = movingRightIntoNoWall && rightVaultableExists;
+                    if (vaultLeft || vaultRight)
+                    {
+                        _body.ApplyLinearImpulse(_groundNormal * 2);
+                        _groundedTimerValue = 0;
+                        _vaultReady = false;
+                    }
+                }
+            }
+
             // Update moving force.
             {
                 var direction = (_moveDirection == Directions.Left) ? _groundNormal.PerpendicularClockwise() : _groundNormal.PerpendicularCounterClockwise();
                 var timerRatio = _moveTimer / _moveTimerMax;
                 float forceMagnitude;
-                if (Moving)
+                if (runningIntoWall)
+                {
+                    _moveForceMagnitude = 0;
+                    forceMagnitude = 0;
+                }
+                else if (Moving)
                 {
                     forceMagnitude = _baseMovement * MathHelper.Lerp(5, 1, speedValue) * (1 - timerRatio);
                     _moveForceMagnitude = forceMagnitude;
@@ -428,6 +498,8 @@ namespace Duo.Utilities.Physics
                     _moveTimer -= timeElapsed;
                 if (_moveTimer < 0)
                     _moveTimer = 0;
+
+                // Debug.Print($"forceMagnitude={forceMagnitude}, Moving={Moving}, timerRatio={timerRatio}, speedValue={speedValue}, timerRatio={timerRatio}");
             }
 
             // Update friction
