@@ -421,6 +421,7 @@ namespace Duo.Utilities.Physics
             }
 
             // Perform vault.
+            // https://bhopkins.net/pages/mmphysics/
             {
                 if (resetToGroundOccurred)
                     _vaultReady = true;

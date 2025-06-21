@@ -109,7 +109,8 @@ namespace Duo.Data
                 new ControlComponent(),
                 new GOCustomComponent<Cat>()));
             runner.AddEntityType((int)EntityTypes.Surface, world => world.Create(
-                new StatusComponent(), 
+                new StatusComponent(),
+                new AnimationComponent(),
                 new PhysicsComponent(), 
                 new GOCustomComponent<Surface>()));
             runner.AddEntityType((int)EntityTypes.HUD, world => world.Create(
