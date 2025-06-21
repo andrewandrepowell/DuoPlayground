@@ -45,6 +45,13 @@ namespace Duo.Managers
                     .Where(token => !string.IsNullOrEmpty(token))
                     .Select(token => int.Parse(token))
                     .ToList();
+                var origin = Vector2.Zero;
+                if (node.Vertices.Length > 0)
+                {
+                    foreach (var vertex in node.Vertices.AsSpan())
+                        origin += vertex;
+                    origin /= node.Vertices.Length;
+                }
                 _fixtureNodes.Clear();
                 for (var i = 0; i < node.Vertices.Length; i++)
                 {
@@ -55,19 +62,19 @@ namespace Duo.Managers
                     var vertex1 = node.Vertices[vertex1Index];
                     var vertex2 = node.Vertices[vertex2Index];
                     var edgeShape = new EdgeShape(
-                        start: vertex1 / Globals.PixelsPerMeter,
-                        end: vertex2 / Globals.PixelsPerMeter);
+                        start: (vertex1 - origin) / Globals.PixelsPerMeter,
+                        end: (vertex2 - origin) / Globals.PixelsPerMeter);
                     var normal = Vector2.Normalize((vertex2 - vertex1).PerpendicularClockwise());
                     var vertex0Index = Pow.Utilities.Math.Mod(i - 1, node.Vertices.Length);
                     if (ghostVertices.Contains(vertex0Index))
                     {
-                        edgeShape.Vertex0 = node.Vertices[vertex0Index] / Globals.PixelsPerMeter;
+                        edgeShape.Vertex0 = (node.Vertices[vertex0Index] - origin) / Globals.PixelsPerMeter;
                         edgeShape.HasVertex0 = true;
                     }
                     var vertex3Index = Pow.Utilities.Math.Mod(i + 2, node.Vertices.Length);
                     if (ghostVertices.Contains(vertex3Index))
                     {
-                        edgeShape.Vertex3 = node.Vertices[vertex3Index] / Globals.PixelsPerMeter;
+                        edgeShape.Vertex3 = (node.Vertices[vertex3Index] - origin) / Globals.PixelsPerMeter;
                         edgeShape.HasVertex3 = true;
                     }
                     var fixture = new Fixture(edgeShape);
@@ -75,7 +82,7 @@ namespace Duo.Managers
                     _fixtureNodes.Add(fixture, fixtureNode);
                     body.Add(fixture);
                 }
-                body.Position = node.Position / Globals.PixelsPerMeter;
+                body.Position = (node.Position + origin) / Globals.PixelsPerMeter;
                 body.Tag = this;
             }
             {

@@ -18,8 +18,8 @@ namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2 }
-    internal enum Sprites { Cat, Pixel }
-    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel }
+    internal enum Sprites { Cat, Pixel, Platform }
+    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel, Platform }
     internal enum Boxes { Cat }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer }
     public class Data : IRunnerParent, IDuoRunnerParent
@@ -91,6 +91,22 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.Pixel,
                 spriteId: (int)Sprites.Pixel,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Platform,
+                assetName: "images/platform_0",
+                regionSize: new(192, 32),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.Platform,
+                spriteId: (int)Sprites.Platform,
                 spriteAnimationId: 0,
                 indices: [0],
                 period: 0,
