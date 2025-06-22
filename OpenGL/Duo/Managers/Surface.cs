@@ -19,11 +19,29 @@ namespace Duo.Managers
 {
     internal class Surface : Environment
     {
+        private Body _body;
         private Modes _mode;
+        private static readonly ReadOnlyDictionary<MoveStates, MoveStates> _moveNextState = new(new Dictionary<MoveStates, MoveStates>() 
+        {
+            {  MoveStates.ToStart, MoveStates.ToEnd },
+            {  MoveStates.ToEnd, MoveStates.ToStart },
+        });
+        private readonly Dictionary<MoveStates, Vector2> _moveDests = new();
+        private float _moveDist;
+        private MoveStates _moveState;
         private readonly Dictionary<Fixture, FixtureNode> _fixtureNodes = [];
-        public enum Modes { Static, MovingPlatform }
+        public enum Modes { Static, Move }
+        public enum MoveStates { ToStart, ToEnd }
         public record FixtureNode(Vector2 Normal);
         public Modes Mode => _mode;
+        public MoveStates MoveState
+        {
+            get
+            {
+                Debug.Assert(_mode == Modes.Move);
+                return _moveState;
+            }
+        }
         public FixtureNode GetFixtureNode(Fixture fixture) => _fixtureNodes[fixture];
         public override void Initialize(PolygonNode node)
         {
@@ -31,13 +49,15 @@ namespace Duo.Managers
             _mode = Enum.Parse<Modes>(node.Parameters.GetValueOrDefault("Mode", "Static"));
             {
                 var body = Entity.Get<PhysicsComponent>().Manager.Body;
+                _body = body;
                 body.BodyType = _mode switch
                 {
                     Modes.Static => BodyType.Static,
-                    Modes.MovingPlatform => BodyType.Kinematic,
+                    Modes.Move => BodyType.Kinematic,
                     _ => throw new NotImplementedException()
                 };
-                body.Mass = 1;
+                body.Mass = 0;
+                body.LinearDamping = 15;
                 var ghostVertices = node.Parameters
                     .GetValueOrDefault("GhostVertices", "")
                     .Split(",")
@@ -78,6 +98,8 @@ namespace Duo.Managers
                         edgeShape.HasVertex3 = true;
                     }
                     var fixture = new Fixture(edgeShape);
+                    fixture.Friction = 0.2f;
+                    fixture.Restitution = 0.0f;
                     var fixtureNode = new FixtureNode(Normal: normal);
                     _fixtureNodes.Add(fixture, fixtureNode);
                     body.Add(fixture);
@@ -86,9 +108,50 @@ namespace Duo.Managers
                 body.Tag = this;
             }
             {
+                var moveComponents = node.Parameters
+                    .GetValueOrDefault("Move", "0, 0")
+                    .Split(",")
+                    .Select(x => x.Trim())
+                    .Select(x => float.Parse(x))
+                    .ToArray();
+                Debug.Assert(moveComponents.Length == 2);
+                var move = new Vector2(x: moveComponents[0], y: moveComponents[1]);
+                _moveDests[MoveStates.ToStart] = _body.Position * Globals.PixelsPerMeter;
+                _moveDests[MoveStates.ToEnd] = _body.Position * Globals.PixelsPerMeter + move;
+                _moveDist = (_moveDests[MoveStates.ToStart] - _moveDests[MoveStates.ToEnd]).Length();
+                if (_mode == Modes.Move)
+                    Debug.Assert(!_moveDist.EqualsWithTolerance(0));
+                _moveState = MoveStates.ToEnd;
+            }
+            {
                 var animationManager = Entity.Get<AnimationComponent>().Manager;
                 animationManager.Play((int)Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("Animation", "Pixel")));
                 animationManager.Visibility = (_mode == Modes.Static) ? 0 : 1;
+            }
+        }
+        public override void Update()
+        {
+            base.Update();
+
+            if (_mode == Modes.Move)
+            {
+                var dest = _moveDests[_moveState];
+                var vectorToDest = dest - _body.Position * Globals.PixelsPerMeter;
+                var distanceToDest = vectorToDest.Length();
+                if (distanceToDest <= 1)
+                {
+                    _moveState = _moveNextState[_moveState];
+                    dest = _moveDests[_moveState];
+                    vectorToDest = dest - _body.Position * Globals.PixelsPerMeter;
+                    distanceToDest = vectorToDest.Length();
+                }
+                
+                
+                var distCoef = distanceToDest / _moveDist;
+                var forceMagnitude = MathHelper.Lerp(4, 0.5f, distCoef) * 10;
+                var direction = vectorToDest / distanceToDest;
+                _body.LinearVelocity = direction * 1;
+                //_body.ApplyForce(forceMagnitude * direction);
             }
         }
     }

@@ -35,7 +35,7 @@ namespace Duo.Utilities.Physics
         private const float _baseLinearDamping = 15f;
         private const float _baseDensity = 1f;
         private const float _stillFriction = 2f;
-        private const float _moveFriction = 0;
+        private const float _moveFriction = 0.2f;
         private const float _maxHorizontalSpeed = 3;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
@@ -377,6 +377,18 @@ namespace Duo.Utilities.Physics
                         y: (float)System.Math.Sin(newRads));
                     _groundNormal = newNorm;
                 }
+            }
+
+            // Handle moving platforms
+            if (_fixtureCollideBins[groundBoxNode].Count > 0) 
+            {
+                //var groundVelocity = Vector2.Zero;
+                //foreach (var fixture in _fixtureCollideBins[groundBoxNode])
+                //    groundVelocity += fixture.Body.LinearVelocity;
+                //groundVelocity /= _fixtureCollideBins[groundBoxNode].Count;
+                //_body.LinearVelocity += groundVelocity;
+                //Debug.Print($"Ground Velo: {groundVelocity}, Body Position: {_body.Position}");
+                //_body.SetTransform(position: _body.Position + groundVelocity * timeElapsed, rotation: _body.Rotation);
             }
 
             // Update the rotation of the body.

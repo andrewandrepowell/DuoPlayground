@@ -25,7 +25,7 @@
   </object>
  </objectgroup>
  <objectgroup id="3" name="objects_cat_0">
-  <object id="2" x="32" y="2816">
+  <object id="2" x="1040" y="1568">
    <properties>
     <property name="EntityType" value="Cat"/>
     <property name="ID" value="Protag"/>
@@ -92,7 +92,8 @@
    <properties>
     <property name="Animation" value="Platform"/>
     <property name="EntityType" value="Surface"/>
-    <property name="Mode" value="MovingPlatform"/>
+    <property name="Mode" value="Move"/>
+    <property name="Move" value="-192, 0"/>
    </properties>
    <polygon points="0,0 192,0 192,32 0,32"/>
   </object>
