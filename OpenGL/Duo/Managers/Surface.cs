@@ -145,12 +145,14 @@ namespace Duo.Managers
                     vectorToDest = dest - _body.Position * Globals.PixelsPerMeter;
                     distanceToDest = vectorToDest.Length();
                 }
-                
-                
-                var distCoef = distanceToDest / _moveDist;
-                var forceMagnitude = MathHelper.Lerp(4, 0.5f, distCoef) * 10;
+
+                var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
+                var v0 = System.Math.Min(distanceToDest, 32);
+                var v1 = System.Math.Min(_moveDist - distanceToDest, 32);
+                var v2 = System.Math.Max(System.Math.Min(v0, v1) / 32, 0.1f);
+
                 var direction = vectorToDest / distanceToDest;
-                _body.LinearVelocity = direction * 1;
+                _body.LinearVelocity = direction * v2 * timeElapsed * 50;
                 //_body.ApplyForce(forceMagnitude * direction);
             }
         }

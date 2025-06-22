@@ -34,8 +34,9 @@ namespace Duo.Utilities.Physics
         private const float _baseMass = 1f;
         private const float _baseLinearDamping = 15f;
         private const float _baseDensity = 1f;
-        private const float _stillFriction = 2f;
-        private const float _moveFriction = 0.2f;
+        private const float _stillFriction = 3f;
+        private const float _moveFriction = 1f;
+        private const float _airFriction = 0f;
         private const float _maxHorizontalSpeed = 3;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
@@ -310,9 +311,7 @@ namespace Duo.Utilities.Physics
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
             var collideBoxNode = new BoxNode(BoxTypes.Collide, null);
             var groundBoxNode = new BoxNode(BoxTypes.Ground, null);
-            var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
-            var horizontalSpeed = System.Math.Abs(rightSpeed);
-            var speedValue = System.Math.Min(1, horizontalSpeed / _maxHorizontalSpeed);
+
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
@@ -329,6 +328,17 @@ namespace Duo.Utilities.Physics
             var runningIntoLeftWall = _fixtureCollideBins[new(BoxTypes.Wall, Directions.Left)].Count > 0 && MovingLeft;
             var runningIntoRightWall = _fixtureCollideBins[new(BoxTypes.Wall, Directions.Right)].Count > 0 && MovingRight;
             var runningIntoWall = runningIntoLeftWall || runningIntoRightWall;
+
+            // Set horizontal speed to zero if colliding into wall.
+            //if (runningIntoWall)
+            //{
+            //    var upSpeed = _body.LinearVelocity.Dot(_groundNormal);
+            //    _body.LinearVelocity = upSpeed * _groundNormal;
+            //}
+
+            var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
+            var horizontalSpeed = System.Math.Abs(rightSpeed);
+            var speedValue = System.Math.Min(1, horizontalSpeed / _maxHorizontalSpeed);
 
             // Handle the ground state.
             {
@@ -377,18 +387,6 @@ namespace Duo.Utilities.Physics
                         y: (float)System.Math.Sin(newRads));
                     _groundNormal = newNorm;
                 }
-            }
-
-            // Handle moving platforms
-            if (_fixtureCollideBins[groundBoxNode].Count > 0) 
-            {
-                //var groundVelocity = Vector2.Zero;
-                //foreach (var fixture in _fixtureCollideBins[groundBoxNode])
-                //    groundVelocity += fixture.Body.LinearVelocity;
-                //groundVelocity /= _fixtureCollideBins[groundBoxNode].Count;
-                //_body.LinearVelocity += groundVelocity;
-                //Debug.Print($"Ground Velo: {groundVelocity}, Body Position: {_body.Position}");
-                //_body.SetTransform(position: _body.Position + groundVelocity * timeElapsed, rotation: _body.Rotation);
             }
 
             // Update the rotation of the body.
@@ -498,7 +496,7 @@ namespace Duo.Utilities.Physics
                 }
                 else if (Moving)
                 {
-                    forceMagnitude = _baseMovement * MathHelper.Lerp(5, 1, speedValue) * (1 - timerRatio);
+                    forceMagnitude = _baseMovement * MathHelper.Lerp(7.5f, 1, speedValue) * (1 - timerRatio);
                     _moveForceMagnitude = forceMagnitude;
                 }
                 else
@@ -511,13 +509,13 @@ namespace Duo.Utilities.Physics
                     _moveTimer -= timeElapsed;
                 if (_moveTimer < 0)
                     _moveTimer = 0;
-
-                // Debug.Print($"forceMagnitude={forceMagnitude}, Moving={Moving}, timerRatio={timerRatio}, speedValue={speedValue}, timerRatio={timerRatio}");
             }
 
             // Update friction
             {
-                if (Moving || !Grounded)
+                if (!Grounded)
+                    UpdateCollideFriction(_airFriction);
+                else if (Moving)
                     UpdateCollideFriction(_moveFriction);
                 else
                     UpdateCollideFriction(_stillFriction);
