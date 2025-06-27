@@ -97,8 +97,8 @@ namespace Duo.Data
                 repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Platform,
-                assetName: "images/platform_0",
-                regionSize: new(192, 32),
+                assetName: "images/platform_1",
+                regionSize: new(224, 64),
                 directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
                 {
                     {Directions.Left, SpriteEffects.None},
