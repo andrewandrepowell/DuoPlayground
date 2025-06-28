@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Duo.Data;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Pow.Utilities;
 using Pow;
-using Duo.Data;
+using Pow.Utilities;
+using System;
+using System.Diagnostics;
 
 
 namespace OpenGLGame
@@ -16,6 +18,16 @@ namespace OpenGLGame
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+#if DEBUG
+            TextWriterTraceListener[] listeners = [
+                new TextWriterTraceListener("debug.txt"),
+                new TextWriterTraceListener(Console.Out)
+            ];
+            Trace.Listeners.AddRange(listeners);
+            Trace.AutoFlush = true;
+            Debug.AutoFlush = true;
+#endif
         }
 
         protected override void Initialize()

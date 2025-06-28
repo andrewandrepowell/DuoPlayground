@@ -329,13 +329,6 @@ namespace Duo.Utilities.Physics
             var runningIntoRightWall = _fixtureCollideBins[new(BoxTypes.Wall, Directions.Right)].Count > 0 && MovingRight;
             var runningIntoWall = runningIntoLeftWall || runningIntoRightWall;
 
-            // Set horizontal speed to zero if colliding into wall.
-            //if (runningIntoWall)
-            //{
-            //    var upSpeed = _body.LinearVelocity.Dot(_groundNormal);
-            //    _body.LinearVelocity = upSpeed * _groundNormal;
-            //}
-
             var rightSpeed = _body.LinearVelocity.Dot(_groundNormal.PerpendicularCounterClockwise());
             var horizontalSpeed = System.Math.Abs(rightSpeed);
             var speedValue = System.Math.Min(1, horizontalSpeed / _maxHorizontalSpeed);
@@ -503,6 +496,7 @@ namespace Duo.Utilities.Physics
                 {
                     forceMagnitude = _moveForceMagnitude * timerRatio;
                 }
+                Debug.Print($"runningIntoWall={runningIntoWall}, Moving={Moving}, forceMagnitude={forceMagnitude}, timerRatio={timerRatio}");
                 var force = direction * forceMagnitude;
                 _body.ApplyForce(force);
                 if (_moveTimer > 0)
