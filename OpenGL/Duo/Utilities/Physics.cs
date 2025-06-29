@@ -68,6 +68,7 @@ namespace Duo.Utilities.Physics
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
         private bool _vaultReady;
+        private Median<float> _moveForceMedian = new(period: (float)1 / 30, amount: 16);
         private void UpdateCollideFriction(float friction)
         {
             var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
@@ -207,6 +208,7 @@ namespace Duo.Utilities.Physics
                 _jumpTimerValue = 0;
                 _fallGravityTimer = 0;
                 _vaultReady = true;
+                _moveForceMedian.Clear();
             }
             _initialized = true;
         }
@@ -408,7 +410,7 @@ namespace Duo.Utilities.Physics
                 if (Grounded && Moving && speedValue > 0.40f)
                     force = -_groundNormal * _baseGravity;
                 else if (falling)
-                    force = -_baseGroundNormal * _baseGravity * MathHelper.Lerp(4, 1, _fallGravityTimer / _fallGravityTimerMax);
+                    force = -_baseGroundNormal * _baseGravity * MathHelper.Lerp(6, 1, _fallGravityTimer / _fallGravityTimerMax);
                 else
                     force = -_baseGroundNormal * _baseGravity;
                 _body.ApplyForce(force);
@@ -490,15 +492,16 @@ namespace Duo.Utilities.Physics
                 else if (Moving)
                 {
                     forceMagnitude = _baseMovement * MathHelper.Lerp(7.5f, 1, speedValue) * (1 - timerRatio);
-                    _moveForceMagnitude = forceMagnitude;
+                    _moveForceMagnitude = _moveForceMedian.Get();
                 }
                 else
                 {
                     forceMagnitude = _moveForceMagnitude * timerRatio;
                 }
-                Debug.Print($"runningIntoWall={runningIntoWall}, Moving={Moving}, forceMagnitude={forceMagnitude}, timerRatio={timerRatio}");
+                //Debug.Print($"runningIntoWall={runningIntoWall}, Moving={Moving}, forceMagnitude={_moveForceMedian.Get()}, timerRatio={timerRatio}, speedValue={speedValue}");
                 var force = direction * forceMagnitude;
                 _body.ApplyForce(force);
+                _moveForceMedian.Update(timeElapsed, forceMagnitude);
                 if (_moveTimer > 0)
                     _moveTimer -= timeElapsed;
                 if (_moveTimer < 0)
