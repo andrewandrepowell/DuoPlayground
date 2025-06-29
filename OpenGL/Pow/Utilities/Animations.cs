@@ -7,16 +7,18 @@ using System.Diagnostics;
 using System.Linq;
 using Pow.Utilities.GO;
 using System.Collections.ObjectModel;
+using Pow.Utilities.Shaders;
 
 
 namespace Pow.Utilities.Animations
 {
-    public class AnimationManager(AnimationGenerator parent) : IGOManager
+    public class AnimationManager(AnimationGenerator parent) : IGOManager, IParent
     {
         private bool _acquired = false;
         private readonly AnimationGenerator _parent = parent;
         private readonly Dictionary<int, SpriteNode> _spriteNodes = [];
         private readonly Dictionary<int, AnimationNode> _animationNodes = [];
+        private readonly List<IFeature> _features = [];
         private AnimationNode _animationNode;
         private int? _animationId = null;
         private Vector2 _position;
@@ -62,6 +64,24 @@ namespace Pow.Utilities.Animations
             var spriteNode = _animationNode.SpriteNode;
             var sprite = spriteNode.Sprite;
             sprite.Color = _color * _visibility;
+        }
+        public IReadOnlyList<IFeature> Features => _features;
+        public Texture2D Texture
+        {
+            get
+            {
+                var l = _features.GetEnumerator();
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Texture;
+            }
+        }
+        public Rectangle Region
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Region;
+            }
         }
         public int AnimationId
         {
@@ -211,6 +231,9 @@ namespace Pow.Utilities.Animations
         public void Return()
         {
             Debug.Assert(_acquired);
+            foreach (var feature in _features)
+                feature.Return();
+            _features.Clear();
             _parent.Return(this);
             _acquired = false;
         }

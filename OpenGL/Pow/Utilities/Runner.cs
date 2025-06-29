@@ -16,6 +16,7 @@ using Pow.Utilities.Control;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D;
 using Pow.Utilities.Gum;
+using Pow.Utilities.Shaders;
 
 namespace Pow.Utilities
 {
@@ -47,6 +48,7 @@ namespace Pow.Utilities
         private readonly PhysicsGenerator _physicsGenerator;
         private readonly ControlGenerator _controlGenerator;
         private readonly GumGenerator _gumGenerator;
+        private readonly FeatureGenerator _featureGenerator;
         private readonly Dictionary<int, EntityTypeNode> _entityTypeNodes = [];
         private bool _initialized;
         private record EntityTypeNode(Func<EcsWorld, Entity> CreateEntity);
@@ -103,6 +105,7 @@ namespace Pow.Utilities
             _physicsGenerator = new(_physicsWorld);
             _controlGenerator = new();
             _gumGenerator = new(_parent.GumProjectFile);
+            _featureGenerator = new();
 
             // Associate components with initialize and destroy systems.
             _initializeSystem.Add<AnimationComponent>();
@@ -126,6 +129,7 @@ namespace Pow.Utilities
             _physicsGenerator.Initialize();
             _controlGenerator.Initialize();
             _gumGenerator.Initialize();
+            _featureGenerator.Initialize();
 
             _initialized = true;
         }
@@ -136,6 +140,7 @@ namespace Pow.Utilities
         public PhysicsGenerator PhysicsGenerator => _physicsGenerator;
         public ControlGenerator ControlGenerator => _controlGenerator;
         public GumGenerator GumGenerator => _gumGenerator;
+        public FeatureGenerator FeatureGenerator => _featureGenerator;
         internal GOGeneratorContainer GOGeneratorContainer => _goGeneratorContainer;
         public PhysicsWorld PhysicsWorld
         {
