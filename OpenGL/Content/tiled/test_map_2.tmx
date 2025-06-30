@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="20">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="21">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_1.tsx"/>
  <objectgroup id="4" name="objects_game_0">
@@ -21,6 +21,13 @@
    <properties>
     <property name="EntityType" value="Dimmer"/>
     <property name="ID" value="MainMenuDimmer"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="20" x="128" y="2736">
+   <properties>
+    <property name="Animation" value="SkyBox"/>
+    <property name="EntityType" value="Background"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>

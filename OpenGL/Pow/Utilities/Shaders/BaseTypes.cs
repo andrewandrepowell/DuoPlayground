@@ -16,18 +16,23 @@ namespace Pow.Utilities.Shaders
     }
     public interface IFeature : IGOManager
     {
-        public Layers Layer { get; }
+        public Layers Layer { get; set; }
         public BaseEffect Effect { get; }
         public Vector2 DrawOffset { get; }
         public float Visibility { get; }
         public float Scale { get; }
         public float Rotation { get; }
         public void UpdateEffect();
+        public void Update();
     }
     public interface IParent
     {
         public Texture2D Texture { get; }
         public Rectangle Region { get; }
+        public void UpdateDrawOffset();
+        public void UpdateVisibility();
+        public void UpdateScale();
+        public void UpdateRotation();
     }
     public abstract class FeatureManager<T> : IFeature where T : BaseEffect
     {
@@ -35,7 +40,7 @@ namespace Pow.Utilities.Shaders
         private IParent _parent;
         private FeatureGenerator _generator;
         private bool _initialized = false;
-        public abstract Layers Layer { get; }
+        public abstract Layers Layer { get; set; }
         public T GetEffect() => _effect;
         public BaseEffect Effect
         {
@@ -58,6 +63,10 @@ namespace Pow.Utilities.Shaders
         public virtual float Scale => 0;
         public virtual float Rotation => 0;
         public virtual void UpdateEffect()
+        {
+            Debug.Assert(_initialized);
+        }
+        public virtual void Update()
         {
             Debug.Assert(_initialized);
         }

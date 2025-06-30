@@ -5,22 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Pow.Utilities;
+using Pow.Utilities.Shaders;
 
-namespace Pow.Utilities.Shaders
+namespace Duo.Utilities.Shaders
 {
     public class ParallaxFeature : FeatureManager<ParallaxEffect>
     {
         private bool _initialized = false;
         private Layers _layer;
         private IParent _parallaxParent;
-        public override Layers Layer => _layer;
+        public override Layers Layer { get => _layer; set => _layer = value; }
         public Vector2 ParallaxPosition;
-        public void Initialize(Layers layer, IParent parallaxParent)
+        public void Initialize(IParent parallaxParent)
         {
             Debug.Assert(!_initialized);
-            _layer = layer;
             _parallaxParent = parallaxParent;
-            _initialized = false;
+            _initialized = true;
         }
         public override void UpdateEffect()
         {
@@ -29,12 +30,14 @@ namespace Pow.Utilities.Shaders
             GetEffect().Configure(
                 parallaxTexture: _parallaxParent.Texture,
                 position: ParallaxPosition,
-                spriteSize: new(width: Parent.Texture.Width, height: Parent.Texture.Height));
+                spriteSize: new(
+                    width: Parent.Texture.Width, 
+                    height: Parent.Texture.Height));
         }
         public override void Return()
         {
-            Debug.Assert(_initialized);
             base.Return();
+            Debug.Assert(_initialized);
             _initialized = false;
         }
     }

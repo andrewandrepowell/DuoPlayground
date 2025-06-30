@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pow;
+using Pow.Utilities.Shaders;
 
-namespace Pow.Utilities.Shaders
+namespace Duo.Utilities.Shaders
 {
     public class ParallaxEffect : BaseEffect
     {
@@ -24,7 +26,7 @@ namespace Pow.Utilities.Shaders
         public override Effect Effect => _effect;
         public ParallaxEffect()
         {
-            _effect = Globals.Game.Content.Load<Effect>("effects/parallax_0");
+            _effect = Pow.Globals.Game.Content.Load<Effect>("effects/parallax_0");
             _parallaxTextureEP = _effect.Parameters["ParallaxTexture"];
             _spriteTextureDimensionsEP = _effect.Parameters["SpriteTextureDimensions"];
             _parallaxTextureDimenionsEP = _effect.Parameters["ParallaxTextureDimensions"];

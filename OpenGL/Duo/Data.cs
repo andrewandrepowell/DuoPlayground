@@ -18,10 +18,10 @@ namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2 }
-    internal enum Sprites { Cat, Pixel, Platform }
-    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel, Platform }
+    internal enum Sprites { Cat, Pixel, Platform, Background, SkyBox }
+    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel, Platform, Background, SkyBox }
     internal enum Boxes { Cat }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer }
+    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer, Background }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -111,6 +111,38 @@ namespace Duo.Data
                 indices: [0],
                 period: 0,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Background,
+                assetName: "images/background_0",
+                regionSize: (Size)Globals.GameWindowSize,
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.Background,
+                spriteId: (int)Sprites.Background,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.SkyBox,
+                assetName: "images/background_1",
+                regionSize: (Size)Globals.GameWindowSize,
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.SkyBox,
+                spriteId: (int)Sprites.SkyBox,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -142,6 +174,10 @@ namespace Duo.Data
                 new StatusComponent(),
                 new AnimationComponent(),
                 new GOCustomComponent<Dimmer>()));
+            runner.AddEntityType((int)EntityTypes.Background, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<Background>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -150,6 +186,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<MainMenu>();
             runner.AddGOCustomManager<Dimmer>();
+            runner.AddGOCustomManager<Background>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -160,6 +197,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
+            duoRunner.AddEnvironment<Background>(EntityTypes.Background);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 

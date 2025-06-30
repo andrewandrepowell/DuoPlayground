@@ -10,6 +10,7 @@ using MonoGame.Extended;
 using System.Collections.ObjectModel;
 using Pow.Utilities.Gum;
 using MonoGameGum;
+using System.Diagnostics;
 
 namespace Pow.Systems
 {
@@ -36,6 +37,7 @@ namespace Pow.Systems
         private readonly static PositionModes[] _gumPositionModes = Enum.GetValues<PositionModes>();
         private readonly QueryDescription _allAnimationComponents;
         private readonly Dictionary<(Layers, PositionModes), ForEach<AnimationComponent>> _drawAnimationComponents;
+        private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawFeatureAnimationComponents;
         private readonly QueryDescription _allGumComponents;
         private readonly Dictionary<Layers, ForEach<GumComponent>> _gumDrawGumComponents;
         private readonly Dictionary<(Layers, PositionModes), ForEach<GumComponent>> _monoDrawGumComponents;
@@ -61,12 +63,47 @@ namespace Pow.Systems
                 _drawAnimationComponents = [];
                 foreach (var layer in _layers)
                     foreach (var positionMode in _gumPositionModes)
-                        _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
+                    _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
+                    {
+                        var manager = component.Manager;
+                        if (manager.ShowBase && manager.Layer == layer && manager.PositionMode == positionMode)
+                            manager.Draw();
+                    }));
+                _drawFeatureAnimationComponents = [];
+                foreach (var layer in _layers)
+                    _drawFeatureAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
+                    {
+                        var manager = component.Manager;
+                        if (manager.Layer == layer && manager.Features.Count > 0)
                         {
-                            var manager = component.Manager;
-                            if (manager.Layer == layer && manager.PositionMode == positionMode)
-                                manager.Draw();
-                        }));
+                            var spriteBatch = Globals.SpriteBatch;
+                            ref var view = ref _camera.View;
+                            switch (manager.PositionMode)
+                            {
+                                case PositionModes.Map:
+                                    foreach (var feature in manager.Features)
+                                    {
+                                        feature.UpdateEffect();
+                                        spriteBatch.Begin(transformMatrix: view, effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
+                                        manager.Draw();
+                                        spriteBatch.End();
+                                    }
+                                    break;
+                                case PositionModes.Screen:
+                                    foreach (var feature in manager.Features)
+                                    {
+                                        feature.UpdateEffect();
+                                        spriteBatch.Begin(effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
+                                        manager.Draw();
+                                        spriteBatch.End();
+                                    }
+                                    break;
+                                default:
+                                    Debug.Assert(false);
+                                    break;
+                            }
+                        }
+                    }));
             }
             {
                 var pixelArtRenderTargets = new Dictionary<Layers, RenderTarget2D>();
@@ -182,6 +219,9 @@ namespace Pow.Systems
                     spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                     World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, PositionModes.Screen)]);
                     spriteBatch.End();
+
+                    // Draw features (i.e. shader effects)
+                    World.Query(_allAnimationComponents, _drawFeatureAnimationComponents[layer]);
                 }
 
                 // smooth art drawing.

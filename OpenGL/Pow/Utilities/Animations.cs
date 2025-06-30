@@ -30,6 +30,7 @@ namespace Pow.Utilities.Animations
         private Color _color;
         private float _visibility;
         private bool _pauseable;
+        private bool _showBase;
         private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
         private void UpdateSpritePosition()
@@ -66,23 +67,6 @@ namespace Pow.Utilities.Animations
             sprite.Color = _color * _visibility;
         }
         public IReadOnlyList<IFeature> Features => _features;
-        public Texture2D Texture
-        {
-            get
-            {
-                var l = _features.GetEnumerator();
-                Debug.Assert(_animationId != null);
-                return _animationNode.SpriteNode.Sprite.Texture;
-            }
-        }
-        public Rectangle Region
-        {
-            get
-            {
-                Debug.Assert(_animationId != null);
-                return _animationNode.SpriteNode.Sprite.Region;
-            }
-        }
         public int AnimationId
         {
             get
@@ -168,6 +152,7 @@ namespace Pow.Utilities.Animations
         public Layers Layer { get => _layer; set => _layer = value; }
         public PositionModes PositionMode { get => _positionMode; set => _positionMode = value; }
         public bool Pauseable { get => _pauseable; set => _pauseable = value; }
+        public bool ShowBase { get => _showBase; set => _showBase = value; }
         public void LoadSprite(int spriteId)
         {
             Debug.Assert(!_spriteNodes.ContainsKey(spriteId));
@@ -226,6 +211,7 @@ namespace Pow.Utilities.Animations
             _visibility = 1;
             _color = Color.White;
             _pauseable = true;
+            _showBase = true;
             _acquired = true;
         }
         public void Return()
@@ -242,6 +228,7 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_acquired);
             Debug.Assert(_animationId != null);
             if (_pauseable && Globals.GamePaused) return;
+            foreach (var feature in _features) feature.Update();
             _animationNode.SpriteNode.Sprite.Update();
         }
         public void Draw()
@@ -250,6 +237,36 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_animationId != null);
             _animationNode.SpriteNode.Sprite.Draw();
         }
+        public T1 CreateFeature<T1, T2>() 
+            where T1 : FeatureManager<T2>, new()
+            where T2 : BaseEffect, new()
+        {
+            Debug.Assert(_acquired);
+            Debug.Assert(_animationId != null);
+            T1 feature = Globals.Runner.FeatureGenerator.Acquire<T1, T2>(this);
+            _features.Add(feature);
+            return feature;
+        }
+        Texture2D IParent.Texture
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Texture;
+            }
+        }
+        Rectangle IParent.Region
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Region;
+            }
+        }
+        void IParent.UpdateDrawOffset() => UpdateSpritePosition();
+        void IParent.UpdateVisibility() => UpdateSpriteColor();
+        void IParent.UpdateScale() => UpdateSpriteScale();
+        void IParent.UpdateRotation() => UpdateSpriteRotation();
     }
     public class AnimationGenerator : IGOGenerator<AnimationManager>
     {
