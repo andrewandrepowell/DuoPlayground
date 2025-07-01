@@ -17,15 +17,17 @@ Texture2D ParallaxTexture;
 sampler2D ParallaxTextureSampler = sampler_state
 {
     Texture = <ParallaxTexture>;
+    minfilter = point; // Use point filtering for minification
+    magfilter = point; // Use point filtering for magnification
+    mipfilter = point; // Use point filtering for mipmaps
     AddressU = Clamp;
     AddressV = Clamp;
 };
 
 float2 SpriteTextureDimensions;
 float2 ParallaxTextureDimensions;
-
+float4 ParallaxRegion;
 float2 Position = float2(0, 0);
-float2 Scale = float2(1, 1);
 
 float wrap(float x, float m)
 {
@@ -46,7 +48,7 @@ struct VertexShaderOutput
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    float2 parallaxPosition = wrap(input.TextureCoordinates * SpriteTextureDimensions * Scale + Position, ParallaxTextureDimensions); 
+    float2 parallaxPosition = wrap(input.TextureCoordinates * SpriteTextureDimensions + Position, ParallaxRegion.zw) + ParallaxRegion.xy;
     return tex2D(SpriteTextureSampler, input.TextureCoordinates) * tex2D(ParallaxTextureSampler, parallaxPosition / ParallaxTextureDimensions) * input.Color;
 }
 

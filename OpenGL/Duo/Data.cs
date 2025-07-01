@@ -18,8 +18,14 @@ namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2 }
-    internal enum Sprites { Cat, Pixel, Platform, Background, SkyBox }
-    internal enum Animations { CatWalk, CatIdle, CatJump, CatFall, CatLand, Pixel, Platform, Background, SkyBox }
+    internal enum Sprites { Cat, Pixel, Platform, Background, PurpleHillsBackground }
+    internal enum Animations 
+    { 
+        CatWalk, CatIdle, CatJump, CatFall, CatLand, 
+        Pixel, 
+        Platform, 
+        Background, PurpleHillsSkyBox, PurpleHillsFarClouds 
+    }
     internal enum Boxes { Cat }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer, Background }
     public class Data : IRunnerParent, IDuoRunnerParent
@@ -128,7 +134,7 @@ namespace Duo.Data
                 period: 0,
                 repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
-                spriteId: (int)Sprites.SkyBox,
+                spriteId: (int)Sprites.PurpleHillsBackground,
                 assetName: "images/background_1",
                 regionSize: (Size)Globals.GameWindowSize,
                 directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
@@ -137,10 +143,17 @@ namespace Duo.Data
                     {Directions.Right, SpriteEffects.FlipHorizontally},
                 }));
             runner.AnimationGenerator.ConfigureAnimation(
-                animationId: (int)Animations.SkyBox,
-                spriteId: (int)Sprites.SkyBox,
+                animationId: (int)Animations.PurpleHillsSkyBox,
+                spriteId: (int)Sprites.PurpleHillsBackground,
                 spriteAnimationId: 0,
                 indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.PurpleHillsFarClouds,
+                spriteId: (int)Sprites.PurpleHillsBackground,
+                spriteAnimationId: 1,
+                indices: [1],
                 period: 0,
                 repeat: false);
             // entities
