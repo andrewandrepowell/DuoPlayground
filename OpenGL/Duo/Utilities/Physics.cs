@@ -371,11 +371,11 @@ namespace Duo.Utilities.Physics
             
                 // Gradually update the ground normal to the target.
                 {
-                    var maxRadsPerSec = 1 / MathHelper.TwoPi * 64f;
+                    // var maxRadsPerSec = 1 / MathHelper.TwoPi * 64f;
                     var curRads = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X);
                     var tarRads = (float)System.Math.Atan2(targetNormal.Y, targetNormal.X);
                     var difRads = Pow.Utilities.Math.AngleDifference(curRads, tarRads);
-                    var updRads = System.Math.Min(difRads * System.Math.Max(horizontalSpeed, 0.5f) * 10f, maxRadsPerSec) * timeElapsed;
+                    var updRads = difRads * System.Math.Max(horizontalSpeed, 0.5f) * 10f * timeElapsed;
                     var newRads = curRads + updRads;
                     var newNorm = new Vector2(
                         x: (float)System.Math.Cos(newRads),
@@ -487,18 +487,17 @@ namespace Duo.Utilities.Physics
                 if (runningIntoWall)
                 {
                     _moveForceMagnitude = 0;
-                    forceMagnitude = 0;
+                    forceMagnitude = _baseMovement;
                 }
                 else if (Moving)
                 {
-                    forceMagnitude = _baseMovement * MathHelper.Lerp(7.5f, 1, speedValue) * (1 - timerRatio);
+                    forceMagnitude = _baseMovement * MathHelper.Lerp(6f, 1, speedValue) * (1 - timerRatio);
                     _moveForceMagnitude = _moveForceMedian.Get();
                 }
                 else
                 {
                     forceMagnitude = _moveForceMagnitude * timerRatio;
                 }
-                //Debug.Print($"runningIntoWall={runningIntoWall}, Moving={Moving}, forceMagnitude={_moveForceMedian.Get()}, timerRatio={timerRatio}, speedValue={speedValue}");
                 var force = direction * forceMagnitude;
                 _body.ApplyForce(force);
                 _moveForceMedian.Update(timeElapsed, forceMagnitude);

@@ -24,7 +24,7 @@ namespace Duo.Data
         CatWalk, CatIdle, CatJump, CatFall, CatLand, 
         Pixel, 
         Platform, 
-        Background, PurpleHillsSkyBox, PurpleHillsFarClouds 
+        Background, PurpleHillsSkyBox, PurpleHillsFarClouds, PurpleHillsMidClouds, 
     }
     internal enum Boxes { Cat }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer, Background }
@@ -154,6 +154,13 @@ namespace Duo.Data
                 spriteId: (int)Sprites.PurpleHillsBackground,
                 spriteAnimationId: 1,
                 indices: [1],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.PurpleHillsMidClouds,
+                spriteId: (int)Sprites.PurpleHillsBackground,
+                spriteAnimationId: 2,
+                indices: [2],
                 period: 0,
                 repeat: false);
             // entities

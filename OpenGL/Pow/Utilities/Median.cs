@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Pow.Utilities
 {
-    public class Median<T> where T : INumber<T>
+    public class Median<T> 
+        where T : INumber<T>
     {
         private readonly int _amount;
         private readonly float _period;

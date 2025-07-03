@@ -8,10 +8,12 @@ using Pow.Utilities;
 using Pow.Utilities.Animations;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Pow.Utilities.BoxesGenerator;
 
 namespace Duo.Managers
 {
@@ -20,6 +22,25 @@ namespace Duo.Managers
         private AnimationManager _parallaxManager;
         private ParallaxFeature _parallaxFeature;
         private Vector2? _velocity;
+        private Vector2? _parallax;
+        private static Vector2? GetVector(ReadOnlyDictionary<string, string> parameters, string vector)
+        {
+            if (parameters.ContainsKey(vector))
+            {
+                var components = parameters
+                    .GetValueOrDefault(vector, "0, 0")
+                    .Split(",")
+                    .Select(x => x.Trim())
+                    .Select(x => float.Parse(x))
+                    .ToArray();
+                Debug.Assert(components.Length == 2);
+                return new Vector2(x: components[0], y: components[1]);
+            }
+            else
+            {
+                return null;
+            }
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -35,21 +56,8 @@ namespace Duo.Managers
             _parallaxFeature = animationManager.CreateFeature<ParallaxFeature, ParallaxEffect>();
             _parallaxFeature.Initialize(parallaxParent: _parallaxManager);
             _parallaxFeature.Layer = layer;
-            if (node.Parameters.ContainsKey("Velocity"))
-            {
-                var velocityComponents = node.Parameters
-                    .GetValueOrDefault("Velocity", "0, 0")
-                    .Split(",")
-                    .Select(x => x.Trim())
-                    .Select(x => float.Parse(x))
-                    .ToArray();
-                Debug.Assert(velocityComponents.Length == 2);
-                _velocity = new Vector2(x: velocityComponents[0], y: velocityComponents[1]);
-            }
-            else
-            {
-                _velocity = null;
-            }
+            _velocity = GetVector(node.Parameters, "Velocity");
+            _parallax = GetVector(node.Parameters, "Parallax");
         }
         public override void Cleanup()
         {
@@ -59,11 +67,18 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
+            var parallaxPosition = Vector2.Zero;
             if (_velocity.HasValue)
             {
                 var totalSeconds = (float)Pow.Globals.GameTime.TotalGameTime.TotalSeconds;
-                _parallaxFeature.ParallaxPosition = totalSeconds * _velocity.Value;
+                parallaxPosition += totalSeconds * _velocity.Value;
             }
+            if (_parallax.HasValue)
+            {
+                var cameraPosition = Pow.Globals.Runner.Camera.Position;
+                parallaxPosition += cameraPosition * _parallax.Value;
+            }
+            _parallaxFeature.ParallaxPosition = parallaxPosition;
         }
     }
 }
