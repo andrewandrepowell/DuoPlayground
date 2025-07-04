@@ -18,7 +18,7 @@ namespace Pow.Utilities
     {
         void Initialize(in Entity entity);
     }
-    public enum Layers { FarSky, MidSky, CloseSky, Background, Ground, Foreground, Interface, Dimmer, Menu, Box }
+    public enum Layers { FarSky, MidSky, CloseSky, FarMountain, MidMountain, Background, Ground, Foreground, Interface, Dimmer, Menu, Box }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }
     public enum Directions { Left, Right, Up, Down }
     public enum BoxTypes { Collide, Ground, Wall, Vault }
