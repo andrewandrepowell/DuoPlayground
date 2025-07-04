@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="26">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="27">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_1.tsx"/>
  <objectgroup id="4" name="objects_game_0">
@@ -37,16 +37,16 @@
     <property name="Animation" value="PurpleHillsFarClouds"/>
     <property name="EntityType" value="Background"/>
     <property name="Layer" value="MidSky"/>
-    <property name="Parallax" value="0.1, 0"/>
+    <property name="Parallax" value="0.05, 0"/>
     <property name="Velocity" value="-4, 0"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="22" x="160" y="2784">
+  <object id="22" x="192" y="2784">
    <properties>
     <property name="Animation" value="PurpleHillsMidClouds"/>
     <property name="EntityType" value="Background"/>
-    <property name="Layer" value="FarMountain"/>
+    <property name="Layer" value="CloseMountain"/>
     <property name="Parallax" value="0.25, 0"/>
     <property name="Velocity" value="-8, 0"/>
    </properties>
@@ -57,7 +57,7 @@
     <property name="Animation" value="PurpleHillsFarMountains"/>
     <property name="EntityType" value="Background"/>
     <property name="Layer" value="CloseSky"/>
-    <property name="Parallax" value="0.15, 0"/>
+    <property name="Parallax" value="0.10, 0"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -66,16 +66,25 @@
     <property name="Animation" value="PurpleHillsMidMountains"/>
     <property name="EntityType" value="Background"/>
     <property name="Layer" value="FarMountain"/>
-    <property name="Parallax" value="0.20, 0"/>
+    <property name="Parallax" value="0.15, 0"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="25" x="192" y="2784">
+  <object id="25" x="224" y="2784">
    <properties>
     <property name="Animation" value="PurpleHillsFarTrees"/>
     <property name="EntityType" value="Background"/>
-    <property name="Layer" value="MidMountain"/>
+    <property name="Layer" value="FarTree"/>
     <property name="Parallax" value="0.30, 0"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="26" x="160" y="2784">
+   <properties>
+    <property name="Animation" value="PurpleHillsCloseMountains"/>
+    <property name="EntityType" value="Background"/>
+    <property name="Layer" value="MidMountain"/>
+    <property name="Parallax" value="0.20, 0"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
