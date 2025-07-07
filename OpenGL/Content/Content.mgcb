@@ -147,3 +147,13 @@
 /processor:TiledMapTilesetProcessor
 /build:tiled/test_tileset_0.tsx
 
+#begin tiled/test_tileset_1.tsx
+/importer:TiledMapTilesetImporter
+/processor:TiledMapTilesetProcessor
+/build:tiled/test_tileset_1.tsx
+
+#begin tiled/test_tileset_2.tsx
+/importer:TiledMapTilesetImporter
+/processor:TiledMapTilesetProcessor
+/build:tiled/test_tileset_2.tsx
+
