@@ -497,6 +497,7 @@ namespace Duo.Utilities.Physics
                 else
                 {
                     forceMagnitude = _moveForceMagnitude * timerRatio;
+                    forceMagnitude = 0;
                 }
                 var force = direction * forceMagnitude;
                 _body.ApplyForce(force);
