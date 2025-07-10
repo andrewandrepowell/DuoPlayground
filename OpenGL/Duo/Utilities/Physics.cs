@@ -32,7 +32,8 @@ namespace Duo.Utilities.Physics
         private const float _baseJump = 24;
         private const float _impulseJumpModifier = 0.15f;
         private const float _baseMass = 1f;
-        private const float _baseLinearDamping = 15f;
+        private const float _groundLinearDamping = 8f;
+        private const float _airLinearDamping = 15f;
         private const float _baseDensity = 1f;
         private const float _stillFriction = 3f;
         private const float _moveFriction = 1f;
@@ -55,7 +56,8 @@ namespace Duo.Utilities.Physics
             .ToDictionary();
         private Directions _moveDirection;
         private bool _moving;
-        private float _moveForceMagnitude;
+        private VectorAverage _moveForceAverager = new(period: (float)1 / 30, amount: 16);
+        private Vector2 _moveForce;
         private float _moveTimer;
         private float _moveTimerMax;
         private const float _moveMoveTimerMax = 2f;
@@ -68,7 +70,7 @@ namespace Duo.Utilities.Physics
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
         private bool _vaultReady;
-        private Median<float> _moveForceMedian = new(period: (float)1 / 30, amount: 16);
+        
         private void UpdateCollideFriction(float friction)
         {
             var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
@@ -152,7 +154,7 @@ namespace Duo.Utilities.Physics
                 body.FixedRotation = true;
                 body.BodyType = BodyType.Dynamic;
                 body.Mass = _baseMass;
-                body.LinearDamping = _baseLinearDamping;
+                body.LinearDamping = _airLinearDamping;
                 var contactManager = body.World.ContactManager;
                 contactManager.BeginContact += BeginContact;
                 contactManager.EndContact += EndContact;
@@ -201,14 +203,14 @@ namespace Duo.Utilities.Physics
             {
                 _moving = false;
                 _moveDirection = Directions.Left;
-                _moveForceMagnitude = 0;
+                _moveForce = Vector2.Zero;
                 _moveTimer = 0;
                 _moveTimerMax = _moveStillTimerMax;
                 _groundedTimerValue = _groundTimerMax;
                 _jumpTimerValue = 0;
                 _fallGravityTimer = 0;
                 _vaultReady = true;
-                _moveForceMedian.Clear();
+                _moveForceAverager.Clear();
             }
             _initialized = true;
         }
@@ -483,25 +485,27 @@ namespace Duo.Utilities.Physics
             {
                 var direction = (_moveDirection == Directions.Left) ? _groundNormal.PerpendicularClockwise() : _groundNormal.PerpendicularCounterClockwise();
                 var timerRatio = _moveTimer / _moveTimerMax;
-                float forceMagnitude;
+
+                Vector2 force;
                 if (runningIntoWall)
                 {
-                    _moveForceMagnitude = 0;
-                    forceMagnitude = _baseMovement;
+                    _moveForce = Vector2.Zero;
+                    force = direction * _baseMovement;
+
                 }
                 else if (Moving)
                 {
-                    forceMagnitude = _baseMovement * MathHelper.Lerp(6f, 1, speedValue) * (1 - timerRatio);
-                    _moveForceMagnitude = _moveForceMedian.Get();
+                    var magnitude = _baseMovement * MathHelper.Lerp(6f, 1, speedValue) * (1 - timerRatio);
+                    force = direction * magnitude;
+                    _moveForce = _moveForceAverager.Get();
                 }
                 else
                 {
-                    forceMagnitude = _moveForceMagnitude * timerRatio;
-                    forceMagnitude = 0;
+                    force = _moveForce * timerRatio * 0.80f;
                 }
-                var force = direction * forceMagnitude;
+                
                 _body.ApplyForce(force);
-                _moveForceMedian.Update(timeElapsed, forceMagnitude);
+                _moveForceAverager.Update(timeElapsed, force);
                 if (_moveTimer > 0)
                     _moveTimer -= timeElapsed;
                 if (_moveTimer < 0)
@@ -516,6 +520,14 @@ namespace Duo.Utilities.Physics
                     UpdateCollideFriction(_moveFriction);
                 else
                     UpdateCollideFriction(_stillFriction);
+            }
+
+            // Update linear damping
+            {
+                if (Grounded)
+                    _body.LinearDamping = _groundLinearDamping;
+                else
+                    _body.LinearDamping = _airLinearDamping;
             }
         }
     }
