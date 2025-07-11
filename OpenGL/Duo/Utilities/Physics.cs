@@ -273,6 +273,11 @@ namespace Duo.Utilities.Physics
             _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
         }
+        public void UpdateLeft()
+        {
+            Debug.Assert(_initialized);
+            Debug.Assert(MovingLeft);
+        }
         public void MoveRight()
         {
             Debug.Assert(_initialized);
@@ -281,6 +286,11 @@ namespace Duo.Utilities.Physics
             _moveDirection = Directions.Right;
             _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
+        }
+        public void UpdateRight()
+        {
+            Debug.Assert(_initialized);
+            Debug.Assert(MovingRight);
         }
         public void ReleaseMove()
         {

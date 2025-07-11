@@ -53,6 +53,10 @@ namespace Duo.Managers
             _characterPhysics.MoveLeft();
             Direction = Directions.Left;
         }
+        public void UpdateLeft()
+        {
+            _characterPhysics.UpdateLeft();
+        }
         public void ReleaseLeft()
         {
             _characterPhysics.ReleaseMove();
@@ -61,6 +65,10 @@ namespace Duo.Managers
         {
             _characterPhysics.MoveRight();
             Direction = Directions.Right;
+        }
+        public void UpdateRight()
+        {
+            _characterPhysics.UpdateRight();
         }
         public void ReleaseRight()
         {

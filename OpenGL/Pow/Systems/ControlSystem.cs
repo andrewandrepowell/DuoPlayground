@@ -3,6 +3,7 @@ using Arch.System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Pow.Components;
+using Pow.Utilities;
 using Pow.Utilities.Control;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,10 @@ namespace Pow.Systems
         private readonly QueryDescription _queryDescription = new QueryDescription().WithAll<ControlComponent>();
         private readonly ForEach _updateControl, _setPrevStates;
         private KeyboardState _keyboardState;
+        private GamePadState _gamePadState;
         private Dictionary<Keys, ButtonStates> _keyPrevStates = [];
+        private Dictionary<Buttons, ButtonStates> _buttonPrevStates = [];
+        private Dictionary<Directions, Vector2> _thumbstickPrevPositions = [];
         private void UpdateControl(in Entity entity)
         {
             var controlManager = World.Get<ControlComponent>(entity).Manager;
@@ -39,6 +43,33 @@ namespace Pow.Systems
                         buttonState: ButtonStates.Released,
                         key: key);
             }
+            foreach (ref var button in controlManager.Control.ControlButtons.AsSpan())
+            {
+                var buttonUp = _gamePadState.IsButtonUp(button);
+                var buttonDown = _gamePadState.IsButtonDown(button);
+                var buttonCurrState = (buttonDown) ? ButtonStates.Pressed : ButtonStates.Released;
+                Debug.Assert((buttonUp && !buttonDown) || (!buttonUp && buttonDown));
+                var buttonPrevState = _buttonPrevStates.GetValueOrDefault(button, ButtonStates.Pressed);
+
+                if (buttonCurrState == ButtonStates.Pressed && buttonPrevState == ButtonStates.Released)
+                    controlManager.Control.UpdateControl(
+                        buttonState: ButtonStates.Pressed,
+                        button: button);
+                else if (buttonCurrState == ButtonStates.Released && buttonPrevState == ButtonStates.Pressed)
+                    controlManager.Control.UpdateControl(
+                        buttonState: ButtonStates.Released,
+                        button: button);
+            }
+            foreach (ref var thumbstick in controlManager.Control.ControlThumbsticks.AsSpan())
+            {
+                var position =
+                    (thumbstick == Directions.Left) ? _gamePadState.ThumbSticks.Left :
+                    (thumbstick == Directions.Right) ? _gamePadState.ThumbSticks.Right :
+                    Vector2.Zero;
+                var prevPosition = _thumbstickPrevPositions.GetValueOrDefault(thumbstick, Vector2.Zero);
+                if (position != prevPosition)
+                    controlManager.Control.UpdateControl(thumbstick, position);
+            }
         }
         private void SetPrevStates(in Entity entity)
         {
@@ -49,6 +80,20 @@ namespace Pow.Systems
                 var keyCurrState = (keyDown) ? ButtonStates.Pressed : ButtonStates.Released;
                 _keyPrevStates[key] = keyCurrState;
             }
+            foreach (ref var button in controlManager.Control.ControlButtons.AsSpan())
+            {
+                var buttonDown = _gamePadState.IsButtonDown(button);
+                var buttonCurrState = (buttonDown) ? ButtonStates.Pressed : ButtonStates.Released;
+                _buttonPrevStates[button] = buttonCurrState;
+            }
+            foreach (ref var thumbstick in controlManager.Control.ControlThumbsticks.AsSpan())
+            {
+                var position =
+                    (thumbstick == Directions.Left) ? _gamePadState.ThumbSticks.Left :
+                    (thumbstick == Directions.Right) ? _gamePadState.ThumbSticks.Right :
+                    Vector2.Zero;
+                _thumbstickPrevPositions[thumbstick] = position;
+            }
         }
         public ControlSystem(World world) : base(world)
         {
@@ -58,6 +103,14 @@ namespace Pow.Systems
         public override void Update(in GameTime t)
         {
             _keyboardState = Keyboard.GetState();
+            try
+            {
+                _gamePadState = GamePad.GetState(0);
+            }
+            catch (NotImplementedException)
+            {
+                _gamePadState = new();
+            }
             World.Query(_queryDescription, _updateControl);
             World.Query(_queryDescription, _setPrevStates);
             base.Update(t);

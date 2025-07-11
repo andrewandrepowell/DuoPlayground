@@ -1,5 +1,6 @@
 ﻿using Duo.Data;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Control;
@@ -29,8 +30,12 @@ namespace Duo.Managers
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;
         public Keys[] ControlKeys => _uaManager.ControlKeys;
+        public Buttons[] ControlButtons => _uaManager.ControlButtons;
+        public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
         public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
-        public void UpdateUserAction(int actionId, ButtonStates buttonState)
+        public void UpdateControl(ButtonStates buttonState, Buttons button) => _uaManager.UpdateControl(buttonState, button);
+        public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
+        public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
         {
             if (Pow.Globals.GamePaused) return;
 
@@ -47,7 +52,10 @@ namespace Duo.Managers
             {
                 if (MovingRight)
                     ReleaseRight();
-                MoveLeft();
+                if (MovingLeft)
+                    UpdateLeft();
+                else
+                    MoveLeft();
             }
 
             if (released && right && MovingRight)
@@ -56,7 +64,10 @@ namespace Duo.Managers
             {
                 if (MovingLeft)
                     ReleaseLeft();
-                MoveRight();
+                if (MovingRight) 
+                    UpdateRight();
+                else
+                    MoveRight();
             }
 
             if (released && jump && Jumping)

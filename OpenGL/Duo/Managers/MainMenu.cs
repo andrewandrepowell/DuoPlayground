@@ -28,8 +28,12 @@ namespace Duo.Managers
         private RunningStates _state;
         private float _period;
         private float _time;
-        public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
         public Keys[] ControlKeys => _uaManager.ControlKeys;
+        public Buttons[] ControlButtons => _uaManager.ControlButtons;
+        public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
+        public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
+        public void UpdateControl(ButtonStates buttonState, Buttons button) => _uaManager.UpdateControl(buttonState, button);
+        public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -72,7 +76,7 @@ namespace Duo.Managers
             else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Waiting)
                 ForceClose();
         }
-        public void UpdateUserAction(int actionId, ButtonStates buttonState)
+        public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
         {
             if (!_initialized) return;
             var control = (Controls)actionId;

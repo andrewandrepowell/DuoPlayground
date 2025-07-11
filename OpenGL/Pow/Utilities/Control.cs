@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using Pow.Utilities.GO;
+using Microsoft.Xna.Framework;
 
 namespace Pow.Utilities.Control
 {
@@ -11,7 +12,11 @@ namespace Pow.Utilities.Control
     public interface IControl
     {
         public Keys[] ControlKeys { get; }
+        public Buttons[] ControlButtons { get; }
+        public Directions[] ControlThumbsticks { get; }
         public void UpdateControl(ButtonStates buttonState, Keys key);
+        public void UpdateControl(ButtonStates buttonState, Buttons button);
+        public void UpdateControl(Directions thumbstick, Vector2 position);
     }
     public class ControlManager(ControlGenerator parent) : IGOManager
     {
