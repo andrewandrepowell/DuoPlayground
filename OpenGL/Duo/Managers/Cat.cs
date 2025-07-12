@@ -6,6 +6,7 @@ using Pow.Utilities;
 using Pow.Utilities.Control;
 using Pow.Utilities.UA;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Arch.Core.Extensions;
@@ -39,6 +40,8 @@ namespace Duo.Managers
         {
             if (Pow.Globals.GamePaused) return;
 
+            Debug.Print($"Strength: {strength}");
+
             var control = (Controls)actionId;
             var left = control == Controls.MoveLeft;
             var right = control == Controls.MoveRight;
@@ -53,9 +56,9 @@ namespace Duo.Managers
                 if (MovingRight)
                     ReleaseRight();
                 if (MovingLeft)
-                    UpdateLeft();
+                    UpdateLeft(strength);
                 else
-                    MoveLeft();
+                    MoveLeft(strength);
             }
 
             if (released && right && MovingRight)
@@ -65,9 +68,9 @@ namespace Duo.Managers
                 if (MovingLeft)
                     ReleaseLeft();
                 if (MovingRight) 
-                    UpdateRight();
+                    UpdateRight(strength);
                 else
-                    MoveRight();
+                    MoveRight(strength);
             }
 
             if (released && jump && Jumping)

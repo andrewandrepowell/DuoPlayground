@@ -60,6 +60,7 @@ namespace Duo.Utilities.Physics
         private Vector2 _moveForce;
         private float _moveTimer;
         private float _moveTimerMax;
+        private float _moveStrength;
         private const float _moveMoveTimerMax = 2f;
         private const float _moveStillTimerMax = 1f;
         private const float _groundTimerMax = 0.25f; // seconds
@@ -264,33 +265,41 @@ namespace Duo.Utilities.Physics
             }
             Debug.Assert(_initialized);
         }
-        public void MoveLeft()
+        public void MoveLeft(float strength = 1.0f)
         {
             Debug.Assert(_initialized);
             Debug.Assert(!Moving);
+            Debug.Assert(strength >= 0.0f && strength <= 1.0f);
             _moving = true;
             _moveDirection = Directions.Left;
             _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
+            _moveStrength = strength;
         }
-        public void UpdateLeft()
+        public void UpdateLeft(float strength = 1.0f)
         {
             Debug.Assert(_initialized);
             Debug.Assert(MovingLeft);
+            Debug.Assert(strength >= 0.0f && strength <= 1.0f);
+            _moveStrength = strength;
         }
-        public void MoveRight()
+        public void MoveRight(float strength = 1.0f)
         {
             Debug.Assert(_initialized);
             Debug.Assert(!Moving);
+            Debug.Assert(strength >= 0.0f && strength <= 1.0f);
             _moving = true;
             _moveDirection = Directions.Right;
             _moveTimerMax = _moveMoveTimerMax;
             _moveTimer = _moveTimerMax;
+            _moveStrength = strength;
         }
-        public void UpdateRight()
+        public void UpdateRight(float strength = 1.0f)
         {
             Debug.Assert(_initialized);
             Debug.Assert(MovingRight);
+            Debug.Assert(strength >= 0.0f && strength <= 1.0f);
+            _moveStrength = strength;
         }
         public void ReleaseMove()
         {
@@ -505,7 +514,7 @@ namespace Duo.Utilities.Physics
                 }
                 else if (Moving)
                 {
-                    var magnitude = _baseMovement * MathHelper.Lerp(6f, 1, speedValue) * (1 - timerRatio);
+                    var magnitude = _baseMovement * MathHelper.Lerp(6f, 1, speedValue) * (1 - timerRatio) * _moveStrength;
                     force = direction * magnitude;
                     _moveForce = _moveForceAverager.Get();
                 }

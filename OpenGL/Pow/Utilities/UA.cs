@@ -56,7 +56,7 @@ namespace Pow.Utilities.UA
             _userAction.UpdateUserAction(
                 actionId: _parent.GetAction(key),
                 buttonState: buttonState,
-                strength: 0);
+                strength: (buttonState == ButtonStates.Pressed) ? 1 : 0);
         }
 
         public void UpdateControl(ButtonStates buttonState, Buttons button)
@@ -65,16 +65,14 @@ namespace Pow.Utilities.UA
             _userAction.UpdateUserAction(
                 actionId: _parent.GetAction(button),
                 buttonState: buttonState,
-                strength: 0);
+                strength: (buttonState == ButtonStates.Pressed)?1:0);
         }
         public void UpdateControl(Directions thumbstick, Vector2 position)
         {
             Debug.Assert(_initialized);
             var node = _parent.GetAction(thumbstick, position);
             var prevThumbstickActionId = _prevThumbstickActionIds.GetValueOrDefault(thumbstick, -1);
-            if (prevThumbstickActionId == node.ActionId)
-                return;
-            if (prevThumbstickActionId >= 0)
+            if (prevThumbstickActionId >= 0 && prevThumbstickActionId != node.ActionId)
                 _userAction.UpdateUserAction(
                     actionId: prevThumbstickActionId,
                     buttonState: ButtonStates.Released,

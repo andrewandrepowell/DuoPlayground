@@ -48,27 +48,27 @@ namespace Duo.Managers
         public bool Moving => _characterPhysics.Moving;
         public bool Jumping => _characterPhysics.Jumping;
         public bool Grounded => _characterPhysics.Grounded;
-        public void MoveLeft()
+        public void MoveLeft(float strength = 1.0f)
         {
-            _characterPhysics.MoveLeft();
+            _characterPhysics.MoveLeft(strength);
             Direction = Directions.Left;
         }
-        public void UpdateLeft()
+        public void UpdateLeft(float strength = 1.0f)
         {
-            _characterPhysics.UpdateLeft();
+            _characterPhysics.UpdateLeft(strength);
         }
         public void ReleaseLeft()
         {
             _characterPhysics.ReleaseMove();
         }
-        public void MoveRight()
+        public void MoveRight(float strength = 1.0f)
         {
-            _characterPhysics.MoveRight();
+            _characterPhysics.MoveRight(strength);
             Direction = Directions.Right;
         }
-        public void UpdateRight()
+        public void UpdateRight(float strength = 1.0f)
         {
-            _characterPhysics.UpdateRight();
+            _characterPhysics.UpdateRight(strength);
         }
         public void ReleaseRight()
         {
