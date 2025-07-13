@@ -38,9 +38,8 @@ namespace Duo.Managers
         public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
         public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
         {
-            if (Pow.Globals.GamePaused) return;
-
-            Debug.Print($"Strength: {strength}");
+            if (Pow.Globals.GamePaused) 
+                return;
 
             var control = (Controls)actionId;
             var left = control == Controls.MoveLeft;
