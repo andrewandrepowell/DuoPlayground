@@ -18,7 +18,11 @@ namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2 }
-    internal enum Sprites { Cat, Pixel, Platform, Background, PurpleHillsBackground }
+    internal enum Sprites 
+    { 
+        Cat, Pixel, Platform, Background, PurpleHillsBackground,
+        TreeRoot
+    }
     internal enum Animations 
     { 
         CatWalk, CatIdle, CatJump, CatFall, CatLand, 
@@ -27,10 +31,11 @@ namespace Duo.Data
         Background, PurpleHillsSkyBox, 
         PurpleHillsFarClouds, PurpleHillsMidClouds, 
         PurpleHillsFarMountains, PurpleHillsMidMountains, PurpleHillsCloseMountains,
-        PurpleHillsFarTrees, PurpleHillsMidTrees
+        PurpleHillsFarTrees, PurpleHillsMidTrees,
+        TreeRootIdle, TreeRootDeath
     }
-    internal enum Boxes { Cat }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, HUD, MainMenu, Dimmer, Background }
+    internal enum Boxes { Cat, Root }
+    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, Key, HUD, MainMenu, Dimmer, Background }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -201,6 +206,29 @@ namespace Duo.Data
                 indices: [7],
                 period: 0,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.TreeRoot,
+                assetName: "images/root_0",
+                regionSize: new(192, 160),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TreeRootIdle,
+                spriteId: (int)Sprites.TreeRoot,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TreeRootDeath,
+                spriteId: (int)Sprites.TreeRoot,
+                spriteAnimationId: 1,
+                indices: Enumerable.Range(0, 15).ToArray(),
+                period: 0.1f,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -219,6 +247,11 @@ namespace Duo.Data
                 new AnimationComponent(),
                 new PhysicsComponent(), 
                 new GOCustomComponent<Surface>()));
+            runner.AddEntityType((int)EntityTypes.Key, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new PhysicsComponent(),
+                new GOCustomComponent<Key>()));
             runner.AddEntityType((int)EntityTypes.HUD, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
@@ -241,6 +274,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Managers.Camera>();
             runner.AddGOCustomManager<Cat>();
             runner.AddGOCustomManager<Surface>();
+            runner.AddGOCustomManager<Key>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<MainMenu>();
             runner.AddGOCustomManager<Dimmer>();
@@ -252,6 +286,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Managers.Camera>(EntityTypes.Camera);
             duoRunner.AddEnvironment<Cat>(EntityTypes.Cat);
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
+            duoRunner.AddEnvironment<Key>(EntityTypes.Key);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
@@ -260,6 +295,9 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
                 assetName: "tiled/cat_boxes_0");
+            duoRunner.BoxesGenerator.Configure(
+                id: (int)Boxes.Root,
+                assetName: "tiled/root_boxes_0");
             // Controls - Actions
             duoRunner.UAGenerator.Configure((int)Controls.Menu);
             duoRunner.UAGenerator.Configure((int)Controls.Interact);

@@ -100,6 +100,7 @@ namespace Duo.Managers
                     var fixture = new Fixture(edgeShape);
                     fixture.Friction = 0.2f;
                     fixture.Restitution = 0.0f;
+                    fixture.CollisionCategories = Category.Cat1;
                     var fixtureNode = new FixtureNode(Normal: normal);
                     _fixtureNodes.Add(fixture, fixtureNode);
                     body.Add(fixture);
@@ -132,7 +133,8 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
-
+            if (Pow.Globals.GamePaused)
+                return;
             if (_mode == Modes.Move)
             {
                 var dest = _moveDests[_moveState];
@@ -153,7 +155,6 @@ namespace Duo.Managers
 
                 var direction = vectorToDest / distanceToDest;
                 _body.LinearVelocity = direction * v2 * timeElapsed * 50;
-                //_body.ApplyForce(forceMagnitude * direction);
             }
         }
     }

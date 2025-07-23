@@ -176,6 +176,7 @@ namespace Duo.Utilities.Physics
                     var fixture = new Fixture(shape);
                     fixture.Friction = (boxType == BoxTypes.Collide)?_stillFriction:0;
                     fixture.IsSensor = isSensor;
+                    fixture.CollisionCategories = Category.Cat1;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
                         Direction: direction);
@@ -244,9 +245,15 @@ namespace Duo.Utilities.Physics
         private bool BeginContact(Contact contact)
         {
             Debug.Assert(_initialized);
-            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && otherFixture.Body.Tag is Surface)
+            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && 
+                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable))
             {
-                Debug.Assert(otherFixture.Shape is EdgeShape);
+#if DEBUG
+                if (otherFixture.Body.Tag is Surface)
+                    Debug.Assert(otherFixture.Shape is EdgeShape);
+                if (otherFixture.Body.Tag is Interactable)
+                    Debug.Assert(otherFixture.Shape is PolygonShape);
+#endif
                 var boxNode = _fixtureToBoxNodeMap[thisFixture];
                 var bin = _fixtureBins[boxNode];
                 Debug.Assert(!bin.Contains(otherFixture));
@@ -256,7 +263,8 @@ namespace Duo.Utilities.Physics
         }
         private void EndContact(Contact contact)
         {
-            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && otherFixture.Body.Tag is Surface)
+            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) &&
+                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable))
             {
                 var boxNode = _fixtureToBoxNodeMap[thisFixture];
                 var bin = _fixtureBins[boxNode];
@@ -373,6 +381,8 @@ namespace Duo.Utilities.Physics
                     var total = Vector2.Zero;
                     foreach (var fixture in _fixtureBins[groundBoxNode])
                     {
+                        if (fixture.Body.Tag is not Surface)
+                            continue;
                         var surface = (Surface)fixture.Body.Tag;
                         var fixtureNode = surface.GetFixtureNode(fixture);
                         var normal = fixtureNode.Normal;
@@ -402,6 +412,15 @@ namespace Duo.Utilities.Physics
                         x: (float)System.Math.Cos(newRads),
                         y: (float)System.Math.Sin(newRads));
                     _groundNormal = newNorm;
+                }
+            }
+
+            // Perform interactions with interactables.
+            {
+                foreach (var fixture in _fixtureCollideBins[groundBoxNode])
+                {
+                    if (fixture.Body.Tag is Key key && key.Action == Interactable.Actions.Waiting)
+                        key.Interact();
                 }
             }
 
@@ -458,6 +477,8 @@ namespace Duo.Utilities.Physics
                     bool rightVaultableExists = false;
                     foreach (var fixture in _fixtureCollideBins[new(BoxTypes.Vault, Directions.Left)])
                     {
+                        if (fixture.Body.Tag is not Surface)
+                            continue;
                         var surface = (Surface)fixture.Body.Tag;
                         var fixtureNode = surface.GetFixtureNode(fixture);
                         var normal = fixtureNode.Normal;
@@ -472,6 +493,8 @@ namespace Duo.Utilities.Physics
                     // Determine if there's a vaultable surface on the right.
                     foreach (var fixture in _fixtureCollideBins[new(BoxTypes.Vault, Directions.Right)])
                     {
+                        if (fixture.Body.Tag is not Surface)
+                            continue;
                         var surface = (Surface)fixture.Body.Tag;
                         var fixtureNode = surface.GetFixtureNode(fixture);
                         var normal = fixtureNode.Normal;
