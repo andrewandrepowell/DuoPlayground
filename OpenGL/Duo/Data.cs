@@ -32,7 +32,7 @@ namespace Duo.Data
         PurpleHillsFarClouds, PurpleHillsMidClouds, 
         PurpleHillsFarMountains, PurpleHillsMidMountains, PurpleHillsCloseMountains,
         PurpleHillsFarTrees, PurpleHillsMidTrees,
-        TreeRootIdle, TreeRootDeath
+        TreeRootIdle, TreeRootDeath, TreeRootTwitch
     }
     internal enum Boxes { Cat, Root }
     public enum EntityTypes { DuoRunner, Camera, Surface, Cat, Key, HUD, MainMenu, Dimmer, Background }
@@ -227,6 +227,13 @@ namespace Duo.Data
                 spriteId: (int)Sprites.TreeRoot,
                 spriteAnimationId: 1,
                 indices: Enumerable.Range(0, 15).ToArray(),
+                period: 0.1f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TreeRootTwitch,
+                spriteId: (int)Sprites.TreeRoot,
+                spriteAnimationId: 2,
+                indices: Enumerable.Range(15, 12).ToArray(),
                 period: 0.1f,
                 repeat: false);
             // entities

@@ -6,6 +6,7 @@ using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using Pow.Components;
 using Pow.Utilities;
+using Pow.Utilities.Animations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,22 +18,26 @@ namespace Duo.Managers
 {
     internal abstract class Interactable : DuoObject
     {
+        private AnimationGroupManager _animationGroupManager;
         private Actions _action;
         private Fixture _fixture;
-        protected abstract IReadOnlyDictionary<Actions, Animations> ActionAnimationMap { get; }
+        protected abstract IReadOnlyDictionary<Actions, int> ActionAnimationGroupMap { get; }
         protected abstract Boxes Boxes { get; }
         private void UpdateAction(Actions action)
         {
-            if (ActionAnimationMap.TryGetValue(action, out var animation))
+            if (ActionAnimationGroupMap.TryGetValue(action, out var groupId))
             {
                 var animationManager = AnimationManager;
-                animationManager.Play((int)animation);
+                _animationGroupManager.Play(groupId);
             }
             _action = action;
         }
         protected virtual bool FinishedInteracting => !AnimationManager.Running;
         public enum Actions { Waiting, Interacting, Interacted }
         public Actions Action => _action;
+        protected virtual void Initialize(AnimationGroupManager manager)
+        {
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -52,6 +57,11 @@ namespace Duo.Managers
                 body.Add(fixture);
                 _fixture = fixture; // Will use to disable and enable collisions.
                 body.Position = (node.Vertices.Average() + node.Position) / Globals.PixelsPerMeter;
+            }
+            {
+                _animationGroupManager = new(AnimationManager);
+                Initialize(manager: _animationGroupManager);
+                _animationGroupManager.Initialize();
             }
             UpdateAction(Actions.Waiting);
         }
@@ -74,6 +84,7 @@ namespace Duo.Managers
                 return;
             if (Action == Actions.Interacting && FinishedInteracting)
                 FinishInteracting();
+            _animationGroupManager.Update();
         }
     }
 }

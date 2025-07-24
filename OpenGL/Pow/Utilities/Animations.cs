@@ -66,7 +66,7 @@ namespace Pow.Utilities.Animations
             var sprite = spriteNode.Sprite;
             sprite.Color = _color * _visibility;
         }
-        public IReadOnlyList<IFeature> Features => _features;
+        public List<IFeature> Features => _features;
         public int AnimationId
         {
             get
