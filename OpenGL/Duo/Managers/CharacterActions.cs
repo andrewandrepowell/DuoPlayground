@@ -21,6 +21,10 @@ namespace Duo.Managers
         }
         private void InitializeAction()
         {
+            {
+                var animationManager = AnimationManager;
+                animationManager.Layer = Layer;
+            }
             UpdateAction(Actions.Idle);
         }
         public enum Actions { Walk, Idle, Jump, Fall, Land }

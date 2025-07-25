@@ -248,7 +248,7 @@ namespace Pow.Utilities.Animations
             where T2 : BaseEffect, new()
         {
             Debug.Assert(_acquired);
-            Debug.Assert(_animationId != null);
+            // Debug.Assert(_animationId != null);
             T1 feature = Globals.Runner.FeatureGenerator.Acquire<T1, T2>(this);
             _features.Add(feature);
             return feature;

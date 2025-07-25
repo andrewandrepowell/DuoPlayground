@@ -30,6 +30,7 @@ namespace Duo.Managers
         });
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;
+        protected override Layers Layer => Layers.Protag;
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;

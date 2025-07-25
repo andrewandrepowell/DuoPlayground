@@ -1,4 +1,5 @@
 ﻿using Duo.Data;
+using Pow.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace Duo.Managers
     {
         protected abstract IReadOnlyDictionary<Actions, Animations> ActionAnimationMap { get; }
         protected abstract Boxes Boxes { get; }
+        protected virtual Layers Layer => Layers.Ground;
     }
 }

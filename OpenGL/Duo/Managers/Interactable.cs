@@ -1,5 +1,6 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
+using Duo.Utilities.Shaders;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Common;
@@ -23,6 +24,8 @@ namespace Duo.Managers
         private Fixture _fixture;
         protected abstract IReadOnlyDictionary<Actions, int> ActionAnimationGroupMap { get; }
         protected abstract Boxes Boxes { get; }
+        protected virtual Layers Layer => Layers.Ground;
+        protected virtual Color GlowColor => Color.Gold;
         private void UpdateAction(Actions action)
         {
             if (ActionAnimationGroupMap.TryGetValue(action, out var groupId))
@@ -59,9 +62,18 @@ namespace Duo.Managers
                 body.Position = (node.Vertices.Average() + node.Position) / Globals.PixelsPerMeter;
             }
             {
+                var animationManager = AnimationManager;
+                animationManager.Layer = Layer;
+            }
+            {
                 _animationGroupManager = new(AnimationManager);
                 Initialize(manager: _animationGroupManager);
                 _animationGroupManager.Initialize();
+            }
+            {
+                var pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
+                pulseGlowFeature.Color = GlowColor;
+                pulseGlowFeature.Layer = Layer;
             }
             UpdateAction(Actions.Waiting);
         }
