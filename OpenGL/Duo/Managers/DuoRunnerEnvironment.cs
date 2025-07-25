@@ -21,6 +21,7 @@ namespace Duo.Managers
         private readonly Queue<Environment> _removeEnvironments = [];
         private readonly Dictionary<EntityTypes, IGetEnvironment<Environment>> _entityTypeGetEnvironments = [];
         private readonly List<Environment> _environments = [];
+        private readonly ListEnumerable<Environment> _environmentsEnumerable;
         private interface IGetEnvironment<out T> where T : Environment
         {
             public T GetEnvironment(in Entity entity);
@@ -45,7 +46,7 @@ namespace Duo.Managers
                 environment.Initialize(node);
             }
         }
-        public IReadOnlyList<Environment> Environments => _environments;
+        public ListEnumerable<Environment> Environments => _environmentsEnumerable;
         public void AddEnvironment<T>(EntityTypes entityType) where T : Environment
         {
             Debug.Assert(!_initialized);

@@ -28,7 +28,7 @@ namespace Duo.Managers
                 group: new PlayIdleGroup(
                     primaryAnimationId: (int)Animations.TreeRootIdle,
                     minWait: 2,
-                    maxWait: 8,
+                    maxWait: 4,
                     secondaryAnimationIds: [(int)Animations.TreeRootTwitch]));
             manager.Configure(
                 groupId: (int)AnimationGroups.Death,

@@ -20,6 +20,10 @@ namespace Duo.Managers
             _parent = parent;
             _parentInitialized = true;
         }
+        public DuoRunner()
+        {
+            _environmentsEnumerable = new(_environments);
+        }
         public override void Initialize() 
         {
             base.Initialize();

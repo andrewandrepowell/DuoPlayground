@@ -12,13 +12,14 @@ using Pow.Utilities.Shaders;
 
 namespace Pow.Utilities.Animations
 {
-    public class AnimationManager(AnimationGenerator parent) : IGOManager, IParent
+    public class AnimationManager : IGOManager, IParent
     {
         private bool _acquired = false;
-        private readonly AnimationGenerator _parent = parent;
+        private readonly AnimationGenerator _parent;
         private readonly Dictionary<int, SpriteNode> _spriteNodes = [];
         private readonly Dictionary<int, AnimationNode> _animationNodes = [];
         private readonly List<IFeature> _features = [];
+        private readonly ListEnumerable<IFeature> _featuresEnumerable;
         private AnimationNode _animationNode;
         private int? _animationId = null;
         private Vector2 _position;
@@ -66,7 +67,12 @@ namespace Pow.Utilities.Animations
             var sprite = spriteNode.Sprite;
             sprite.Color = _color * _visibility;
         }
-        public List<IFeature> Features => _features;
+        public AnimationManager(AnimationGenerator parent)
+        {
+            _parent = parent;
+            _featuresEnumerable = new(_features);
+        }
+        public ListEnumerable<IFeature> Features => _featuresEnumerable;
         public int AnimationId
         {
             get
