@@ -20,7 +20,7 @@ static const int BlurWidth = BlurRadius * 2 + 1;
 static const int BlurArea = BlurWidth * BlurWidth;
 static const float GausSpread = 5.0f;
 static const float OffsetSpread = 3.0f;
-static const float Brighten = 1.0f;
+static const float Brighten = 0.5f;
 static const float Speed = 4.0f;
 static const float HalfSpeed = Speed / 2.0f;
 
