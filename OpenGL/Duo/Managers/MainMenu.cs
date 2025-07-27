@@ -20,7 +20,7 @@ namespace Duo.Managers
 {
     internal class MainMenu : GumObject, IUserAction, IControl
     {
-        private bool _initialized;
+        private bool _initialized = false;
         private string _dimmerID;
         private mainView _view;
         private Dimmer _dimmer;
@@ -37,6 +37,7 @@ namespace Duo.Managers
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
+            Debug.Assert(!_initialized);
             _view = new mainView();
             var menu = _view.menu;
             menu.resume.Click += (object? sender, EventArgs e) => Close();
@@ -53,16 +54,22 @@ namespace Duo.Managers
             _uaManager.Initialize(this);
             _time = 0;
             _state = RunningStates.Waiting;
+        }
+        public override void Cleanup()
+        {
+            Debug.Assert(_initialized);
             _initialized = false;
+            base.Cleanup();
         }
         public override void Update()
         {
             base.Update();
 
-            if (_dimmer == null)
+            if (!_initialized)
+            {
                 _dimmer = Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
-            if (_dimmer != null && !_initialized)
                 _initialized = true;
+            }    
 
             if (_state == RunningStates.Starting)
                 GumManager.Visibility = MathHelper.Lerp(1, 0, _time / _period);

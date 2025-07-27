@@ -83,7 +83,7 @@ namespace Duo.Managers
             _fixture.CollisionCategories = Category.None;
             UpdateAction(Actions.Interacting);
         }
-        public virtual void FinishInteracting()
+        protected virtual void FinishInteracting()
         {
             Debug.Assert(Action == Actions.Interacting);
             _fixture.CollisionCategories = Category.None;

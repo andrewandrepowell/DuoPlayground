@@ -111,6 +111,18 @@
 /processorParam:TextureFormat=Color
 /build:images/root_0.png
 
+#begin images/root_blockage_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/root_blockage_0.png
+
 #begin images/test_ball_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -144,6 +156,16 @@
 /importer:TiledMapTilesetImporter
 /processor:TiledMapTilesetProcessor
 /build:tiled/cat_tileset_0.tsx
+
+#begin tiled/root_blockage_0.tsx
+/importer:TiledMapTilesetImporter
+/processor:TiledMapTilesetProcessor
+/build:tiled/root_blockage_0.tsx
+
+#begin tiled/root_blockage_boxes_0.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/root_blockage_boxes_0.tmx
 
 #begin tiled/root_boxes_0.tmx
 /importer:TiledMapImporter
