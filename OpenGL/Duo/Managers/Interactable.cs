@@ -26,6 +26,7 @@ namespace Duo.Managers
         protected abstract Boxes Boxes { get; }
         protected virtual Layers Layer => Layers.Ground;
         protected virtual Color GlowColor => Color.Gold;
+        protected virtual bool DirectlyInteractable => true;
         private void UpdateAction(Actions action)
         {
             if (ActionAnimationGroupMap.TryGetValue(action, out var groupId))
@@ -70,6 +71,7 @@ namespace Duo.Managers
                 Initialize(manager: _animationGroupManager);
                 _animationGroupManager.Initialize();
             }
+            if (DirectlyInteractable)
             {
                 var pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
                 pulseGlowFeature.Color = GlowColor;

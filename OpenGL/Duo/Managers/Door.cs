@@ -19,6 +19,7 @@ namespace Duo.Managers
         });
         protected override IReadOnlyDictionary<Actions, int> ActionAnimationGroupMap => _actionAnimationGroupMap;
         protected override Boxes Boxes => Boxes.RootBlockage;
+        protected override bool DirectlyInteractable => false;
         protected override void Initialize(AnimationGroupManager manager)
         {
             base.Initialize(manager);
