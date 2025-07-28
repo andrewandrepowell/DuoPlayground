@@ -16,19 +16,22 @@ namespace Duo.Utilities.Shaders
         private readonly Effect _effect;
         private readonly EffectParameter _spriteTextureDimensionsEP;
         private readonly EffectParameter _colorEP;
-        private readonly EffectParameter _gameTimeSecondsEP;
+        private readonly EffectParameter _periodEP;
+        private readonly EffectParameter _timeEP;
         private SizeF _spriteSize;
         private Color _color;
-        private float _gameTimeSeconds;
+        private float _period;
+        private float _time;
         public override Effect Effect => _effect;
         public PulseGlowEffect()
         {
             _effect = Pow.Globals.Game.Content.Load<Effect>("effects/pulse_glow_0");
             _spriteTextureDimensionsEP = _effect.Parameters["SpriteTextureDimensions"];
+            _periodEP = _effect.Parameters["Period"];
             _colorEP = _effect.Parameters["Color"];
-            _gameTimeSecondsEP = _effect.Parameters["GameTimeSeconds"];
+            _timeEP = _effect.Parameters["Time"];
         }
-        public void Configure(SizeF spriteSize, Color color)
+        public void Configure(SizeF spriteSize, Color color, float time, float period)
         {
             if (spriteSize != _spriteSize)
             {
@@ -40,11 +43,15 @@ namespace Duo.Utilities.Shaders
                 _color = color;
                 _colorEP.SetValue(color.ToVector4());
             }
-            var gameTimeSeconds = (float)Pow.Globals.GameTime.TotalGameTime.TotalSeconds;
-            if (gameTimeSeconds != _gameTimeSeconds)
+            if (_period != period)
             {
-                _gameTimeSeconds = gameTimeSeconds;
-                _gameTimeSecondsEP.SetValue(gameTimeSeconds);
+                _period = period;
+                _periodEP.SetValue(period);
+            }
+            if (_time != time)
+            {
+                _time = time;
+                _timeEP.SetValue(time);
             }
         }
     }

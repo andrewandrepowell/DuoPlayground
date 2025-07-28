@@ -21,12 +21,11 @@ static const int BlurArea = BlurWidth * BlurWidth;
 static const float GausSpread = 5.0f;
 static const float OffsetSpread = 3.0f;
 static const float Brighten = 0.5f;
-static const float Speed = 4.0f;
-static const float HalfSpeed = Speed / 2.0f;
 
 float2 SpriteTextureDimensions;
 float4 Color;
-float GameTimeSeconds;
+float Period;
+float Time;
 
 
 float reduce(float x, int n)
@@ -56,10 +55,11 @@ float average(float3 color)
 
 float pulse()
 {
-    float v0 = wrap(GameTimeSeconds, Speed);
-    if (v0 >= HalfSpeed)
-        return (Speed - v0) / HalfSpeed;
-    return v0 / HalfSpeed;
+    float v0 = wrap(Time, Period);
+    float halfPeriod = Period / 2.0f;
+    if (v0 >= halfPeriod)
+        return (Period - v0) / halfPeriod;
+    return v0 / halfPeriod;
 }
 
 struct VertexShaderOutput

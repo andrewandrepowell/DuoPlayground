@@ -22,6 +22,7 @@ namespace Pow.Utilities.Shaders
         public float Visibility { get; }
         public float Scale { get; }
         public float Rotation { get; }
+        public bool Running { get; }
         public void UpdateEffect();
         public void Update();
     }
@@ -62,6 +63,7 @@ namespace Pow.Utilities.Shaders
         public virtual float Visibility => 0;
         public virtual float Scale => 0;
         public virtual float Rotation => 0;
+        public virtual bool Running => true;
         public virtual void UpdateEffect()
         {
             Debug.Assert(_initialized);
@@ -76,13 +78,23 @@ namespace Pow.Utilities.Shaders
             _generator = generator;
             _effect = effect;
             _parent = parent;
+            Initialize();
             _initialized = true;
         }
-        public virtual void Return()
+        public void Return()
         {
             Debug.Assert(_initialized);
+            Cleanup();
             _generator.Return(this);
             _initialized = false;
+        }
+        protected virtual void Initialize()
+        {
+            Debug.Assert(!_initialized);
+        }
+        protected virtual void Cleanup()
+        {
+            Debug.Assert(_initialized);
         }
     }
 }

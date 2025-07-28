@@ -93,6 +93,7 @@ namespace Pow.Systems
                                     {
                                         foreach (var feature in manager.Features)
                                         {
+                                            if (!feature.Running) continue;
                                             feature.UpdateEffect();
                                             spriteBatch.Begin(transformMatrix: view, effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
                                             manager.Draw();
@@ -105,6 +106,7 @@ namespace Pow.Systems
                                     {
                                         foreach (var feature in manager.Features)
                                         {
+                                            if (!feature.Running) continue;
                                             feature.UpdateEffect();
                                             spriteBatch.Begin(effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
                                             manager.Draw();

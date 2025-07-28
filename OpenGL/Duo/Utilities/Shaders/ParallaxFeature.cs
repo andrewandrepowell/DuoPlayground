@@ -23,6 +23,7 @@ namespace Duo.Utilities.Shaders
         {
             Debug.Assert(!_initialized);
             _parallaxParent = parallaxParent;
+            _parallaxPosition = Vector2.Zero;
             _initialized = true;
         }
         public override void UpdateEffect()
@@ -37,9 +38,8 @@ namespace Duo.Utilities.Shaders
                     width: Parent.Texture.Width, 
                     height: Parent.Texture.Height));
         }
-        public override void Return()
+        protected override void Cleanup()
         {
-            base.Return();
             Debug.Assert(_initialized);
             _initialized = false;
         }

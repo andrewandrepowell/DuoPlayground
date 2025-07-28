@@ -22,6 +22,7 @@ namespace Duo.Managers
         private AnimationGroupManager _animationGroupManager;
         private Actions _action;
         private Fixture _fixture;
+        private PulseGlowFeature _pulseGlowFeature;
         protected abstract IReadOnlyDictionary<Actions, int> ActionAnimationGroupMap { get; }
         protected abstract Boxes Boxes { get; }
         protected virtual Layers Layer => Layers.Ground;
@@ -73,9 +74,10 @@ namespace Duo.Managers
             }
             if (DirectlyInteractable)
             {
-                var pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
-                pulseGlowFeature.Color = GlowColor;
-                pulseGlowFeature.Layer = Layer;
+                _pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
+                _pulseGlowFeature.Color = GlowColor;
+                _pulseGlowFeature.Layer = Layer;
+                _pulseGlowFeature.Start();
             }
             UpdateAction(Actions.Waiting);
         }
@@ -89,6 +91,11 @@ namespace Duo.Managers
         {
             Debug.Assert(Action == Actions.Interacting);
             _fixture.CollisionCategories = Category.None;
+            if (DirectlyInteractable)
+            {
+                Debug.Assert(_pulseGlowFeature != null);
+                _pulseGlowFeature.Stop();
+            }
             UpdateAction(Actions.Interacted);
         }
         public override void Update()
