@@ -155,6 +155,14 @@ namespace Pow.Utilities.Animations
                 UpdateSpriteColor();
             }
         }
+        public RectangleF Bounds
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Bounds;
+            }
+        }
         public Layers Layer { get => _layer; set => _layer = value; }
         public PositionModes PositionMode { get => _positionMode; set => _positionMode = value; }
         public bool Pauseable { get => _pauseable; set => _pauseable = value; }
@@ -248,7 +256,6 @@ namespace Pow.Utilities.Animations
             where T2 : BaseEffect, new()
         {
             Debug.Assert(_acquired);
-            // Debug.Assert(_animationId != null);
             T1 feature = Globals.Runner.FeatureGenerator.Acquire<T1, T2>(this);
             _features.Add(feature);
             return feature;
@@ -335,6 +342,8 @@ namespace Pow.Utilities.Animations
         private int _frame, _index;
         private bool _running = false;
         private Vector2 _origin;
+        private RectangleF _bounds;
+        private Vector2 _position;
         private record Node(int[] Indices, float Period, bool Repeat);
         public Sprite(string assetName, Size regionSize)
         {
@@ -358,6 +367,11 @@ namespace Pow.Utilities.Animations
             }
 
             _origin = (regionSize / 2).ToVector2();
+            _bounds = new(
+                x: -_origin.X,
+                y: -_origin.Y,
+                width: regionSize.Width,
+                height: regionSize.Height);
         }
         public void Configure(int id, int[] indices, float period = 0, bool repeat = false)
         {
@@ -387,7 +401,18 @@ namespace Pow.Utilities.Animations
         public int Frame => _frame;
         public ref Vector2 Origin => ref _origin;
         public Color Color = Color.White;
-        public Vector2 Position;
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                if (_position == value)
+                    return;
+                _position = value;
+                _bounds.Position = value - _origin;
+            }
+        }
+        public ref RectangleF Bounds => ref _bounds;
         public Vector2 Scale = new(1, 1);
         public float Rotation = 0;
         public SpriteEffects SpriteEffect = SpriteEffects.None;
