@@ -1,19 +1,20 @@
-﻿using Duo.Data;
-using Microsoft.Xna.Framework.Input;
+﻿using Arch.Core.Extensions;
+using Duo.Data;
+using Duo.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using nkast.Aether.Physics2D.Dynamics;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Control;
 using Pow.Utilities.UA;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Arch.Core.Extensions;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Duo.Utilities;
 
 namespace Duo.Managers
 {
@@ -31,6 +32,7 @@ namespace Duo.Managers
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;
         protected override Layers Layer => Layers.Protag;
+        protected override Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => ContactInteractable;
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -77,6 +79,13 @@ namespace Duo.Managers
                 ReleaseJump();
             if (pressed && jump && Grounded && !Jumping)
                 Jump();
+        }
+        private void ContactInteractable(in Utilities.Physics.Character.BoxNode boxNode, Interactable interactable)
+        {
+            if (boxNode.BoxType == BoxTypes.Ground && 
+                interactable is Key key && 
+                key.Action == Interactable.Actions.Waiting)
+                key.Interact();
         }
         public override void Initialize(PolygonNode node)
         {

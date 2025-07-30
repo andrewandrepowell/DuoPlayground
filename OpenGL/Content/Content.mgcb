@@ -69,6 +69,18 @@
 /processorParam:TextureFormat=Color
 /build:images/cat_0.png
 
+#begin images/collectibles_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/collectibles_0.png
+
 #begin images/pixel_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -162,6 +174,11 @@
 /importer:TiledMapTilesetImporter
 /processor:TiledMapTilesetProcessor
 /build:tiled/cat_tileset_0.tsx
+
+#begin tiled/collectible_boxes_0.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/collectible_boxes_0.tmx
 
 #begin tiled/root_blockage_0.tsx
 /importer:TiledMapTilesetImporter

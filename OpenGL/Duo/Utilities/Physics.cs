@@ -1,17 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Duo.Data;
+using Duo.Managers;
+using Microsoft.Xna.Framework;
+using MonoGame.Extended;
+using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Contacts;
-using nkast.Aether.Physics2D.Collision.Shapes;
+using Pow.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pow.Utilities;
-using System.Diagnostics;
-using Duo.Data;
-using Duo.Managers;
-using MonoGame.Extended;
 
 namespace Duo.Utilities.Physics
 {
@@ -44,7 +44,6 @@ namespace Duo.Utilities.Physics
         private Vector2 _groundNormal;
         private const float _groundNormalUpdateThreshold = 0.80f; // dot product of normals
         private Body _body;
-        private readonly record struct BoxNode(BoxTypes BoxType, Directions? Direction);
         private readonly Dictionary<Fixture, BoxNode> _fixtureToBoxNodeMap = [];
         private readonly Dictionary<BoxNode, Fixture> _boxNodeToFixtureMap = [];
         private readonly record struct ContactNode(BoxNode BoxNode, Fixture OtherFixture);
@@ -71,7 +70,8 @@ namespace Duo.Utilities.Physics
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
         private bool _vaultReady;
-        
+        private ServiceInteractableContact _serviceInteractableContact;
+
         private void UpdateCollideFriction(float friction)
         {
             var fixture = _boxNodeToFixtureMap[new(BoxTypes.Collide, null)];
@@ -86,6 +86,8 @@ namespace Duo.Utilities.Physics
                 contactEdge = contactEdge.Next;
             }
         }
+        public readonly record struct BoxNode(BoxTypes BoxType, Directions? Direction);
+        public delegate void ServiceInteractableContact(in BoxNode boxNode, Interactable interactable);
         public float UpSpeed
         {
             get
@@ -147,7 +149,7 @@ namespace Duo.Utilities.Physics
                 return _jumpTimerValue > 0;
             }
         }
-        public void Initialize(Body body, Boxes boxes)
+        public void Initialize(Body body, Boxes boxes, ServiceInteractableContact serviceInteractableContact = null)
         {
             Debug.Assert(!_initialized);
             {
@@ -213,6 +215,7 @@ namespace Duo.Utilities.Physics
                 _fallGravityTimer = 0;
                 _vaultReady = true;
                 _moveForceAverager.Clear();
+                _serviceInteractableContact = serviceInteractableContact;
             }
             _initialized = true;
         }
@@ -346,7 +349,7 @@ namespace Duo.Utilities.Physics
 
             // Update the fixture collide bins.
             // The collide bins indicate surface contacts on both collider and ground fixtures.
-            {
+            { 
                 foreach (ref var boxNode in _boxNodes.AsSpan())
                     _fixtureCollideBins[boxNode].Clear();
                 foreach (var otherFixture in _fixtureBins[collideBoxNode])
@@ -416,12 +419,12 @@ namespace Duo.Utilities.Physics
             }
 
             // Perform interactions with interactables.
+            if (_serviceInteractableContact != null)
             {
-                foreach (var fixture in _fixtureCollideBins[groundBoxNode])
-                {
-                    if (fixture.Body.Tag is Key key && key.Action == Interactable.Actions.Waiting)
-                        key.Interact();
-                }
+                foreach (ref var boxNode in _boxNodes.AsSpan())
+                    foreach (var fixture in _fixtureCollideBins[boxNode])
+                        if (fixture.Body.Tag is Interactable interactable)
+                            _serviceInteractableContact(boxNode: in boxNode, interactable: interactable);
             }
 
             // Update the rotation of the body.

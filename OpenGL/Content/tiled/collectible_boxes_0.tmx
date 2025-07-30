@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="5" height="5" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="2">
+ <objectgroup id="2" name="objects_0">
+  <object id="1" x="32" y="32">
+   <properties>
+    <property name="BoxType" value="Collide"/>
+   </properties>
+   <polygon points="0,0 16,0 16,16 0,16"/>
+  </object>
+ </objectgroup>
+</map>

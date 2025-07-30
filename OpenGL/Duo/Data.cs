@@ -21,7 +21,8 @@ namespace Duo.Data
     internal enum Sprites 
     { 
         Cat, Pixel, Platform, Background, PurpleHillsBackground,
-        TreeRoot, RootBlockage
+        TreeRoot, RootBlockage,
+        Collectibles
     }
     internal enum Animations 
     { 
@@ -33,10 +34,11 @@ namespace Duo.Data
         PurpleHillsFarMountains, PurpleHillsMidMountains, PurpleHillsCloseMountains,
         PurpleHillsFarTrees, PurpleHillsMidTrees,
         TreeRootIdle, TreeRootDeath, TreeRootTwitch,
-        RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch
+        RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch,
+        PineCone
     }
-    internal enum Boxes { Cat, Root, RootBlockage }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, Key, Door, HUD, MainMenu, Dimmer, Background }
+    internal enum Boxes { Cat, Root, RootBlockage, Collectible }
+    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, Key, Door, Collectible, HUD, MainMenu, Dimmer, Background }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -267,6 +269,22 @@ namespace Duo.Data
                 indices: Enumerable.Range(19, 11).ToArray(),
                 period: 0.1f,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Collectibles,
+                assetName: "images/root_blockage_0",
+                regionSize: new(80, 80),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.PineCone,
+                spriteId: (int)Sprites.Collectibles,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -295,6 +313,11 @@ namespace Duo.Data
                 new AnimationComponent(),
                 new PhysicsComponent(),
                 new GOCustomComponent<Door>()));
+            runner.AddEntityType((int)EntityTypes.Collectible, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new PhysicsComponent(),
+                new GOCustomComponent<Collectible>()));
             runner.AddEntityType((int)EntityTypes.HUD, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
@@ -332,6 +355,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
             duoRunner.AddEnvironment<Key>(EntityTypes.Key);
             duoRunner.AddEnvironment<Door>(EntityTypes.Door);
+            duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
@@ -346,6 +370,9 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.RootBlockage,
                 assetName: "tiled/root_blockage_boxes_0");
+            duoRunner.BoxesGenerator.Configure(
+                id: (int)Boxes.Collectible,
+                assetName: "tiled/collectible_boxes_0");
             // Controls - Actions
             duoRunner.UAGenerator.Configure((int)Controls.Menu);
             duoRunner.UAGenerator.Configure((int)Controls.Interact);

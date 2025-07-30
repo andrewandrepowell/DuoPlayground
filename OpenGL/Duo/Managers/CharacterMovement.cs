@@ -21,7 +21,10 @@ namespace Duo.Managers
         private void InitializeMovement(PolygonNode node)
         {
             var body = PhysicsManager.Body;
-            _characterPhysics.Initialize(body: body, boxes: Boxes);
+            _characterPhysics.Initialize(
+                body: body, 
+                boxes: Boxes,
+                serviceInteractableContact: ServiceInteractableContact);
             _characterPhysics.Position = node.Vertices.Average() + node.Position;
         }
         private void CleanupMovement()
