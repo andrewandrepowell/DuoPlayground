@@ -14,6 +14,10 @@ namespace Pow.Utilities.Shaders
     {
         public abstract Effect Effect { get; }
     }
+    public class NullEffect : BaseEffect
+    {
+        public override Effect Effect => null;
+    }
     public interface IFeature : IGOManager
     {
         public Layers Layer { get; set; }
@@ -78,8 +82,8 @@ namespace Pow.Utilities.Shaders
             _generator = generator;
             _effect = effect;
             _parent = parent;
-            Initialize();
             _initialized = true;
+            Initialize();
         }
         public void Return()
         {
@@ -90,7 +94,7 @@ namespace Pow.Utilities.Shaders
         }
         protected virtual void Initialize()
         {
-            Debug.Assert(!_initialized);
+            Debug.Assert(_initialized);
         }
         protected virtual void Cleanup()
         {

@@ -51,8 +51,6 @@ namespace Duo.Utilities.Shaders
         public override void Update()
         {
             base.Update();
-            if (Pow.Globals.GamePaused)
-                return;
             if (_state == RunningStates.Waiting)
                 return;
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();

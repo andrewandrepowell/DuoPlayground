@@ -70,7 +70,7 @@ namespace Pow.Systems
                     _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
                     {
                         var manager = component.Manager;
-                        if (manager.ShowBase && 
+                        if (manager.Show && 
                             manager.Layer == layer && 
                             manager.PositionMode == positionMode &&
                             ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||

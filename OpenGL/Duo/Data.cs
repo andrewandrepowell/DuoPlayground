@@ -271,7 +271,7 @@ namespace Duo.Data
                 repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Collectibles,
-                assetName: "images/root_blockage_0",
+                assetName: "images/collectibles_0",
                 regionSize: new(80, 80),
                 directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
                 {
@@ -342,6 +342,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Surface>();
             runner.AddGOCustomManager<Key>();
             runner.AddGOCustomManager<Door>();
+            runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<MainMenu>();
             runner.AddGOCustomManager<Dimmer>();

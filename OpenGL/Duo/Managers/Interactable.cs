@@ -28,6 +28,7 @@ namespace Duo.Managers
         protected virtual Layers Layer => Layers.Ground;
         protected virtual Color GlowColor => Color.Gold;
         protected virtual bool DirectlyInteractable => true;
+        protected virtual bool Solid => true;
         private void UpdateAction(Actions action)
         {
             if (ActionAnimationGroupMap.TryGetValue(action, out var groupId))
@@ -57,7 +58,7 @@ namespace Duo.Managers
                         density: 1f);
                 var fixture = new Fixture(shape);
                 fixture.Friction = 3f;
-                fixture.IsSensor = false;
+                fixture.IsSensor = !Solid;
                 fixture.CollisionCategories = Category.Cat1;
                 body.Add(fixture);
                 _fixture = fixture; // Will use to disable and enable collisions.

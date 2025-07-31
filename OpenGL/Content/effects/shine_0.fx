@@ -26,7 +26,7 @@ static const float Speed = 0.7f; //= 0.7;
 static const float Position = 0; //: hint_range(0, 1) = 0;
 static const float PositionMin = 0.25f; //= 0.25;
 static const float PositionMax = 0.5f; //= 0.5;
-static const float Alpha = 1.0f; //: hint_range(0, 1) = 1;
+static const float Alpha = .50; //: hint_range(0, 1) = 1;
 float Time;
 
 float2 rotate_uv(float2 uv, float2 center, float angle)

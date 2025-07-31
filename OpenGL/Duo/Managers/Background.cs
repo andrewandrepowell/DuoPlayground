@@ -50,7 +50,7 @@ namespace Duo.Managers
             animationManager.Layer = layer;
             animationManager.PositionMode = PositionModes.Screen;
             animationManager.Position = Globals.GameWindowSize / 2;
-            animationManager.ShowBase = false;
+            animationManager.Show = false;
             _parallaxManager = Pow.Globals.Runner.AnimationGenerator.Acquire();
             _parallaxManager.Play((int)Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("Animation", "Background")));
             _parallaxFeature = animationManager.CreateFeature<ParallaxFeature, ParallaxEffect>();
