@@ -86,6 +86,10 @@ namespace Duo.Managers
                 interactable is Key key && 
                 key.Action == Interactable.Actions.Waiting)
                 key.Interact();
+            if (boxNode.BoxType == BoxTypes.Collide &&
+                interactable is Collectible collectible &&
+                collectible.Action == Interactable.Actions.Waiting)
+                collectible.Interact();
         }
         public override void Initialize(PolygonNode node)
         {

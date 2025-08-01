@@ -22,7 +22,7 @@ namespace Duo.Utilities.Shaders
         private bool _flashing;
         private Layers _layer;
         private RunningStates _state = RunningStates.Waiting;
-        public override bool Running => _state != RunningStates.Waiting && _flashing;
+        public override bool Show => _state != RunningStates.Waiting && _flashing;
         public override Layers Layer { get => _layer; set => _layer = value; }
         protected override void Initialize()
         {
@@ -41,14 +41,12 @@ namespace Duo.Utilities.Shaders
             _flashing = false;
             _period = _idleMinPeriod + _random.NextSingle() * (_idleMaxPeriod - _idleMinPeriod);
             _state = RunningStates.Running;
-            Debug.Print("Shine Started");
         }
         public void Stop()
         {
             if (_state == RunningStates.Waiting || _state == RunningStates.Stopping)
                 return;
             _state = RunningStates.Stopping;
-            Debug.Print("Shine Stopping");
         }
         public void ForceStop()
         {
@@ -56,7 +54,6 @@ namespace Duo.Utilities.Shaders
                 return;
             _flashing = false;
             _state = RunningStates.Waiting;
-            Debug.Print("Shine Stopped");
         }
         public override void Update()
         {

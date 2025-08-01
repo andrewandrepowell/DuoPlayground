@@ -26,7 +26,7 @@ namespace Pow.Utilities.Shaders
         public float Visibility { get; }
         public float Scale { get; }
         public float Rotation { get; }
-        public bool Running { get; }
+        public bool Show { get; }
         public void UpdateEffect();
         public void Update();
     }
@@ -64,10 +64,10 @@ namespace Pow.Utilities.Shaders
             }
         }
         public virtual Vector2 DrawOffset => Vector2.Zero;
-        public virtual float Visibility => 0;
-        public virtual float Scale => 0;
+        public virtual float Visibility => 1;
+        public virtual float Scale => 1;
         public virtual float Rotation => 0;
-        public virtual bool Running => true;
+        public virtual bool Show => true;
         public virtual void UpdateEffect()
         {
             Debug.Assert(_initialized);

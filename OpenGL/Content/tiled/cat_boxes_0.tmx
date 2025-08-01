@@ -13,40 +13,40 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects_0">
-  <object id="1" x="40" y="32">
+  <object id="1" x="40" y="31">
    <properties>
     <property name="BoxType" value="Collide"/>
    </properties>
    <polygon points="0,0 32,0 32,48 0,48"/>
   </object>
-  <object id="2" x="24" y="32">
+  <object id="2" x="24" y="31">
    <properties>
     <property name="BoxType" value="Wall"/>
     <property name="Direction" value="Left"/>
    </properties>
    <polygon points="0,0 16,0 16,31 0,31"/>
   </object>
-  <object id="3" x="72" y="32">
+  <object id="3" x="72" y="31">
    <properties>
     <property name="BoxType" value="Wall"/>
     <property name="Direction" value="Right"/>
    </properties>
    <polygon points="0,0 16,0 16,31 0,31"/>
   </object>
-  <object id="4" x="42" y="80">
+  <object id="4" x="42" y="79">
    <properties>
     <property name="BoxType" value="Ground"/>
    </properties>
    <polygon points="0,0 28,0 28,16 0,16"/>
   </object>
-  <object id="5" x="24" y="63">
+  <object id="5" x="24" y="62">
    <properties>
     <property name="BoxType" value="Vault"/>
     <property name="Direction" value="Left"/>
    </properties>
    <polygon points="0,0 16,0 16,15 0,15"/>
   </object>
-  <object id="8" x="72" y="63">
+  <object id="8" x="72" y="62">
    <properties>
     <property name="BoxType" value="Vault"/>
     <property name="Direction" value="Right"/>

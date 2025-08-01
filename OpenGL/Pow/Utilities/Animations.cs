@@ -47,7 +47,10 @@ namespace Pow.Utilities.Animations
         {
             Debug.Assert(_animationId != null);
             var sprite = _animationNode.SpriteNode.Sprite;
-            sprite.Rotation = _rotation;
+            var offset = 0.0f;
+            foreach (var feature in _features)
+                offset += feature.Rotation;
+            sprite.Rotation = MathHelper.WrapAngle(_rotation + offset);
         }
         private void UpdateSpriteSpriteEffect()
         {
@@ -68,7 +71,10 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_animationId != null);
             var spriteNode = _animationNode.SpriteNode;
             var sprite = spriteNode.Sprite;
-            sprite.Color = _color * _visibility;
+            var visibility = 1.0f;
+            foreach (var feature in _features)
+                visibility *= feature.Visibility;
+            sprite.Color = _color * _visibility * visibility;
         }
         public AnimationManager(AnimationGenerator parent)
         {

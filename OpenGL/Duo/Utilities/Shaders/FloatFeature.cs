@@ -18,11 +18,13 @@ namespace Duo.Utilities.Shaders
         private float _time;
         private bool _up;
         private bool _initialized;
+        private bool _running;
         private Vector2 _drawOffset;
         private Layers _layer;
         public override Layers Layer { get => _layer; set => _layer = value; }
         public override Vector2 DrawOffset => _drawOffset;
-        public override bool Running => false;
+        public override bool Show => false;
+        public bool Running => _running;
         protected override void Initialize()
         {
             base.Initialize();
@@ -30,11 +32,23 @@ namespace Duo.Utilities.Shaders
             _initialized = false;
             _time = _random.NextSingle() * 4;
             _drawOffset.Y = -_maxHeight;
+            _running = true;
+            Parent.UpdateDrawOffset();
+        }
+        public void Stop()
+        {
+            _up = false;
+            _initialized = false;
+            _time = 0;
+            _drawOffset.Y = 0;
+            _running = false;
             Parent.UpdateDrawOffset();
         }
         public override void Update()
         {
             base.Update();
+
+            if (!_running) return;
 
             if (_initialized)
             {

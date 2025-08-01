@@ -20,7 +20,7 @@ namespace Duo.Utilities.Shaders
         private RunningStates _state = RunningStates.Waiting;
         public override Layers Layer { get => _layer; set => _layer = value; }
         public Color Color { get => _color; set => _color = value; }
-        public override bool Running => _state != RunningStates.Waiting;
+        public override bool Show => _state != RunningStates.Waiting;
         protected override void Initialize()
         {
             base.Initialize();
