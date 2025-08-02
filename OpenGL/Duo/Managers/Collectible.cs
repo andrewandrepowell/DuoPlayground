@@ -1,5 +1,6 @@
 ﻿using Duo.Data;
 using Duo.Utilities.Shaders;
+using MonoGame.Extended;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
 using Pow.Utilities.Shaders;
@@ -22,6 +23,8 @@ namespace Duo.Managers
         {
             { Actions.Waiting, (int)AnimationGroups.Idle }
         });
+        private const float _deathPeriod = 4.0f;
+        private float _time;
         private Modes _mode;
         private ShineFeature _shineFeature;
         private FloatFeature _floatFeature;
@@ -34,6 +37,7 @@ namespace Duo.Managers
         protected override Boxes Boxes => Boxes.Collectible;
         protected override Layers Layer => Layers.Foreground;
         protected override bool Solid => false;
+        protected override bool FinishedInteracting => Action == Actions.Interacting && _time <= 0;
         public Modes Mode => _mode;
         protected override void Initialize(AnimationGroupManager manager)
         {
@@ -64,6 +68,18 @@ namespace Duo.Managers
             _rotationFeature.Start();
             _driftAwayFeature.Start();
             _vanishFeature.Start();
+            _time = _deathPeriod;
+        }
+        protected override void FinishInteracting()
+        {
+            base.FinishInteracting();
+            Globals.DuoRunner.RemoveEnvironment(this);
+        }
+        public override void Update()
+        {
+            base.Update();
+            if (Action == Actions.Interacting && _time > 0)
+                _time -= Pow.Globals.GameTime.GetElapsedSeconds();
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Duo.Managers
             }
             _action = action;
         }
-        protected virtual bool FinishedInteracting => !AnimationManager.Running;
+        protected virtual bool FinishedInteracting => Action == Actions.Interacting && !AnimationManager.Running;
         public enum Actions { Waiting, Interacting, Interacted }
         public Actions Action => _action;
         protected virtual void Initialize(AnimationGroupManager manager)
