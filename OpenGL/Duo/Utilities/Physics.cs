@@ -340,6 +340,8 @@ namespace Duo.Utilities.Physics
         public void Update()
         {
             // https://info.sonicretro.org/Sonic_Physics_Guide
+            // Nothing in this algorithm really references the algorithm from 
+            // the sonic physics guide, but it's a good reference to have.
             Debug.Assert(_initialized);
 
             var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
