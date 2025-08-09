@@ -20,7 +20,9 @@ namespace Duo.Managers
 {
     internal class Cat : Character, IUserAction, IControl
     {
+        private bool _initialized;
         private UAManager _uaManager;
+        private UI _ui;
         private static readonly ReadOnlyDictionary<Actions, Animations> _actionAnimationMap = new(new Dictionary<Actions, Animations>()
         {
             { Actions.Idle, Animations.CatIdle },
@@ -41,7 +43,7 @@ namespace Duo.Managers
         public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
         public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
         {
-            if (Pow.Globals.GamePaused) 
+            if (Pow.Globals.GamePaused || !_initialized) 
                 return;
 
             var control = (Controls)actionId;
@@ -82,6 +84,9 @@ namespace Duo.Managers
         }
         private void ContactInteractable(in Utilities.Physics.Character.BoxNode boxNode, Interactable interactable)
         {
+            if (Pow.Globals.GamePaused || !_initialized)
+                return;
+
             if (boxNode.BoxType == BoxTypes.Ground && 
                 interactable is Key key && 
                 key.Action == Interactable.Actions.Waiting)
@@ -89,7 +94,11 @@ namespace Duo.Managers
             if (boxNode.BoxType == BoxTypes.Collide &&
                 interactable is Collectible collectible &&
                 collectible.Action == Interactable.Actions.Waiting)
+            {
                 collectible.Interact();
+                if (_ui.Action != UI.Actions.Opening)
+                    _ui.Twitch();
+            }
         }
         public override void Initialize(PolygonNode node)
         {
@@ -97,6 +106,25 @@ namespace Duo.Managers
             Entity.Get<ControlComponent>().Manager.Initialize(this);
             _uaManager = Globals.DuoRunner.UAGenerator.Acquire();
             _uaManager.Initialize(this);
+            _ui = null;
+            _initialized = false;
+        }
+        public override void Update()
+        {
+            base.Update();
+            // Initialize based on finding related in game environments.
+            {
+                if (_ui == null)
+                {
+                    var uis = Globals.DuoRunner.Environments.OfType<UI>().ToArray();
+                    Debug.Assert(uis.Length == 1);
+                    _ui = uis[0];
+                }
+                if (!_initialized && _ui != null)
+                {
+                    _initialized = true;
+                }
+            }
         }
     }
 }

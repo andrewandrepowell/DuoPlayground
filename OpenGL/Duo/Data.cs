@@ -22,7 +22,8 @@ namespace Duo.Data
     { 
         Cat, Pixel, Platform, Background, PurpleHillsBackground,
         TreeRoot, RootBlockage,
-        Collectibles
+        Collectibles,
+        UI
     }
     internal enum Animations 
     { 
@@ -35,10 +36,24 @@ namespace Duo.Data
         PurpleHillsFarTrees, PurpleHillsMidTrees,
         TreeRootIdle, TreeRootDeath, TreeRootTwitch,
         RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch,
-        PineCone
+        PineCone,
+        UIOpening, UIIdle, UITwitch
     }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
-    public enum EntityTypes { DuoRunner, Camera, Surface, Cat, Key, Door, Collectible, HUD, MainMenu, Dimmer, Background }
+    public enum EntityTypes { 
+        DuoRunner, 
+        Camera, 
+        Surface, 
+        Cat, 
+        Key, 
+        Door, 
+        Collectible, 
+        HUD, 
+        MainMenu, 
+        Dimmer, 
+        Background,
+        UI
+    }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
         public Data() => DuoRunner.Initialize(this);
@@ -285,6 +300,36 @@ namespace Duo.Data
                 indices: [0],
                 period: 0,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.UI,
+                assetName: "images/ui_0",
+                regionSize: new(320, 256),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.UIOpening,
+                spriteId: (int)Sprites.UI,
+                spriteAnimationId: 0,
+                indices: Enumerable.Range(0, 26).ToArray(),
+                period: 0.1f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.UIIdle,
+                spriteId: (int)Sprites.UI,
+                spriteAnimationId: 1,
+                indices: [25],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.UITwitch,
+                spriteId: (int)Sprites.UI,
+                spriteAnimationId: 2,
+                indices: [21, 22, 23, 22, 21, 22, 23, 24, 25],
+                period: 0.1f,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -322,6 +367,11 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<HUD>()));
+            runner.AddEntityType((int)EntityTypes.UI, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                // new GumComponent(),
+                new GOCustomComponent<UI>()));
             runner.AddEntityType((int)EntityTypes.MainMenu, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
@@ -344,6 +394,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Door>();
             runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
+            runner.AddGOCustomManager<UI>();
             runner.AddGOCustomManager<MainMenu>();
             runner.AddGOCustomManager<Dimmer>();
             runner.AddGOCustomManager<Background>();
@@ -358,6 +409,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Door>(EntityTypes.Door);
             duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
+            duoRunner.AddEnvironment<UI>(EntityTypes.UI);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
             duoRunner.AddEnvironment<Background>(EntityTypes.Background);

@@ -53,9 +53,9 @@ namespace Duo.Managers
                 body.BodyType = BodyType.Static;
                 body.Tag = this;
                 var shape = new PolygonShape(
-                        vertices: new(boxesNode.Collide.Select(
-                            pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
-                        density: 1f);
+                    vertices: new(boxesNode.Collide.Select(
+                        pixelPosition => pixelPosition / Globals.PixelsPerMeter)),
+                    density: 1f);
                 var fixture = new Fixture(shape);
                 fixture.Friction = 3f;
                 fixture.IsSensor = !Solid;
