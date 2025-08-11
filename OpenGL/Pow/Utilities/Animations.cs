@@ -32,8 +32,15 @@ namespace Pow.Utilities.Animations
         private float _visibility;
         private bool _pauseable;
         private bool _show;
+        private Sprite.ServiceFrameUpdatedDelegate _serviceFrameUpdated;
         private record SpriteNode(Sprite Sprite, ReadOnlyDictionary<Directions, SpriteEffects> DirectionSpriteEffects);
         private record AnimationNode(SpriteNode SpriteNode, int SpriteAnimationId);
+        private void UpdateSpriteServiceFrameUpdated()
+        {
+            Debug.Assert(_animationId != null);
+            var sprite = _animationNode.SpriteNode.Sprite;
+            sprite.ServiceFrameUpdated = _serviceFrameUpdated;
+        }
         private void UpdateSpritePosition()
         {
             Debug.Assert(_animationId != null);
@@ -90,12 +97,31 @@ namespace Pow.Utilities.Animations
                 return _animationId.Value;
             }
         }
+        public int Frame
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Frame;
+            }
+        }
         public bool Running
         {
             get
             {
                 Debug.Assert(_animationId != null);
                 return _animationNode.SpriteNode.Sprite.Running;
+            }
+        }
+        public Sprite.ServiceFrameUpdatedDelegate ServiceFrameUpdated
+        {
+            get => _serviceFrameUpdated;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_serviceFrameUpdated == value) return;
+                _serviceFrameUpdated = value;
+                UpdateSpriteServiceFrameUpdated();
             }
         }
         public Vector2 Position
@@ -210,6 +236,7 @@ namespace Pow.Utilities.Animations
                 _animationNode = _animationNodes[animationId];
             }
             _animationNode.SpriteNode.Sprite.Play(_animationNode.SpriteAnimationId);
+            UpdateSpriteServiceFrameUpdated();
             UpdateSpritePosition();
             UpdateSpriteRotation();
             UpdateSpriteSpriteEffect();
@@ -235,6 +262,7 @@ namespace Pow.Utilities.Animations
             _color = Color.White;
             _pauseable = true;
             _show = true;
+            _serviceFrameUpdated = null;
             _acquired = true;
         }
         public void Return()
@@ -354,6 +382,7 @@ namespace Pow.Utilities.Animations
         private RectangleF _bounds;
         private Vector2 _position;
         private record Node(int[] Indices, float Period, bool Repeat);
+        public delegate void ServiceFrameUpdatedDelegate();
         public Sprite(string assetName, Size regionSize)
         {
             _texture = Globals.Game.Content.Load<Texture2D>(assetName);
@@ -425,6 +454,7 @@ namespace Pow.Utilities.Animations
         public Vector2 Scale = new(1, 1);
         public float Rotation = 0;
         public SpriteEffects SpriteEffect = SpriteEffects.None;
+        public ServiceFrameUpdatedDelegate ServiceFrameUpdated = null;
         public void Update()
         {
             if (_running && _node.Period > 0)
@@ -449,6 +479,7 @@ namespace Pow.Utilities.Animations
                         _index = _node.Indices[_frame];
                     }
                     _time += _node.Period;
+                    ServiceFrameUpdated?.Invoke();
                 }
 
                 _time -= Globals.GameTime.GetElapsedSeconds();

@@ -53,7 +53,8 @@ namespace Duo.Data
         MainMenu, 
         Dimmer, 
         Background,
-        UI
+        UI,
+        UIIcon,
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -373,6 +374,10 @@ namespace Duo.Data
                 new AnimationComponent(),
                 // new GumComponent(),
                 new GOCustomComponent<UI>()));
+            runner.AddEntityType((int)EntityTypes.UIIcon, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<UIIcon>()));
             runner.AddEntityType((int)EntityTypes.MainMenu, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
@@ -396,6 +401,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<UI>();
+            runner.AddGOCustomManager<UIIcon>();
             runner.AddGOCustomManager<MainMenu>();
             runner.AddGOCustomManager<Dimmer>();
             runner.AddGOCustomManager<Background>();
@@ -411,6 +417,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<UI>(EntityTypes.UI);
+            duoRunner.AddEnvironment<UIIcon>(EntityTypes.UIIcon);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
             duoRunner.AddEnvironment<Background>(EntityTypes.Background);
