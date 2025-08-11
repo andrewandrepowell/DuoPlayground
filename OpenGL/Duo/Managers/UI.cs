@@ -19,17 +19,20 @@ namespace Duo.Managers
 {
     internal class UIIcon : Environment
     {
+        private const Layers _layer = Layers.InterfaceComponent;
+        private const PositionModes _positionMode = PositionModes.Screen;
         private AnimationManager _animationManager;
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
             _animationManager = Entity.Get<AnimationComponent>().Manager;
-            _animationManager.Layer = Enum.Parse<Layers>(node.Parameters["Layer"]);
-            _animationManager.PositionMode = Enum.Parse<PositionModes>(node.Parameters["PositionMode"]);
+            _animationManager.Layer = _layer;
+            _animationManager.PositionMode = _positionMode;
             _animationManager.Play((int)Enum.Parse<Animations>(node.Parameters["AnimationId"]));
         }
         public Vector2 Position { get => _animationManager.Position; set => _animationManager.Position = value; }
         public float Rotation { get => _animationManager.Rotation; set => _animationManager.Rotation = value; }
+        public bool Show { get=> _animationManager.Show; set => _animationManager.Show = value; }
     }
     internal class UI : Environment
     {
@@ -40,6 +43,7 @@ namespace Duo.Managers
         private readonly static Color _topRightColorUIGuide = new(0xff_36_f2_fb);
         private readonly static Color _bottomLeftColorUIGuide = new(0xff_26_71_df);
         private readonly static SizeF _size = new(192, 128);
+        private readonly static Vector2 _origin = _size / 2;
         private readonly static ReadOnlyDictionary<Actions, AnimationGroups> _actionAnimationGroupMap = new(new Dictionary<Actions, AnimationGroups>() 
         {
             { Actions.Opening, AnimationGroups.Opening },
@@ -48,9 +52,11 @@ namespace Duo.Managers
         });
         private bool _initialized = false;
         private Actions _action;
+        private AnimationManager _animationManager;
         private AnimationGroupManager _animationGroupManager;
         private UIGuide.Node _uiGuideNode;
         private UIIcon _pineConeUiIcon;
+        private UIIcon _clockConeUiIcon;
         private void UpdateAction(Actions action)
         {
             if (_actionAnimationGroupMap.TryGetValue(action, out var groupId))
@@ -61,7 +67,28 @@ namespace Duo.Managers
         }
         private void ServiceFrameUpdated()
         {
-
+            if (!_initialized) return;
+            var frameNode = _uiGuideNode.FrameNodes[_animationManager.Index];
+            if (frameNode.TopLeft.HasValue)
+            {
+                _pineConeUiIcon.Position = _animationManager.Position - _animationManager.Origin + frameNode.TopLeft.Value;
+                _pineConeUiIcon.Rotation = frameNode.Rotation.Value;
+                _pineConeUiIcon.Show = true;
+            }
+            else
+            {
+                _pineConeUiIcon.Show = false;
+            }
+            if (frameNode.BottomLeft.HasValue)
+            {
+                _clockConeUiIcon.Position = _animationManager.Position - _animationManager.Origin + frameNode.BottomLeft.Value;
+                _clockConeUiIcon.Rotation = frameNode.Rotation.Value;
+                _clockConeUiIcon.Show = true;
+            }
+            else
+            {
+                _clockConeUiIcon.Show = false;
+            }
         }
         public enum Actions { Opening, Idle, Twitching }
         public enum AnimationGroups { Opening, Idle, Twitching }
@@ -71,13 +98,13 @@ namespace Duo.Managers
             base.Initialize(node);
             _initialized = false;
             var gameWindowSize = Globals.GameWindowSize;
-            var animationManager = Entity.Get<AnimationComponent>().Manager;
+            _animationManager = Entity.Get<AnimationComponent>().Manager;
             {
-                animationManager.Layer = _layer;
-                animationManager.PositionMode = _positionMode;
+                _animationManager.Layer = _layer;
+                _animationManager.PositionMode = _positionMode;
             }
             {
-                _animationGroupManager = new(animationManager);
+                _animationGroupManager = new(_animationManager);
                 _animationGroupManager.Configure(
                     groupId: (int)AnimationGroups.Opening,
                     group: new PlaySingleGroup((int)Animations.UIOpening));
@@ -107,21 +134,30 @@ namespace Duo.Managers
                         {"EntityType", "UIIcon"},
                         {"ID", "pinecone"},
                         {"AnimationId", "PineCone"},
-                        {"Layer", Enum.GetName(_layer)},
-                        {"PositionMode", Enum.GetName(_positionMode)}
+                    })));
+                Globals.DuoRunner.AddEnvironment(new(
+                    Position: Vector2.Zero,
+                    Vertices: null,
+                    Parameters: new(new Dictionary<string, string>()
+                    {
+                        {"EntityType", "UIIcon"},
+                        {"ID", "clock"},
+                        {"AnimationId", "Clock"},
                     })));
             }
             UpdateAction(Actions.Opening);
             {
-                animationManager.Position = new(
+                _animationManager.Position = new(
                     x: gameWindowSize.Width / 2,
                     y: _size.Height / 2);
+                _animationManager.ServiceFrameUpdated = ServiceFrameUpdated;
             }
         }
         public override void Cleanup()
         {
             base.Cleanup();
             Globals.DuoRunner.RemoveEnvironment(_pineConeUiIcon);
+            Globals.DuoRunner.RemoveEnvironment(_clockConeUiIcon);
         }
         public void Twitch()
         {
@@ -131,14 +167,18 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
-            if (_pineConeUiIcon != null)
+            if (Pow.Globals.GamePaused) return;
+            if (_pineConeUiIcon == null && _clockConeUiIcon == null)
             {
                 Debug.Assert(!_initialized);
                 var uiIcons = Globals.DuoRunner.Environments.OfType<UIIcon>().ToArray();
-                Debug.Assert(uiIcons.Length == 1);
-                _initialized = true;
+                if (uiIcons.Length == 2)
+                {
+                    _pineConeUiIcon = uiIcons.Where(x => x.ID == "pinecone").First();
+                    _clockConeUiIcon = uiIcons.Where(x => x.ID == "clock").First();
+                    _initialized = true;
+                }
             }
-            Debug.Assert(_initialized);
             if ((_action == Actions.Opening || _action == Actions.Twitching) && !_animationGroupManager.Running)
                 UpdateAction(Actions.Idle);
         }

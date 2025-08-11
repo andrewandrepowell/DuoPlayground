@@ -97,12 +97,28 @@ namespace Pow.Utilities.Animations
                 return _animationId.Value;
             }
         }
+        public int Index
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Index;
+            }
+        }
         public int Frame
         {
             get
             {
                 Debug.Assert(_animationId != null);
                 return _animationNode.SpriteNode.Sprite.Frame;
+            }
+        }
+        public Vector2 Origin
+        {
+            get
+            {
+                Debug.Assert(_animationId != null);
+                return _animationNode.SpriteNode.Sprite.Origin;
             }
         }
         public bool Running
@@ -426,6 +442,7 @@ namespace Pow.Utilities.Animations
             _time = _node.Period;
             _frame = 0;
             _index = _node.Indices[_frame];
+            ServiceFrameUpdated?.Invoke();
             _running = true;
         }
         public void Stop()

@@ -23,7 +23,8 @@ namespace Duo.Data
         Cat, Pixel, Platform, Background, PurpleHillsBackground,
         TreeRoot, RootBlockage,
         Collectibles,
-        UI
+        UI,
+        Clock,
     }
     internal enum Animations 
     { 
@@ -37,7 +38,8 @@ namespace Duo.Data
         TreeRootIdle, TreeRootDeath, TreeRootTwitch,
         RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch,
         PineCone,
-        UIOpening, UIIdle, UITwitch
+        UIOpening, UIIdle, UITwitch,
+        Clock
     }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
     internal enum Masks { UIGuide }
@@ -332,6 +334,22 @@ namespace Duo.Data
                 indices: [21, 22, 23, 22, 21, 22, 23, 24, 25],
                 period: 0.1f,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Clock,
+                assetName: "images/clock_0",
+                regionSize: new(80, 80),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.Clock,
+                spriteId: (int)Sprites.Clock,
+                spriteAnimationId: 0,
+                indices: Enumerable.Range(0, 17).ToArray(),
+                period: 1,
+                repeat: true);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
