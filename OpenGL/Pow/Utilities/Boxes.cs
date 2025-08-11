@@ -81,10 +81,15 @@ namespace Pow.Utilities
             Debug.Assert(!_configNodes.ContainsKey(id));
             _configNodes.Add(id, new(assetName));
         }
-        public void Initialize()
+        public void Initialize(bool load = false)
         {
             Debug.Assert(!_initialized);
             _initialized = true;
+            if (load)
+            {
+                foreach (var id in _configNodes.Keys)
+                    GetNode(id);
+            }
         }
         public Node GetNode(int id)
         {

@@ -112,6 +112,7 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
+
             // Initialize based on finding related in game environments.
             {
                 if (_ui == null)
@@ -125,6 +126,7 @@ namespace Duo.Managers
                     _initialized = true;
                 }
             }
+            Debug.Assert(_initialized);
         }
     }
 }

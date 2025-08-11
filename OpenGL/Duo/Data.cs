@@ -40,6 +40,7 @@ namespace Duo.Data
         UIOpening, UIIdle, UITwitch
     }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
+    internal enum Masks { UIGuide }
     public enum EntityTypes { 
         DuoRunner, 
         Camera, 
@@ -426,6 +427,16 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Collectible,
                 assetName: "tiled/collectible_boxes_0");
+            // Masks
+            duoRunner.MaskGenerator.Configure(
+                id: (int)Masks.UIGuide,
+                assetName: "images/ui_guide_0",
+                regionSize: new(320, 256),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
             // Controls - Actions
             duoRunner.UAGenerator.Configure((int)Controls.Menu);
             duoRunner.UAGenerator.Configure((int)Controls.Interact);

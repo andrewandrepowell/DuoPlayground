@@ -12,12 +12,15 @@ namespace Duo.Managers
     {
         private readonly BoxesGenerator _boxesGenerator = new();
         private readonly UAGenerator _uaGenerator = new();
+        private readonly MaskGenerator _maskGenerator = new();
         public BoxesGenerator BoxesGenerator => _boxesGenerator;
         internal UAGenerator UAGenerator => _uaGenerator;
+        internal MaskGenerator MaskGenerator => _maskGenerator;
         private void InitializeGenerators()
         {
-            _boxesGenerator.Initialize();
+            _boxesGenerator.Initialize(load: true);
             _uaGenerator.Initalize();
+            _maskGenerator.Initialize();
         }
     }
 }
