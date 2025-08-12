@@ -201,7 +201,7 @@ namespace Pow.Systems
                     foreach (var positionMode in _gumPositionModes)
                         _monoDrawGumComponents.Add((layer, positionMode), new((ref GumComponent component) =>
                         {
-                            if (component.Manager.Layer == layer && component.Manager.PositionMode == positionMode)
+                            if (component.Manager.Show && component.Manager.Layer == layer && component.Manager.PositionMode == positionMode)
                                 component.Manager.MonoDraw();
                         }));
                 }
@@ -256,23 +256,33 @@ namespace Pow.Systems
 
                     // Draw features (i.e. shader effects)
                     World.Query(_allAnimationComponents, _drawFeatureAnimationComponents[layer]);
-                }
-
-                // smooth art drawing.
-                {
-                    graphicsDevice.SetRenderTarget(_smoothArtRenderTargets[layer]);
-                    graphicsDevice.Clear(Color.Transparent);
 
                     // Draw gum components with respect to view matrix.
-                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.LinearClamp);
+                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
                     World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Map)]);
                     spriteBatch.End();
 
                     // Draw gum components directly to screen.
-                    spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+                    spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                     World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Screen)]);
                     spriteBatch.End();
                 }
+
+                //// smooth art drawing.
+                //{
+                //    graphicsDevice.SetRenderTarget(_smoothArtRenderTargets[layer]);
+                //    graphicsDevice.Clear(Color.Transparent);
+
+                //    // Draw gum components with respect to view matrix.
+                //    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.LinearClamp);
+                //    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Map)]);
+                //    spriteBatch.End();
+
+                //    // Draw gum components directly to screen.
+                //    spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+                //    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Screen)]);
+                //    spriteBatch.End();
+                //}
             }
 
             // Update game window related properties, such as game window sizing and letter box sizes.

@@ -1,9 +1,13 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
 using Duo.Utilities;
+using DuoGum.Components;
+using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
+using Pow.Utilities.Gum;
 using Pow.Utilities.UA;
 using System;
 using System.Collections.Generic;
@@ -12,8 +16,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 
 namespace Duo.Managers
 {
@@ -22,17 +24,58 @@ namespace Duo.Managers
         private const Layers _layer = Layers.InterfaceComponent;
         private const PositionModes _positionMode = PositionModes.Screen;
         private AnimationManager _animationManager;
+        private GumManager _gumManager;
+        private uiTextView _uiTextView;
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
-            _animationManager = Entity.Get<AnimationComponent>().Manager;
-            _animationManager.Layer = _layer;
-            _animationManager.PositionMode = _positionMode;
-            _animationManager.Play((int)Enum.Parse<Animations>(node.Parameters["AnimationId"]));
+            {
+                _animationManager = Entity.Get<AnimationComponent>().Manager;
+                _animationManager.Layer = _layer;
+                _animationManager.PositionMode = _positionMode;
+                _animationManager.Play((int)Enum.Parse<Animations>(node.Parameters["AnimationId"]));
+            }
+            { 
+                _uiTextView = new();
+                _gumManager = Entity.Get<GumComponent>().Manager;
+                _gumManager.Initialize(_uiTextView.Visual);
+                _gumManager.Layer = _layer;
+                _gumManager.PositionMode = _positionMode;
+                _gumManager.Origin = new(x: -16, y: _gumManager.Size.Height / 2);
+            }
         }
-        public Vector2 Position { get => _animationManager.Position; set => _animationManager.Position = value; }
-        public float Rotation { get => _animationManager.Rotation; set => _animationManager.Rotation = value; }
-        public bool Show { get=> _animationManager.Show; set => _animationManager.Show = value; }
+        public Vector2 Position 
+        { 
+            get => _animationManager.Position; 
+            set 
+            {
+                _animationManager.Position = value;
+                _gumManager.Position = value;
+            }
+        }
+        public float Rotation 
+        { 
+            get => _animationManager.Rotation;
+            set
+            {
+                _animationManager.Rotation = value;
+                _gumManager.Rotation = value;
+            }
+        }
+        public bool Show 
+        { 
+            get => _animationManager.Show;
+            set 
+            { 
+                _animationManager.Show = value;
+                _gumManager.Show = value;
+            } 
+        }
+        public string Text
+        {
+            get => _uiTextView.Text;
+            set => _uiTextView.Text = value;
+        }
     }
     internal class UI : Environment
     {
@@ -43,7 +86,6 @@ namespace Duo.Managers
         private readonly static Color _topRightColorUIGuide = new(0xff_36_f2_fb);
         private readonly static Color _bottomLeftColorUIGuide = new(0xff_26_71_df);
         private readonly static SizeF _size = new(192, 128);
-        private readonly static Vector2 _origin = _size / 2;
         private readonly static ReadOnlyDictionary<Actions, AnimationGroups> _actionAnimationGroupMap = new(new Dictionary<Actions, AnimationGroups>() 
         {
             { Actions.Opening, AnimationGroups.Opening },
@@ -57,6 +99,8 @@ namespace Duo.Managers
         private UIGuide.Node _uiGuideNode;
         private UIIcon _pineConeUiIcon;
         private UIIcon _clockConeUiIcon;
+        private Timer _timer;
+        private int _pinecones;
         private void UpdateAction(Actions action)
         {
             if (_actionAnimationGroupMap.TryGetValue(action, out var groupId))
@@ -90,9 +134,29 @@ namespace Duo.Managers
                 _clockConeUiIcon.Show = false;
             }
         }
+        private void ServiceUpdatedTime()
+        {
+            if (!_initialized) return;
+            _clockConeUiIcon.Text = _timer.CurrentTextTime;
+        }
+        private void UpdatePineconeUiText()
+        {
+            if (!_initialized) return;
+            _pineConeUiIcon.Text = $"{_pinecones}";
+        }
         public enum Actions { Opening, Idle, Twitching }
         public enum AnimationGroups { Opening, Idle, Twitching }
         public Actions Action => _action;
+        public int Pinecones
+        {
+            get => _pinecones;
+            set
+            {
+                if (_pinecones == value) return;
+                _pinecones = value;
+                UpdatePineconeUiText();
+            }
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -145,6 +209,13 @@ namespace Duo.Managers
                         {"AnimationId", "Clock"},
                     })));
             }
+            {
+                _timer = new();
+                _timer.ServiceUpdatedTime = ServiceUpdatedTime;
+            }
+            {
+                _pinecones = 0;
+            }
             UpdateAction(Actions.Opening);
             {
                 _animationManager.Position = new(
@@ -177,10 +248,15 @@ namespace Duo.Managers
                     _pineConeUiIcon = uiIcons.Where(x => x.ID == "pinecone").First();
                     _clockConeUiIcon = uiIcons.Where(x => x.ID == "clock").First();
                     _initialized = true;
+                    ServiceUpdatedTime();
+                    ServiceFrameUpdated();
+                    UpdatePineconeUiText();
                 }
             }
             if ((_action == Actions.Opening || _action == Actions.Twitching) && !_animationGroupManager.Running)
                 UpdateAction(Actions.Idle);
+            if (_action != Actions.Opening)
+                _timer.Update();
         }
     }
 }

@@ -390,10 +390,10 @@ namespace Duo.Data
             runner.AddEntityType((int)EntityTypes.UI, world => world.Create(
                 new StatusComponent(),
                 new AnimationComponent(),
-                // new GumComponent(),
                 new GOCustomComponent<UI>()));
             runner.AddEntityType((int)EntityTypes.UIIcon, world => world.Create(
                 new StatusComponent(),
+                new GumComponent(),
                 new AnimationComponent(),
                 new GOCustomComponent<UIIcon>()));
             runner.AddEntityType((int)EntityTypes.MainMenu, world => world.Create(

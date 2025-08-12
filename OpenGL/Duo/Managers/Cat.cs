@@ -97,7 +97,10 @@ namespace Duo.Managers
             {
                 collectible.Interact();
                 if (_ui.Action != UI.Actions.Opening)
+                {
+                    _ui.Pinecones += 1;
                     _ui.Twitch();
+                }
             }
         }
         public override void Initialize(PolygonNode node)

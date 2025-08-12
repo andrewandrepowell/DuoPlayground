@@ -32,13 +32,15 @@ namespace Pow.Utilities.Gum
         private SizeF _size;
         private Vector2 _origin;
         private float _visibility;
+        private float _rotation;
         private Color _drawColor;
+        private bool _show;
         private void UpdateRenderTarget()
         {
             _renderTarget = new RenderTarget2D(
                 graphicsDevice: Globals.SpriteBatch.GraphicsDevice,
-                width: (int)_gumRuntime.Width,
-                height: (int)_gumRuntime.Height,
+                width: (int)_gumRuntime.GetAbsoluteWidth(),
+                height: (int)_gumRuntime.GetAbsoluteHeight(),
                 mipMap: false,
                 preferredFormat: SurfaceFormat.Color,
                 preferredDepthFormat: DepthFormat.None,
@@ -55,6 +57,11 @@ namespace Pow.Utilities.Gum
         private void UpdateDrawColor()
         {
             _drawColor = Color.White * _visibility;
+        }
+        public float Rotation
+        {
+            get => _rotation;
+            set => _rotation = value;
         }
         public PositionModes PositionMode 
         {
@@ -86,6 +93,11 @@ namespace Pow.Utilities.Gum
                 Debug.Assert(_initialized);
                 return _origin;
             }
+            set
+            {
+                Debug.Assert(_initialized);
+                _origin = value;
+            }
         }
         public float Visibility
         {
@@ -96,6 +108,7 @@ namespace Pow.Utilities.Gum
                 UpdateDrawColor();
             }
         }
+        public bool Show { get => _show; set => _show = value; }
         public GumProjectSave GumProject => _parent.GumProject;
         public GumManager(GumGenerator parent)
         {
@@ -104,6 +117,7 @@ namespace Pow.Utilities.Gum
             _prevRenderTargets = new RenderTargetBinding[graphicsDevice.RenderTargetCount];
             _positionMode = PositionModes.Screen;
             _visibility = 1;
+            _show = true;
             _initialized = false;
         }
         public void Initialize(InteractiveGue gumRuntime)
@@ -119,8 +133,8 @@ namespace Pow.Utilities.Gum
         public void GumDraw()
         {
             Debug.Assert(_initialized);
-            Debug.Assert(_gumRuntime.Width == _renderTarget.Width); // width and height of gumruntime should fit in float mantissa.
-            Debug.Assert(_gumRuntime.Height == _renderTarget.Height);
+            Debug.Assert(_gumRuntime.GetAbsoluteWidth() == _renderTarget.Width); // width and height of gumruntime should fit in float mantissa.
+            Debug.Assert(_gumRuntime.GetAbsoluteHeight() == _renderTarget.Height);
             if (_visibility.EqualsWithTolerance(0)) return;
             var gumBatch = _parent.GumBatch;
             var graphicsDevice = Globals.Game.GraphicsDevice;
@@ -143,7 +157,7 @@ namespace Pow.Utilities.Gum
                 position: _position,
                 sourceRectangle: null,
                 color: _drawColor,
-                rotation: 0,
+                rotation: _rotation,
                 origin: _origin,
                 scale: 1,
                 effects: SpriteEffects.None,
