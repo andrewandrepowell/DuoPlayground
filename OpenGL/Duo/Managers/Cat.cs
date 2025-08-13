@@ -96,9 +96,12 @@ namespace Duo.Managers
                 collectible.Action == Interactable.Actions.Waiting)
             {
                 collectible.Interact();
-                if (_ui.Action != UI.Actions.Opening)
+                if (collectible.Mode == Collectible.Modes.PineCone)
                 {
                     _ui.Pinecones += 1;
+                }
+                if (_ui.Action != UI.Actions.Opening)
+                { 
                     _ui.Twitch();
                 }
             }
