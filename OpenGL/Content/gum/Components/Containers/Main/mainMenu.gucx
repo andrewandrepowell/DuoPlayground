@@ -190,6 +190,18 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>string</Type>
+      <Name>help.Message</Name>
+      <Value xsi:type="xsd:string">Help</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>help.Parent</Name>
+      <Value xsi:type="xsd:string">buttons</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>bool</Type>
       <Name>IgnoredByParentSize</Name>
       <Value xsi:type="xsd:boolean">false</Value>
@@ -277,6 +289,18 @@
       <Value xsi:type="xsd:string">Default</Value>
       <Category>States and Visibility</Category>
       <SetsValue>false</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>title.Message</Name>
+      <Value xsi:type="xsd:string">Title</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>title.Parent</Name>
+      <Value xsi:type="xsd:string">buttons</Value>
+      <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>bool</Type>
@@ -375,7 +399,17 @@
     <DefinedByBase>false</DefinedByBase>
   </Instance>
   <Instance>
+    <Name>help</Name>
+    <BaseType>Containers/Main/mainButton</BaseType>
+    <DefinedByBase>false</DefinedByBase>
+  </Instance>
+  <Instance>
     <Name>options</Name>
+    <BaseType>Containers/Main/mainButton</BaseType>
+    <DefinedByBase>false</DefinedByBase>
+  </Instance>
+  <Instance>
+    <Name>title</Name>
     <BaseType>Containers/Main/mainButton</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>

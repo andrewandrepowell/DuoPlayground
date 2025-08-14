@@ -98,6 +98,41 @@
         "ElementType": "Components",
         "EventType": 1,
         "TimestampUtc": "2025-08-12T02:31:41.1762004Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu (Container).mainButtonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-08-14T05:28:14.7469539Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu (Container).restart",
+        "OldName": "Containers/Main/mainMenu (Container).mainButtonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-08-14T05:28:33.7244991Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu (Container).mainButtonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-08-14T06:04:56.1438443Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu (Container).help",
+        "OldName": "Containers/Main/mainMenu (Container).mainButtonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-08-14T06:05:06.6551965Z"
+      },
+      {
+        "NewName": "Containers/Main/mainMenu (Container).title",
+        "OldName": "Containers/Main/mainMenu (Container).restart",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-08-14T06:09:40.7833032Z"
       }
     ]
   }

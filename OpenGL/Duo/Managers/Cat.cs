@@ -43,7 +43,7 @@ namespace Duo.Managers
         public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
         public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
         {
-            if (Pow.Globals.GamePaused || !_initialized) 
+            if (!_initialized) 
                 return;
 
             var control = (Controls)actionId;
@@ -52,8 +52,12 @@ namespace Duo.Managers
             var jump = control == Controls.Jump;
             var released = buttonState == ButtonStates.Released;
             var pressed = buttonState == ButtonStates.Pressed;
+            var paused = Pow.Globals.GamePaused;
 
-            if (released && left && MovingLeft)
+            if (paused && pressed)
+                return;
+
+            if (((released && left) || paused) && MovingLeft)
                 ReleaseLeft();
             if (pressed && left)
             {
@@ -65,7 +69,7 @@ namespace Duo.Managers
                     MoveLeft(strength);
             }
 
-            if (released && right && MovingRight)
+            if (((released && right) || paused) && MovingRight)
                 ReleaseRight();
             if (pressed && right)
             {
@@ -77,7 +81,7 @@ namespace Duo.Managers
                     MoveRight(strength);
             }
 
-            if (released && jump && Jumping)
+            if (((released && jump) || paused) && Jumping)
                 ReleaseJump();
             if (pressed && jump && Grounded && !Jumping)
                 Jump();

@@ -34,7 +34,9 @@ partial class mainMenu : MonoGameGum.Forms.Controls.FrameworkElement
     }
     public NineSliceRuntime background { get; protected set; }
     public mainButton resume { get; protected set; }
+    public mainButton help { get; protected set; }
     public mainButton options { get; protected set; }
+    public mainButton title { get; protected set; }
     public mainButton exit { get; protected set; }
     public ContainerRuntime buttons { get; protected set; }
 
@@ -50,7 +52,9 @@ partial class mainMenu : MonoGameGum.Forms.Controls.FrameworkElement
         base.ReactToVisualChanged();
         background = this.Visual?.GetGraphicalUiElementByName("background") as NineSliceRuntime;
         resume = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"resume");
+        help = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"help");
         options = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"options");
+        title = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"title");
         exit = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"exit");
         buttons = this.Visual?.GetGraphicalUiElementByName("buttons") as ContainerRuntime;
         CustomInitialize();
