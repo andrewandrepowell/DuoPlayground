@@ -37,7 +37,6 @@ namespace Duo.Managers
             }
             { 
                 _uiTextView = new();
-                Debug.Print($"Dimensions: {_uiTextView.Visual.GetAbsoluteWidth()}, {_uiTextView.Visual.GetAbsoluteHeight()}");
                 _gumManager = Entity.Get<GumComponent>().Manager;
                 _gumManager.Initialize(_uiTextView.Visual);
                 _gumManager.Layer = _layer;
@@ -51,7 +50,7 @@ namespace Duo.Managers
             set 
             {
                 _animationManager.Position = value;
-                _gumManager.Position = value;// + new Vector2(x: 0, y: -_gumManager.Size.Height / 2); ;
+                _gumManager.Position = value;
             }
         }
         public float Rotation 
