@@ -25,7 +25,7 @@ namespace Duo.Data
         Collectibles,
         UI,
         Clock,
-        MainMenuButtonBackground
+        MainMenuButtonBackground, MainMenuButtonForeground,
     }
     internal enum Animations 
     { 
@@ -41,7 +41,8 @@ namespace Duo.Data
         PineCone,
         UIOpening, UIIdle, UITwitch,
         Clock,
-        MainMenuButtonBackground
+        MainMenuButtonBackground,
+        MainMenuButtonForeground
     }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
     internal enum Masks { UIGuide }
@@ -365,6 +366,22 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.MainMenuButtonBackground,
                 spriteId: (int)Sprites.MainMenuButtonBackground,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.MainMenuButtonForeground,
+                assetName: "images/menu_button_2",
+                regionSize: new(160, 96),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.MainMenuButtonForeground,
+                spriteId: (int)Sprites.MainMenuButtonForeground,
                 spriteAnimationId: 0,
                 indices: [0],
                 period: 0,

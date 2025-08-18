@@ -30,7 +30,7 @@ namespace Duo.Managers
         private static readonly ReadOnlyDictionary<Modes, Animations> _animations = new(new Dictionary<Modes, Animations>()
         {
             { Modes.Background, Animations.MainMenuButtonBackground },
-            { Modes.Foreground, Animations.MainMenuButtonBackground },
+            { Modes.Foreground, Animations.MainMenuButtonForeground },
         });
         private const PositionModes _positionMode = PositionModes.Screen;
         private AnimationManager _animationManager;
@@ -82,10 +82,11 @@ namespace Duo.Managers
                 foreach (var buttonNode in _buttonNodes.Values)
                 {
                     buttonNode.Background.Visibility = value;
+                    buttonNode.Foreground.Visibility = value;
                 }
             }
         }
-        private record ButtonNode(MainMenuButton Background);
+        private record ButtonNode(MainMenuButton Background, MainMenuButton Foreground);
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -113,14 +114,23 @@ namespace Duo.Managers
                 foreach (var button in _view.menu.Buttons.Reverse())
                 {
                     Globals.DuoRunner.AddEnvironment(new(
-                    Position: Vector2.Zero,
-                    Vertices: null,
-                    Parameters: new(new Dictionary<string, string>()
-                    {
-                        {"EntityType", "MainMenuButton"},
-                        {"ID", $"mm_bg_{button.Message}"},
-                        {"Mode", "Background"},
-                    })));
+                        Position: Vector2.Zero,
+                        Vertices: null,
+                        Parameters: new(new Dictionary<string, string>()
+                        {
+                            {"EntityType", "MainMenuButton"},
+                            {"ID", $"mm_bg_{button.Message}"},
+                            {"Mode", "Background"},
+                        })));
+                    Globals.DuoRunner.AddEnvironment(new(
+                        Position: Vector2.Zero,
+                        Vertices: null,
+                        Parameters: new(new Dictionary<string, string>()
+                        {
+                            {"EntityType", "MainMenuButton"},
+                            {"ID", $"mm_fg_{button.Message}"},
+                            {"Mode", "Foreground"},
+                        })));
                 }
                 _buttonNodes = null;
             }
@@ -142,6 +152,12 @@ namespace Duo.Managers
         {
             Debug.Assert(_initialized);
             _initialized = false;
+            foreach (var mainMenuButton in _buttonNodes.Values)
+            {
+                var duoRunner = Globals.DuoRunner;
+                duoRunner.RemoveEnvironment(mainMenuButton.Background);
+                duoRunner.RemoveEnvironment(mainMenuButton.Foreground);
+            }
             base.Cleanup();
         }
         public override void Update()
@@ -154,20 +170,15 @@ namespace Duo.Managers
             {
                 var ids = _view.menu.Buttons.Select(x => x.Message).ToArray();
                 var mainMenuButtons = Globals.DuoRunner.Environments.OfType<MainMenuButton>().ToArray();
-                if (mainMenuButtons.Length == _view.menu.Buttons.Length)
+                if (mainMenuButtons.Length == _view.menu.Buttons.Length * 2)
                 {
                     // Associate button id with main menu button.
                     var buttonNodes = new Dictionary<string, ButtonNode>();
-                    foreach (var mainMenuButton in mainMenuButtons)
+                    foreach (var id in ids)
                     {
-                        var buttonIdComponents = mainMenuButton.ID.Split("_");
-                        Debug.Assert(buttonIdComponents[0] == "mm");
-                        var id = buttonIdComponents[2];
-                        if (buttonIdComponents[1] == "bg")
-                        {
-                            Debug.Assert(ids.Contains(id));
-                            buttonNodes.Add(id, new(Background: mainMenuButton));
-                        }
+                        var mainMenuButtonFg = mainMenuButtons.Where(x => x.ID == $"mm_fg_{id}").First();
+                        var mainMenuButtonBg = mainMenuButtons.Where(x => x.ID == $"mm_bg_{id}").First();
+                        buttonNodes.Add(id, new(Background: mainMenuButtonBg, Foreground: mainMenuButtonFg));
                     }
                     Debug.Assert(buttonNodes.Keys.Count == _view.menu.Buttons.Length);
                     _buttonNodes = new(buttonNodes);
@@ -178,8 +189,9 @@ namespace Duo.Managers
                         var buttonNode = _buttonNodes[button.Message];
                         var position = new Vector2(x: button.Visual.AbsoluteX, y: button.Visual.AbsoluteY);
                         buttonNode.Background.Position = position;
-                        buttonNode.Background.Visibility = 0;
+                        buttonNode.Foreground.Position = position;
                     }
+                    _buttonVisibility = 0;
                 }
             }
 
