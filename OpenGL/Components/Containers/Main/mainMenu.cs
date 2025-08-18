@@ -4,6 +4,7 @@ using Gum.Managers;
 using Gum.Wireframe;
 
 using RenderingLibrary.Graphics;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -24,7 +25,7 @@ namespace DuoGum.Components
         }
         partial void CustomInitialize()
         {
-            _buttons = [resume, options, exit];
+            _buttons = [resume, help, options, title, exit];
         }
         public mainButton[] Buttons => _buttons;
         public void ResetFocus()

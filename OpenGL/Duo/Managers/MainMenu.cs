@@ -6,11 +6,13 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using Pow.Components;
 using Pow.Utilities;
+using Pow.Utilities.Animations;
 using Pow.Utilities.Control;
 using Pow.Utilities.Gum;
 using Pow.Utilities.UA;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -18,6 +20,50 @@ using System.Threading.Tasks;
 
 namespace Duo.Managers
 {
+    internal class MainMenuButton : Environment
+    {
+        private static readonly ReadOnlyDictionary<Modes, Layers> _layers = new(new Dictionary<Modes, Layers>() 
+        {
+            { Modes.Background, Layers.Menu },
+            { Modes.Foreground, Layers.MenuForeground },
+        });
+        private static readonly ReadOnlyDictionary<Modes, Animations> _animations = new(new Dictionary<Modes, Animations>()
+        {
+            { Modes.Background, Animations.MainMenuButtonBackground },
+            { Modes.Foreground, Animations.MainMenuButtonBackground },
+        });
+        private const PositionModes _positionMode = PositionModes.Screen;
+        private AnimationManager _animationManager;
+        private Modes _mode;
+        public enum Modes { Background, Foreground }
+        public Modes Mode => _mode;
+        public Vector2 Position
+        {
+            get => _animationManager.Position;
+            set => _animationManager.Position = value;
+        }
+        public float Rotation
+        {
+            get => _animationManager.Rotation;
+            set => _animationManager.Rotation = value;
+        }
+        public float Visibility
+        {
+            get => _animationManager.Visibility;
+            set => _animationManager.Visibility = value;
+        }
+        public override void Initialize(PolygonNode node)
+        {
+            base.Initialize(node);
+            {
+                _mode = Enum.Parse<Modes>(node.Parameters.GetValueOrDefault("Mode", "Background"));
+                _animationManager = Entity.Get<AnimationComponent>().Manager;
+                _animationManager.Layer = _layers[_mode];
+                _animationManager.PositionMode = _positionMode;
+                _animationManager.Play((int)_animations[_mode]);
+            }
+        }
+    }
     internal class MainMenu : GumObject, IUserAction, IControl
     {
         private bool _initialized = false;
@@ -28,6 +74,18 @@ namespace Duo.Managers
         private RunningStates _state;
         private float _period;
         private float _time;
+        private ReadOnlyDictionary<string, ButtonNode> _buttonNodes;
+        private float _buttonVisibility
+        {
+            set
+            {
+                foreach (var buttonNode in _buttonNodes.Values)
+                {
+                    buttonNode.Background.Visibility = value;
+                }
+            }
+        }
+        private record ButtonNode(MainMenuButton Background);
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -38,22 +96,47 @@ namespace Duo.Managers
         {
             base.Initialize(node);
             Debug.Assert(!_initialized);
-            _view = new mainView();
-            var menu = _view.menu;
-            menu.resume.Click += (object? sender, EventArgs e) => Close();
-            menu.exit.Click += (object? sender, EventArgs e) => Pow.Globals.Game.Exit();
-            GumManager.Initialize(_view.Visual);
-            GumManager.Position = GumManager.Origin;
-            GumManager.Layer = Layers.Menu;
-            GumManager.PositionMode = PositionModes.Screen;
-            GumManager.Visibility = 0;
-            _dimmer = null;
-            _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
-            Entity.Get<ControlComponent>().Manager.Initialize(this);
-            _uaManager = Globals.DuoRunner.UAGenerator.Acquire();
-            _uaManager.Initialize(this);
-            _time = 0;
-            _state = RunningStates.Waiting;
+            {
+                _view = new mainView();
+                var menu = _view.menu;
+                menu.resume.Click += (object? sender, EventArgs e) => Close();
+                menu.exit.Click += (object? sender, EventArgs e) => Pow.Globals.Game.Exit();
+            }
+            {
+                GumManager.Initialize(_view.Visual);
+                GumManager.Position = GumManager.Origin;
+                GumManager.Layer = Layers.MenuComponent;
+                GumManager.PositionMode = PositionModes.Screen;
+                GumManager.Visibility = 0;
+            }
+            {
+                foreach (var button in _view.menu.Buttons.Reverse())
+                {
+                    Globals.DuoRunner.AddEnvironment(new(
+                    Position: Vector2.Zero,
+                    Vertices: null,
+                    Parameters: new(new Dictionary<string, string>()
+                    {
+                        {"EntityType", "MainMenuButton"},
+                        {"ID", $"mm_bg_{button.Message}"},
+                        {"Mode", "Background"},
+                    })));
+                }
+                _buttonNodes = null;
+            }
+            { 
+                _dimmer = null;
+                _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
+            }
+            {
+                Entity.Get<ControlComponent>().Manager.Initialize(this);
+                _uaManager = Globals.DuoRunner.UAGenerator.Acquire();
+                _uaManager.Initialize(this);
+            }
+            {
+                _time = 0;
+                _state = RunningStates.Waiting;
+            }
         }
         public override void Cleanup()
         {
@@ -65,16 +148,64 @@ namespace Duo.Managers
         {
             base.Update();
 
+            _dimmer ??= Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
+
+            if (_buttonNodes == null)
+            {
+                var ids = _view.menu.Buttons.Select(x => x.Message).ToArray();
+                var mainMenuButtons = Globals.DuoRunner.Environments.OfType<MainMenuButton>().ToArray();
+                if (mainMenuButtons.Length == _view.menu.Buttons.Length)
+                {
+                    // Associate button id with main menu button.
+                    var buttonNodes = new Dictionary<string, ButtonNode>();
+                    foreach (var mainMenuButton in mainMenuButtons)
+                    {
+                        var buttonIdComponents = mainMenuButton.ID.Split("_");
+                        Debug.Assert(buttonIdComponents[0] == "mm");
+                        var id = buttonIdComponents[2];
+                        if (buttonIdComponents[1] == "bg")
+                        {
+                            Debug.Assert(ids.Contains(id));
+                            buttonNodes.Add(id, new(Background: mainMenuButton));
+                        }
+                    }
+                    Debug.Assert(buttonNodes.Keys.Count == _view.menu.Buttons.Length);
+                    _buttonNodes = new(buttonNodes);
+
+                    // Initialize each main menu button bg and fg pair.
+                    foreach (var button in _view.menu.Buttons)
+                    {
+                        var buttonNode = _buttonNodes[button.Message];
+                        var position = new Vector2(x: button.Visual.AbsoluteX, y: button.Visual.AbsoluteY);
+                        buttonNode.Background.Position = position;
+                        buttonNode.Background.Visibility = 0;
+                    }
+                }
+            }
+
+#if DEBUG
             if (!_initialized)
             {
-                _dimmer = Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
+                var mainMenus = Globals.DuoRunner.Environments.OfType<MainMenu>().ToArray();
+                Debug.Assert(mainMenus.Length == 1);
+            }
+#endif
+
+            if (!_initialized && _dimmer != null && _buttonNodes != null)
                 _initialized = true;
-            }    
 
             if (_state == RunningStates.Starting)
-                GumManager.Visibility = MathHelper.Lerp(1, 0, _time / _period);
+            {
+                var visibility = MathHelper.Lerp(1, 0, _time / _period);
+                GumManager.Visibility = visibility;
+                _buttonVisibility = visibility;
+            }
             else if (_state == RunningStates.Stopping)
-                GumManager.Visibility = MathHelper.Lerp(0, 1, _time / _period);
+            {
+                var visibility = MathHelper.Lerp(0, 1, _time / _period);
+                GumManager.Visibility = visibility;
+                _buttonVisibility = visibility;
+            }
 
             if (_time > 0)
                 _time -= Pow.Globals.GameTime.GetElapsedSeconds();
@@ -102,6 +233,7 @@ namespace Duo.Managers
             Debug.Assert(!_view.menu.ButtonFocused);
             Pow.Globals.GamePause();
             GumManager.Visibility = 0;
+            _buttonVisibility = 0;
             _dimmer.Start();
             _period = _dimmer.Period;
             _time = _dimmer.Period;
@@ -117,6 +249,7 @@ namespace Duo.Managers
             var menu = _view.menu;
             menu.ResetFocus();
             GumManager.Visibility = 1;
+            _buttonVisibility = 1;
             _dimmer.Stop();
             _period = _dimmer.Period;
             _time = _dimmer.Period;
@@ -128,6 +261,7 @@ namespace Duo.Managers
             menu.ResetFocus();
             menu.resume.IsFocused = true;
             GumManager.Visibility = 1;
+            _buttonVisibility = 1;
             _time = 0;
             _state = RunningStates.Running;
         }
@@ -137,6 +271,7 @@ namespace Duo.Managers
             var menu = _view.menu;
             menu.ResetFocus();
             GumManager.Visibility = 0;
+            _buttonVisibility = 0;
             _time = 0;
             _state = RunningStates.Waiting;
         }

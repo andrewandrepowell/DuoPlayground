@@ -32,7 +32,6 @@ partial class mainMenu : MonoGameGum.Forms.Controls.FrameworkElement
             return gue;
         });
     }
-    public NineSliceRuntime background { get; protected set; }
     public mainButton resume { get; protected set; }
     public mainButton help { get; protected set; }
     public mainButton options { get; protected set; }
@@ -50,7 +49,6 @@ partial class mainMenu : MonoGameGum.Forms.Controls.FrameworkElement
     protected override void ReactToVisualChanged()
     {
         base.ReactToVisualChanged();
-        background = this.Visual?.GetGraphicalUiElementByName("background") as NineSliceRuntime;
         resume = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"resume");
         help = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"help");
         options = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButton>(this.Visual,"options");

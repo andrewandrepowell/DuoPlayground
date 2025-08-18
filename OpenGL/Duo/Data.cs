@@ -25,6 +25,7 @@ namespace Duo.Data
         Collectibles,
         UI,
         Clock,
+        MainMenuButtonBackground
     }
     internal enum Animations 
     { 
@@ -39,7 +40,8 @@ namespace Duo.Data
         RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch,
         PineCone,
         UIOpening, UIIdle, UITwitch,
-        Clock
+        Clock,
+        MainMenuButtonBackground
     }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
     internal enum Masks { UIGuide }
@@ -52,7 +54,8 @@ namespace Duo.Data
         Door, 
         Collectible, 
         HUD, 
-        MainMenu, 
+        MainMenu,
+        MainMenuButton,
         Dimmer, 
         Background,
         UI,
@@ -350,6 +353,22 @@ namespace Duo.Data
                 indices: Enumerable.Range(0, 17).ToArray(),
                 period: 1,
                 repeat: true);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.MainMenuButtonBackground,
+                assetName: "images/menu_button_1",
+                regionSize: new(160, 96),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.MainMenuButtonBackground,
+                spriteId: (int)Sprites.MainMenuButtonBackground,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -401,6 +420,10 @@ namespace Duo.Data
                 new GumComponent(),
                 new ControlComponent(),
                 new GOCustomComponent<MainMenu>()));
+            runner.AddEntityType((int)EntityTypes.MainMenuButton, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<MainMenuButton>()));
             runner.AddEntityType((int)EntityTypes.Dimmer, world => world.Create(
                 new StatusComponent(),
                 new AnimationComponent(),
@@ -421,6 +444,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<UI>();
             runner.AddGOCustomManager<UIIcon>();
             runner.AddGOCustomManager<MainMenu>();
+            runner.AddGOCustomManager<MainMenuButton>();
             runner.AddGOCustomManager<Dimmer>();
             runner.AddGOCustomManager<Background>();
         }
@@ -437,6 +461,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<UI>(EntityTypes.UI);
             duoRunner.AddEnvironment<UIIcon>(EntityTypes.UIIcon);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
+            duoRunner.AddEnvironment<MainMenuButton>(EntityTypes.MainMenuButton);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
             duoRunner.AddEnvironment<Background>(EntityTypes.Background);
             // Boxes

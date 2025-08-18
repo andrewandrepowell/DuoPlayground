@@ -26,25 +26,6 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
-      <Type>DimensionUnitType</Type>
-      <Name>background.HeightUnits</Name>
-      <Value xsi:type="xsd:int">2</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <IsFile>true</IsFile>
-      <Type>string</Type>
-      <Name>background.SourceFile</Name>
-      <Value xsi:type="xsd:string">..\images\menu_0.png</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>TextureAddress</Type>
-      <Name>background.TextureAddress</Name>
-      <Value xsi:type="xsd:int">0</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
       <Type>Blend</Type>
       <Name>Blend</Name>
       <Value xsi:type="xsd:int">0</Value>
@@ -60,7 +41,7 @@
     <Variable>
       <Type>float</Type>
       <Name>buttons.Height</Name>
-      <Value xsi:type="xsd:float">8</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -77,7 +58,7 @@
     <Variable>
       <Type>float</Type>
       <Name>buttons.Width</Name>
-      <Value xsi:type="xsd:float">8</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -89,7 +70,7 @@
     <Variable>
       <Type>float</Type>
       <Name>buttons.X</Name>
-      <Value xsi:type="xsd:float">4</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -107,7 +88,7 @@
     <Variable>
       <Type>float</Type>
       <Name>buttons.Y</Name>
-      <Value xsi:type="xsd:float">4</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -340,7 +321,7 @@
     <Variable>
       <Type>HorizontalAlignment</Type>
       <Name>XOrigin</Name>
-      <Value xsi:type="xsd:int">0</Value>
+      <Value xsi:type="xsd:int">1</Value>
       <Category>Position</Category>
       <SetsValue>true</SetsValue>
     </Variable>
@@ -361,7 +342,7 @@
     <Variable>
       <Type>VerticalAlignment</Type>
       <Name>YOrigin</Name>
-      <Value xsi:type="xsd:int">0</Value>
+      <Value xsi:type="xsd:int">1</Value>
       <Category>Position</Category>
       <SetsValue>true</SetsValue>
     </Variable>
@@ -380,19 +361,7 @@
       <IsHiddenInPropertyGrid>false</IsHiddenInPropertyGrid>
       <Value />
     </VariableList>
-    <VariableList xsi:type="VariableListSaveOfString">
-      <Type>string</Type>
-      <Name>background.AnimationFrames</Name>
-      <IsFile>false</IsFile>
-      <IsHiddenInPropertyGrid>false</IsHiddenInPropertyGrid>
-      <Value />
-    </VariableList>
   </State>
-  <Instance>
-    <Name>background</Name>
-    <BaseType>NineSlice</BaseType>
-    <DefinedByBase>false</DefinedByBase>
-  </Instance>
   <Instance>
     <Name>resume</Name>
     <BaseType>Containers/Main/mainButton</BaseType>

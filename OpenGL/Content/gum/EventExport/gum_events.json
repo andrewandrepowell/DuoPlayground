@@ -133,6 +133,20 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2025-08-14T06:09:40.7833032Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/mainMenu (Container).NineSlice background in Containers/Main/mainMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-08-18T00:46:00.1221358Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Main/mainMenu (Container).NineSlice background in Containers/Main/mainMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-08-18T01:03:56.1035574Z"
       }
     ]
   }

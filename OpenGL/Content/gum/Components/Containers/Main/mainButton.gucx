@@ -5,53 +5,90 @@
   <State>
     <Name>Default</Name>
     <Variable>
+      <Type>float</Type>
+      <Name>background.Height</Name>
+      <Value xsi:type="xsd:float">96</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>DimensionUnitType</Type>
       <Name>background.HeightUnits</Name>
-      <Value xsi:type="xsd:int">2</Value>
+      <Value xsi:type="xsd:int">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <IsFile>true</IsFile>
       <Type>string</Type>
       <Name>background.SourceFile</Name>
-      <Value xsi:type="xsd:string">..\images\button_0.png</Value>
+      <Value xsi:type="xsd:string">..\images\menu_button_0.png</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>TextureAddress</Type>
+      <Name>background.TextureAddress</Name>
+      <Value xsi:type="xsd:int">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>int</Type>
       <Name>background.TextureHeight</Name>
-      <Value xsi:type="xsd:int">48</Value>
+      <Value xsi:type="xsd:int">96</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>int</Type>
       <Name>background.TextureLeft</Name>
-      <ExposedAsName>BackgroundTextureLeft</ExposedAsName>
-      <SetsValue>false</SetsValue>
+      <Value xsi:type="xsd:int">0</Value>
+      <ExposedAsName>background.TextureLeft</ExposedAsName>
+      <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>int</Type>
       <Name>background.TextureTop</Name>
       <Value xsi:type="xsd:int">0</Value>
-      <ExposedAsName>BackgroundTextureTop</ExposedAsName>
+      <ExposedAsName>background.TextureTop</ExposedAsName>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>int</Type>
       <Name>background.TextureWidth</Name>
-      <Value xsi:type="xsd:int">48</Value>
+      <Value xsi:type="xsd:int">160</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>background.Width</Name>
+      <Value xsi:type="xsd:float">160</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>DimensionUnitType</Type>
       <Name>background.WidthUnits</Name>
-      <Value xsi:type="xsd:int">2</Value>
+      <Value xsi:type="xsd:int">0</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>background.X</Name>
+      <Value xsi:type="xsd:float">0</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>HorizontalAlignment</Type>
+      <Name>background.XOrigin</Name>
+      <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>PositionUnitType</Type>
       <Name>background.XUnits</Name>
       <Value xsi:type="xsd:int">6</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>VerticalAlignment</Type>
+      <Name>background.YOrigin</Name>
+      <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -68,13 +105,24 @@
     <Variable>
       <Type>float</Type>
       <Name>Height</Name>
-      <Value xsi:type="xsd:float">8</Value>
+      <Value xsi:type="xsd:float">-32</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>DimensionUnitType</Type>
       <Name>HeightUnits</Name>
       <Value xsi:type="xsd:int">4</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float?</Type>
+      <Name>MaxWidth</Name>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>Rotation</Name>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -125,6 +173,12 @@
       <Type>bool</Type>
       <Name>text.IsBold</Name>
       <Value xsi:type="xsd:boolean">true</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>int</Type>
+      <Name>text.OutlineThickness</Name>
+      <Value xsi:type="xsd:int">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -203,7 +257,49 @@
     <Variable>
       <Type>float</Type>
       <Name>Width</Name>
-      <Value xsi:type="xsd:float">128</Value>
+      <Value xsi:type="xsd:float">-32</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>DimensionUnitType</Type>
+      <Name>WidthUnits</Name>
+      <Value xsi:type="xsd:int">4</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>X</Name>
+      <Value xsi:type="xsd:float">64</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>HorizontalAlignment</Type>
+      <Name>XOrigin</Name>
+      <Value xsi:type="xsd:int">1</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>PositionUnitType</Type>
+      <Name>XUnits</Name>
+      <Value xsi:type="xsd:int">0</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>Y</Name>
+      <Value xsi:type="xsd:float">32</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>VerticalAlignment</Type>
+      <Name>YOrigin</Name>
+      <Value xsi:type="xsd:int">1</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>PositionUnitType</Type>
+      <Name>YUnits</Name>
+      <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <VariableList xsi:type="VariableListSaveOfString">
@@ -285,7 +381,7 @@
   </Category>
   <Instance>
     <Name>background</Name>
-    <BaseType>NineSlice</BaseType>
+    <BaseType>Sprite</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>
   <Instance>

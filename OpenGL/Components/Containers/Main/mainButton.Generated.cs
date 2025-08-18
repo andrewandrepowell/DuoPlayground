@@ -66,16 +66,16 @@ partial class mainButton : MonoGameGum.Forms.Controls.Button
             }
         }
     }
-    public NineSliceRuntime background { get; protected set; }
+    public SpriteRuntime background { get; protected set; }
     public TextRuntime text { get; protected set; }
 
-    public int BackgroundTextureLeft
+    public int TextureLeft
     {
         get => background.TextureLeft;
         set => background.TextureLeft = value;
     }
 
-    public int BackgroundTextureTop
+    public int TextureTop
     {
         get => background.TextureTop;
         set => background.TextureTop = value;
@@ -97,7 +97,7 @@ partial class mainButton : MonoGameGum.Forms.Controls.Button
     protected override void ReactToVisualChanged()
     {
         base.ReactToVisualChanged();
-        background = this.Visual?.GetGraphicalUiElementByName("background") as NineSliceRuntime;
+        background = this.Visual?.GetGraphicalUiElementByName("background") as SpriteRuntime;
         text = this.Visual?.GetGraphicalUiElementByName("text") as TextRuntime;
         CustomInitialize();
     }
