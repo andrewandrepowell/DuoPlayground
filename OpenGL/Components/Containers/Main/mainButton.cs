@@ -14,7 +14,7 @@ namespace DuoGum.Components
     partial class mainButton
     {
         private static readonly Random _random = new();
-        private const float _rotationMagnitude = 5;
+        private const float _rotationMagnitude = 8.5f;
         private const float _rotationOffset = -_rotationMagnitude / 2.0f;
         partial void CustomInitialize()
         {

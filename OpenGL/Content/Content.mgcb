@@ -33,6 +33,12 @@
 /processorParam:DebugMode=Auto
 /build:effects/shine_0.fx
 
+#begin effects/winded_0.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/winded_0.fx
+
 #begin images/background_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
