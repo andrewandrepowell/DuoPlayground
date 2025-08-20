@@ -1,5 +1,6 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
+using Duo.Utilities.Shaders;
 using DuoGum.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -35,6 +36,7 @@ namespace Duo.Managers
         private const PositionModes _positionMode = PositionModes.Screen;
         private AnimationManager _animationManager;
         private Modes _mode;
+        private WindedFeature _windedFeature;
         public enum Modes { Background, Foreground }
         public Modes Mode => _mode;
         public Vector2 Position
@@ -61,6 +63,8 @@ namespace Duo.Managers
                 _animationManager.Layer = _layers[_mode];
                 _animationManager.PositionMode = _positionMode;
                 _animationManager.Play((int)_animations[_mode]);
+                //_animationManager.Show = false;
+                //_windedFeature = (_mode == Modes.Background) ? _animationManager.CreateFeature<WindedFeature, WindedEffect>() : null;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 using Pow.Utilities;
 using Pow.Utilities.Shaders;
 using System;
@@ -84,9 +85,9 @@ namespace Duo.Utilities.Shaders
                 }
             }
         }
-        public override void UpdateEffect()
+        public override void UpdateEffect(in Matrix viewProjection)
         {
-            base.UpdateEffect();
+            base.UpdateEffect(in viewProjection);
             if (!_flashing) return;
             GetEffect().Configure(
                 time: System.Math.Min(_time * _speed, _period));

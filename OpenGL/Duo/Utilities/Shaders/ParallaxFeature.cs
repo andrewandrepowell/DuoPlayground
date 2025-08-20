@@ -26,9 +26,9 @@ namespace Duo.Utilities.Shaders
             _parallaxPosition = Vector2.Zero;
             _initialized = true;
         }
-        public override void UpdateEffect()
+        public override void UpdateEffect(in Matrix viewProjection)
         {
-            base.UpdateEffect();
+            base.UpdateEffect(in viewProjection);
             Debug.Assert(_initialized);
             GetEffect().Configure(
                 parallaxTexture: _parallaxParent.Texture,

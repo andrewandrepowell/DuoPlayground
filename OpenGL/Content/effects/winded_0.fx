@@ -10,7 +10,7 @@
 #endif
 
 
-Matrix MatrixTransform;
+Matrix ViewProjection;
 Texture2D SpriteTexture;
 sampler2D SpriteTextureSampler = sampler_state
 {
@@ -36,13 +36,13 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    output.Position = mul(input.Position, MatrixTransform);
+    output.Position = mul(input.Position, ViewProjection);
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
     return output;
 }
 
-float4 MainPS(VertexShaderOutput input) : COLOR
+float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float4 output = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
     return output;

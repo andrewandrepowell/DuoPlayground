@@ -65,9 +65,9 @@ namespace Duo.Utilities.Shaders
                     ForceStop();
             }
         }
-        public override void UpdateEffect()
+        public override void UpdateEffect(in Matrix viewProjection)
         {
-            base.UpdateEffect();
+            base.UpdateEffect(in viewProjection);
             GetEffect().Configure(
                 color: _color,
                 spriteSize: new(

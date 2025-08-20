@@ -27,7 +27,7 @@ namespace Pow.Utilities.Shaders
         public float Scale { get; }
         public float Rotation { get; }
         public bool Show { get; }
-        public void UpdateEffect();
+        public void UpdateEffect(in Matrix viewProjection);
         public void Update();
     }
     public interface IParent
@@ -68,7 +68,7 @@ namespace Pow.Utilities.Shaders
         public virtual float Scale => 1;
         public virtual float Rotation => 0;
         public virtual bool Show => true;
-        public virtual void UpdateEffect()
+        public virtual void UpdateEffect(in Matrix viewProjection)
         {
             Debug.Assert(_initialized);
         }

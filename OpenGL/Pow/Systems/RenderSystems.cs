@@ -34,7 +34,7 @@ namespace Pow.Systems
     {
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly static Directions[] _directions = Enum.GetValues<Directions>();
-        private readonly static PositionModes[] _gumPositionModes = Enum.GetValues<PositionModes>();
+        private readonly static PositionModes[] _positionModes = Enum.GetValues<PositionModes>();
         private readonly QueryDescription _allAnimationComponents;
         private readonly Dictionary<(Layers, PositionModes), ForEach<AnimationComponent>> _drawAnimationComponents;
         private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawFeatureAnimationComponents;
@@ -44,12 +44,13 @@ namespace Pow.Systems
         private readonly Map _map;
         private readonly Camera _camera;
         private readonly ReadOnlyDictionary<Layers, RenderTarget2D> _pixelArtRenderTargets;
-        private readonly ReadOnlyDictionary<Layers, RenderTarget2D> _smoothArtRenderTargets;
         private readonly RenderTargetBinding[] _prevRenderTargets;
         private readonly Utilities.GameWindow _gameWindow;
         private readonly Vector2 _windowOrigin;
         private readonly RectangleF _windowScreenBounds;
         private RectangleF _windowMapBounds;
+        private readonly Dictionary<PositionModes, Matrix> _viewMatrices;
+        private readonly Dictionary<PositionModes, Matrix> _viewProjectionMatrices;
         private record LetterBoxNode(RenderTarget2D RenderTarget, Utilities.GameWindow.LetterBoxNode GameWindowNode);
         private readonly ReadOnlyDictionary<Directions, LetterBoxNode> _letterBoxNodes;
         public RenderDrawSystem(
@@ -61,12 +62,22 @@ namespace Pow.Systems
             var graphicsDevice = Globals.Game.GraphicsDevice;
             _map = map;
             _camera = camera;
+            _viewMatrices = new()
+            {
+                { PositionModes.Map, Matrix.Identity },
+                { PositionModes.Screen, Matrix.Identity },
+            };
+            _viewProjectionMatrices = new()
+            {
+                { PositionModes.Map, _camera.Projection },
+                { PositionModes.Screen, _camera.Projection },
+            };
             _allAnimationComponents = new QueryDescription().WithAny<AnimationComponent>();
             {
                 var screenIntersects = 
                 _drawAnimationComponents = [];
                 foreach (var layer in _layers)
-                    foreach (var positionMode in _gumPositionModes)
+                    foreach (var positionMode in _positionModes)
                     _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
                     {
                         var manager = component.Manager;
@@ -82,41 +93,19 @@ namespace Pow.Systems
                     _drawFeatureAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
                     {
                         var manager = component.Manager;
-                        if (manager.Layer == layer && manager.Features.Count > 0)
+                        if (manager.Layer == layer && 
+                            manager.Features.Count > 0 &&
+                            ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||
+                             (manager.PositionMode == PositionModes.Map && _windowMapBounds.Intersects(manager.Bounds))))
                         {
                             var spriteBatch = Globals.SpriteBatch;
-                            ref var view = ref _camera.View;
-                            switch (manager.PositionMode)
+                            foreach (var feature in manager.Features)
                             {
-                                case PositionModes.Map:
-                                    if (_windowMapBounds.Intersects(manager.Bounds))
-                                    {
-                                        foreach (var feature in manager.Features)
-                                        {
-                                            if (!feature.Show) continue;
-                                            feature.UpdateEffect();
-                                            spriteBatch.Begin(transformMatrix: view, effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
-                                            manager.Draw();
-                                            spriteBatch.End();
-                                        }
-                                    }
-                                    break;
-                                case PositionModes.Screen:
-                                    if (_windowScreenBounds.Intersects(manager.Bounds))
-                                    {
-                                        foreach (var feature in manager.Features)
-                                        {
-                                            if (!feature.Show) continue;
-                                            feature.UpdateEffect();
-                                            spriteBatch.Begin(effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
-                                            manager.Draw();
-                                            spriteBatch.End();
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    Debug.Assert(false);
-                                    break;
+                                if (!feature.Show) continue;
+                                feature.UpdateEffect(viewProjection: _viewProjectionMatrices[manager.PositionMode]);
+                                spriteBatch.Begin(transformMatrix: _viewMatrices[manager.PositionMode], effect: feature.Effect.Effect, samplerState: SamplerState.PointClamp);
+                                manager.Draw();
+                                spriteBatch.End();
                             }
                         }
                     }));
@@ -134,20 +123,6 @@ namespace Pow.Systems
                         preferredMultiSampleCount: 0,
                         usage: RenderTargetUsage.DiscardContents));
                 _pixelArtRenderTargets = new(pixelArtRenderTargets);
-            }
-            {
-                var smoothArtRenderTargets = new Dictionary<Layers, RenderTarget2D>();
-                foreach (var layer in _layers)
-                    smoothArtRenderTargets.Add(layer, new RenderTarget2D(
-                        graphicsDevice: Globals.Game.GraphicsDevice,
-                        width: (int)gameWindowSize.Width,
-                        height: (int)gameWindowSize.Height,
-                        mipMap: false,
-                        preferredFormat: SurfaceFormat.Color,
-                        preferredDepthFormat: DepthFormat.None,
-                        preferredMultiSampleCount: 0,
-                        usage: RenderTargetUsage.DiscardContents));
-                _smoothArtRenderTargets = new(smoothArtRenderTargets);
             }
             _prevRenderTargets = new RenderTargetBinding[graphicsDevice.RenderTargetCount];
             {
@@ -198,7 +173,7 @@ namespace Pow.Systems
                         if (component.Manager.Layer == layer)
                             component.Manager.GumDraw();
                     }));
-                    foreach (var positionMode in _gumPositionModes)
+                    foreach (var positionMode in _positionModes)
                         _monoDrawGumComponents.Add((layer, positionMode), new((ref GumComponent component) =>
                         {
                             if (component.Manager.Show && component.Manager.Layer == layer && component.Manager.PositionMode == positionMode)
@@ -211,17 +186,18 @@ namespace Pow.Systems
         {
             foreach (var renderTarget in _pixelArtRenderTargets.Values)
                 renderTarget.Dispose();
-            foreach (var renderTarget in _smoothArtRenderTargets.Values)
-                renderTarget.Dispose();
             foreach (var letterBoxNode in _letterBoxNodes.Values)
                 letterBoxNode.RenderTarget.Dispose();
             base.Dispose();
         }
         public override void Update(in GameTime t)
         {
-            ref var view = ref _camera.View;
             var graphicsDevice = Globals.Game.GraphicsDevice;
             var spriteBatch = Globals.SpriteBatch;
+
+            // Configure view and view projection matrices.
+            _viewMatrices[PositionModes.Map] = _camera.View;
+            _viewProjectionMatrices[PositionModes.Map] = _camera.ViewProjection;
 
             // Perform mono draw step of all gum components.
             foreach (var layer in _layers.AsSpan())
@@ -240,49 +216,29 @@ namespace Pow.Systems
                     graphicsDevice.Clear(Color.Transparent);
 
                     // Draw map.
-                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
+                    spriteBatch.Begin(transformMatrix: _viewMatrices[PositionModes.Map], samplerState: SamplerState.PointClamp);
                     _map.Draw(layer);
                     spriteBatch.End();
 
-                    // Draw animations with respect to view matrix.
-                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
-                    World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, PositionModes.Map)]);
-                    spriteBatch.End();
-
-                    // Draw animations directly to screen.
-                    spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, PositionModes.Screen)]);
-                    spriteBatch.End();
+                    // Draw animations.
+                    foreach (var positionMode in _positionModes.AsSpan())
+                    {
+                        spriteBatch.Begin(transformMatrix: _viewMatrices[positionMode], samplerState: SamplerState.PointClamp);
+                        World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, positionMode)]);
+                        spriteBatch.End();
+                    }
 
                     // Draw features (i.e. shader effects)
                     World.Query(_allAnimationComponents, _drawFeatureAnimationComponents[layer]);
 
-                    // Draw gum components with respect to view matrix.
-                    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.PointClamp);
-                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Map)]);
-                    spriteBatch.End();
-
-                    // Draw gum components directly to screen.
-                    spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Screen)]);
-                    spriteBatch.End();
+                    // Draw gum components.
+                    foreach (var positionMode in _positionModes.AsSpan())
+                    {
+                        spriteBatch.Begin(transformMatrix: _viewMatrices[positionMode], samplerState: SamplerState.PointClamp);
+                        World.Query(_allGumComponents, _monoDrawGumComponents[(layer, positionMode)]);
+                        spriteBatch.End();
+                    }
                 }
-
-                //// smooth art drawing.
-                //{
-                //    graphicsDevice.SetRenderTarget(_smoothArtRenderTargets[layer]);
-                //    graphicsDevice.Clear(Color.Transparent);
-
-                //    // Draw gum components with respect to view matrix.
-                //    spriteBatch.Begin(transformMatrix: view, samplerState: SamplerState.LinearClamp);
-                //    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Map)]);
-                //    spriteBatch.End();
-
-                //    // Draw gum components directly to screen.
-                //    spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
-                //    World.Query(_allGumComponents, _monoDrawGumComponents[(layer, PositionModes.Screen)]);
-                //    spriteBatch.End();
-                //}
             }
 
             // Update game window related properties, such as game window sizing and letter box sizes.
@@ -297,20 +253,6 @@ namespace Pow.Systems
                 spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 spriteBatch.Draw(
                     texture: _pixelArtRenderTargets[layer],
-                    position: _gameWindow.Offset,
-                    sourceRectangle: null,
-                    color: Color.White,
-                    rotation: 0,
-                    origin: Vector2.Zero,
-                    scale: _gameWindow.Scalar,
-                    effects: SpriteEffects.None,
-                    layerDepth: 0);
-                spriteBatch.End();
-
-                // Draw smooth art.
-                spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
-                spriteBatch.Draw(
-                    texture: _smoothArtRenderTargets[layer],
                     position: _gameWindow.Offset,
                     sourceRectangle: null,
                     color: Color.White,
