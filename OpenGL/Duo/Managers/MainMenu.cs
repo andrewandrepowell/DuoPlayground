@@ -60,11 +60,20 @@ namespace Duo.Managers
             {
                 _mode = Enum.Parse<Modes>(node.Parameters.GetValueOrDefault("Mode", "Background"));
                 _animationManager = Entity.Get<AnimationComponent>().Manager;
+                _animationManager.Pauseable = false;
                 _animationManager.Layer = _layers[_mode];
                 _animationManager.PositionMode = _positionMode;
                 _animationManager.Play((int)_animations[_mode]);
-                //_animationManager.Show = false;
-                //_windedFeature = (_mode == Modes.Background) ? _animationManager.CreateFeature<WindedFeature, WindedEffect>() : null;
+                _animationManager.Show = false;
+                if (_mode == Modes.Background)
+                {
+                    _windedFeature = _animationManager.CreateFeature<WindedFeature, WindedEffect>();
+                    _windedFeature.Layer = _layers[_mode];
+                }
+                else
+                {
+                    _windedFeature = null;
+                }    
             }
         }
     }

@@ -83,7 +83,7 @@ namespace Pow.Utilities
                 StrictAllocationMode = false,
             });
             EcsWorld.SharedJobScheduler = _jobScheduler;
-            _camera = new();
+            _camera = new(gameWindowSize: _parent.GameWindowSize);
             _map = new(this);
             _renderDrawSystem = new(
                 world: _ecsWorld, 
