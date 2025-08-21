@@ -17,6 +17,14 @@ sampler2D SpriteTextureSampler = sampler_state
     Texture = <SpriteTexture>;
 };
 
+static const float Amplitude = 8.0f;
+static const float Period = 2.0f;
+static const float Pi = 3.14159265359f;
+float Time;
+float2 SpriteTextureSize;
+float2 SpriteTextureRegionSize;
+
+
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
@@ -31,12 +39,30 @@ struct VertexShaderOutput
     float2 TextureCoordinates : TEXCOORD0;
 };
 
+float wrap(float x, float m)
+{
+    return (m + x % m) % m;
+};
+
+float2 wrap(float2 x, float2 m)
+{
+    return float2(wrap(x.x, m.x), wrap(x.y, m.y));
+};
+
+float2 sway(float2 uv)
+{
+    // float2 regionPosition = wrap(uv * SpriteTextureSize, SpriteTextureRegionSize);
+    float2 regionPosition = uv * SpriteTextureSize;
+    float yOffset = Amplitude * cos(2 * Pi * (Time / Period + regionPosition.x / (2.0f * SpriteTextureRegionSize.x))) * (1.0f - regionPosition.y / SpriteTextureRegionSize.y);
+    float2 offset = float2(0, yOffset);
+    return offset;
+}
 
 VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    output.Position = mul(input.Position, ViewProjection);
+    output.Position = mul(input.Position + float4(sway(input.TextureCoordinates), 0, 0), ViewProjection);
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
     return output;

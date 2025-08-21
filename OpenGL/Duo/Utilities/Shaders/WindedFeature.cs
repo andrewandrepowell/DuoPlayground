@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Pow.Utilities;
 using Pow.Utilities.Shaders;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,13 @@ namespace Duo.Utilities.Shaders
         public override void UpdateEffect(in Matrix viewProjection)
         {
             base.UpdateEffect(in viewProjection);
-            GetEffect().Configure(in viewProjection);
+            GetEffect().Configure(
+                viewProjection: in viewProjection,
+                time: (float)Pow.Globals.GameTime.TotalGameTime.TotalSeconds,
+                textureSize: new SizeF(
+                    width: Parent.Texture.Width, 
+                    height: Parent.Texture.Height),
+                regionSize: Parent.Region.Size);
         }
     }
 }
