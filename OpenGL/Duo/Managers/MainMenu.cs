@@ -65,15 +65,15 @@ namespace Duo.Managers
                 _animationManager.PositionMode = _positionMode;
                 _animationManager.Play((int)_animations[_mode]);
                 _animationManager.Show = false;
-                if (_mode == Modes.Background)
-                {
+                //if (_mode == Modes.Background)
+                //{
                     _windedFeature = _animationManager.CreateFeature<WindedFeature, WindedEffect>();
                     _windedFeature.Layer = _layers[_mode];
-                }
-                else
-                {
-                    _windedFeature = null;
-                }    
+                //}
+                //else
+                //{
+                //    _windedFeature = null;
+                //}    
             }
         }
     }

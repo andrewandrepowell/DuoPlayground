@@ -23,7 +23,8 @@ namespace Duo.Utilities.Shaders
                 textureSize: new SizeF(
                     width: Parent.Texture.Width, 
                     height: Parent.Texture.Height),
-                regionSize: Parent.Region.Size);
+                regionSize: Parent.Region.Size,
+                regionOffset: Parent.Region.Location.ToVector2());
         }
     }
 }

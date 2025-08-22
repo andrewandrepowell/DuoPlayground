@@ -18,10 +18,12 @@ namespace Duo.Utilities.Shaders
         private readonly EffectParameter _timeEP;
         private readonly EffectParameter _spriteTextureSizeEP;
         private readonly EffectParameter _spriteTextureRegionSizeEP;
+        private readonly EffectParameter _spriteTextureRegionOffsetEP;
         private Matrix _viewProjection;
         private float _time;
         private SizeF _textureSize;
         private SizeF _regionSize;
+        private Vector2 _regionOffset;
         public override Effect Effect => _effect;
         public WindedEffect()
         {
@@ -30,8 +32,9 @@ namespace Duo.Utilities.Shaders
             _timeEP = _effect.Parameters["Time"];
             _spriteTextureSizeEP = _effect.Parameters["SpriteTextureSize"];
             _spriteTextureRegionSizeEP = _effect.Parameters["SpriteTextureRegionSize"];
+            _spriteTextureRegionOffsetEP = _effect.Parameters["SpriteTextureRegionOffset"];
         }
-        public void Configure(in Matrix viewProjection, in float time, in SizeF textureSize, in SizeF regionSize)
+        public void Configure(in Matrix viewProjection, in float time, in SizeF textureSize, in SizeF regionSize, in Vector2 regionOffset)
         {
             if (_viewProjection != viewProjection)
             {
@@ -51,7 +54,12 @@ namespace Duo.Utilities.Shaders
             if (_regionSize != regionSize)
             {
                 _regionSize = regionSize;
-                _spriteTextureRegionSizeEP?.SetValue(regionSize);
+                _spriteTextureRegionSizeEP.SetValue(regionSize);
+            }
+            if (_regionOffset != regionOffset)
+            {
+                _regionOffset = regionOffset;
+                _spriteTextureRegionOffsetEP.SetValue(regionOffset);
             }
         }
     }

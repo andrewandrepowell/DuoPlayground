@@ -1,5 +1,6 @@
 // https://docs.monogame.net/articles/tutorials/building_2d_games/24_shaders/
 // https://learn-monogame.github.io/tutorial/first-shader/
+// https://thebookofshaders.com/10/
 #if OPENGL
 #define SV_POSITION POSITION
 #define VS_SHADERMODEL vs_3_0
@@ -17,11 +18,13 @@ sampler2D SpriteTextureSampler = sampler_state
     Texture = <SpriteTexture>;
 };
 
-static const float Amplitude = 8.0f;
-static const float Period = 2.0f;
+static const float YAmplitude = 4.0f;
+static const float XAmplitude = 6.0f;
+static const float Period = 4.0f;
 static const float Pi = 3.14159265359f;
 float Time;
 float2 SpriteTextureSize;
+float2 SpriteTextureRegionOffset;
 float2 SpriteTextureRegionSize;
 
 
@@ -39,6 +42,12 @@ struct VertexShaderOutput
     float2 TextureCoordinates : TEXCOORD0;
 };
 
+
+float rand(float x)
+{
+    return frac(sin(x) * 1000000.0f);
+}
+
 float wrap(float x, float m)
 {
     return (m + x % m) % m;
@@ -49,12 +58,25 @@ float2 wrap(float2 x, float2 m)
     return float2(wrap(x.x, m.x), wrap(x.y, m.y));
 };
 
-float2 sway(float2 uv)
+float drift(float x)
 {
-    // float2 regionPosition = wrap(uv * SpriteTextureSize, SpriteTextureRegionSize);
-    float2 regionPosition = uv * SpriteTextureSize;
-    float yOffset = Amplitude * cos(2 * Pi * (Time / Period + regionPosition.x / (2.0f * SpriteTextureRegionSize.x))) * (1.0f - regionPosition.y / SpriteTextureRegionSize.y);
-    float2 offset = float2(0, yOffset);
+    float i = floor(x) % 6;
+    float i_next = (i + 1) % 6;
+    float f = floor(x);
+    return lerp(rand(i), rand(i_next), smoothstep(0.0f, 1.0f, f));
+}
+
+float2 sway(float2 uv, float seed)
+{
+    
+    float2 regionPosition = uv * SpriteTextureSize - SpriteTextureRegionOffset;
+    float timeCoef = Time / Period;
+    float diminishAmplitudeCoef = (1.0f - regionPosition.y / SpriteTextureRegionSize.y);
+    float driftCoef = drift(timeCoef / 2.0f + seed);
+    float rightPhaseCoef = regionPosition.x / (2.0f * SpriteTextureRegionSize.x);
+    float yOffset = YAmplitude * cos(2 * Pi * (timeCoef + rightPhaseCoef + seed)) * diminishAmplitudeCoef * driftCoef;
+    float xOffset = XAmplitude * cos(2 * Pi * (timeCoef + seed)) * diminishAmplitudeCoef * driftCoef;
+    float2 offset = float2(xOffset, yOffset);
     return offset;
 }
 
@@ -62,7 +84,7 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    output.Position = mul(input.Position + float4(sway(input.TextureCoordinates), 0, 0), ViewProjection);
+    output.Position = mul(input.Position + float4(sway(input.TextureCoordinates, input.Position.x + input.Position.y), 0, 0), ViewProjection);
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
     return output;
