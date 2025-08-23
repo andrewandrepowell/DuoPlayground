@@ -71,7 +71,10 @@ namespace Pow.Utilities.Animations
             Debug.Assert(_animationId != null);
             var spriteNode = _animationNode.SpriteNode;
             var sprite = spriteNode.Sprite;
-            sprite.Scale = _scale;
+            var scale = 1.0f;
+            foreach (var feature in _features)
+                scale *= feature.Scale;
+            sprite.Scale = _scale * scale;
         }
         private void UpdateSpriteColor()
         {

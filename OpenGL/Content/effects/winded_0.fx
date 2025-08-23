@@ -37,6 +37,7 @@ float2 SpriteTextureSize;
 float2 SpriteTextureRegionOffset;
 float2 SpriteTextureRegionSize;
 float GlowIntensitiy;
+float Scale;
 
 struct VertexShaderInput
 {
@@ -72,6 +73,17 @@ float2 wrap(float2 x, float2 m)
 {
     return float2(wrap(x.x, m.x), wrap(x.y, m.y));
 };
+
+
+float2 scale(float2 position, float2 uv, float amount)
+{
+    float2 regionPosition = (uv * SpriteTextureSize) - SpriteTextureRegionOffset;
+    float2 originPosition = (position - regionPosition) + (SpriteTextureRegionSize / 2);
+    float2 translatedPosition = position - originPosition;
+    float2 scaledPosition = mul(translatedPosition, float2x2(amount, 0.0f, 0.0f, amount));
+    float2 untranslatedPosition = scaledPosition + originPosition;
+    return untranslatedPosition;
+}
 
 float drift(float x)
 {
@@ -129,7 +141,9 @@ VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    output.Position = mul(input.Position + float4(sway(input.TextureCoordinates, input.Position.x + input.Position.y), 0, 0), ViewProjection);
+    float2 swayedPosition = input.Position.xy + sway(input.TextureCoordinates, input.Position.x + input.Position.y);
+    float2 scaledPosition = scale(swayedPosition, input.TextureCoordinates, Scale);
+    output.Position = mul(float4(scaledPosition, input.Position.zw), ViewProjection);
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
     return output;

@@ -14,6 +14,7 @@ namespace Duo.Utilities.Shaders
     public class WindedFeature : FeatureManager<WindedEffect>
     {
         private float _glowIntensity;
+        private float _effectScale;
         private Layers _layer = Layers.MenuForeground;
         public override Layers Layer { get => _layer; set => _layer = value; }
         public float GlowIntensity
@@ -25,10 +26,20 @@ namespace Duo.Utilities.Shaders
                 _glowIntensity = value;
             }
         }
+        public float EffectScale
+        {
+            get => _effectScale;
+            set
+            {
+                Debug.Assert(value >= 0);
+                _effectScale = value;
+            }
+        }
         protected override void Initialize()
         {
             base.Initialize();
             _glowIntensity = 0;
+            _effectScale = 1.0f;
         }
         public override void UpdateEffect(in Matrix viewProjection)
         {
@@ -41,7 +52,8 @@ namespace Duo.Utilities.Shaders
                     height: Parent.Texture.Height),
                 regionSize: Parent.Region.Size,
                 regionOffset: Parent.Region.Location.ToVector2(),
-                glowIntensity: _glowIntensity);
+                glowIntensity: _glowIntensity,
+                scale: _effectScale);
         }
     }
 }

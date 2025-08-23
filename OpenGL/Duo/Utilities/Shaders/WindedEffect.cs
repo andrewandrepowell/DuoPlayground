@@ -20,12 +20,14 @@ namespace Duo.Utilities.Shaders
         private readonly EffectParameter _spriteTextureRegionSizeEP;
         private readonly EffectParameter _spriteTextureRegionOffsetEP;
         private readonly EffectParameter _glowIntensitiyEP;
+        private readonly EffectParameter _scaleEP;
         private Matrix _viewProjection;
         private float _time;
         private SizeF _textureSize;
         private SizeF _regionSize;
         private Vector2 _regionOffset;
         private float _glowIntensity;
+        private float _scale;
         public override Effect Effect => _effect;
         public WindedEffect()
         {
@@ -36,8 +38,16 @@ namespace Duo.Utilities.Shaders
             _spriteTextureRegionSizeEP = _effect.Parameters["SpriteTextureRegionSize"];
             _spriteTextureRegionOffsetEP = _effect.Parameters["SpriteTextureRegionOffset"];
             _glowIntensitiyEP = _effect.Parameters["GlowIntensitiy"];
+            _scaleEP = _effect.Parameters["Scale"];
         }
-        public void Configure(in Matrix viewProjection, in float time, in SizeF textureSize, in SizeF regionSize, in Vector2 regionOffset, in float glowIntensity)
+        public void Configure(
+            in Matrix viewProjection, 
+            in float time, 
+            in SizeF textureSize, 
+            in SizeF regionSize, 
+            in Vector2 regionOffset, 
+            in float glowIntensity,
+            in float scale = 1.0f)
         {
             if (_viewProjection != viewProjection)
             {
@@ -68,6 +78,11 @@ namespace Duo.Utilities.Shaders
             {
                 _glowIntensity = glowIntensity;
                 _glowIntensitiyEP.SetValue(glowIntensity);
+            }
+            if (_scale != scale)
+            {
+                _scale = scale;
+                _scaleEP.SetValue(scale);
             }
         }
     }

@@ -64,6 +64,7 @@ namespace Duo.Managers
                 if (_selected == value) return;
                 _selected = value;
                 _windedFeature.GlowIntensity = _selected ? 1.0f : 0.0f;
+                _windedFeature.EffectScale = _selected ? 1.15f : 1.0f;
             }
         }
         public override void Initialize(PolygonNode node)
@@ -105,10 +106,6 @@ namespace Duo.Managers
             }
         }
         private record ButtonNode(MainMenuButton Background, MainMenuButton Foreground);
-        private void ServiceButtonFocusUpdate(IInputReceiver receiver)
-        {
-            Debug.Print($"Focus Occurred: {receiver}");
-        }
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -122,8 +119,6 @@ namespace Duo.Managers
             {
                 _view = new mainView();
                 var menu = _view.menu;
-                //foreach (var button in menu.Buttons)
-                //    button.FocusUpdate += ServiceButtonFocusUpdate;
                 menu.resume.Click += (object? sender, EventArgs e) => Close();
                 menu.exit.Click += (object? sender, EventArgs e) => Pow.Globals.Game.Exit();
             }
