@@ -2,6 +2,7 @@
 using Duo.Data;
 using Duo.Utilities.Shaders;
 using DuoGum.Components;
+using Gum.Wireframe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -37,6 +38,7 @@ namespace Duo.Managers
         private AnimationManager _animationManager;
         private Modes _mode;
         private WindedFeature _windedFeature;
+        private bool _selected;
         public enum Modes { Background, Foreground }
         public Modes Mode => _mode;
         public Vector2 Position
@@ -54,27 +56,30 @@ namespace Duo.Managers
             get => _animationManager.Visibility;
             set => _animationManager.Visibility = value;
         }
+        public bool Selected
+        {
+            get => _selected;
+            set
+            {
+                if (_selected == value) return;
+                _selected = value;
+                _windedFeature.GlowIntensity = _selected ? 1.0f : 0.0f;
+            }
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
-            {
-                _mode = Enum.Parse<Modes>(node.Parameters.GetValueOrDefault("Mode", "Background"));
-                _animationManager = Entity.Get<AnimationComponent>().Manager;
-                _animationManager.Pauseable = false;
-                _animationManager.Layer = _layers[_mode];
-                _animationManager.PositionMode = _positionMode;
-                _animationManager.Play((int)_animations[_mode]);
-                _animationManager.Show = false;
-                //if (_mode == Modes.Background)
-                //{
-                    _windedFeature = _animationManager.CreateFeature<WindedFeature, WindedEffect>();
-                    _windedFeature.Layer = _layers[_mode];
-                //}
-                //else
-                //{
-                //    _windedFeature = null;
-                //}    
-            }
+            _mode = Enum.Parse<Modes>(node.Parameters.GetValueOrDefault("Mode", "Background"));
+            _animationManager = Entity.Get<AnimationComponent>().Manager;
+            _animationManager.Pauseable = false;
+            _animationManager.Layer = _layers[_mode];
+            _animationManager.PositionMode = _positionMode;
+            _animationManager.Play((int)_animations[_mode]);
+            _animationManager.Show = false;
+            _windedFeature = _animationManager.CreateFeature<WindedFeature, WindedEffect>();
+            _windedFeature.Layer = _layers[_mode];
+            _windedFeature.GlowIntensity = 0.0f;
+            _selected = false;
         }
     }
     internal class MainMenu : GumObject, IUserAction, IControl
@@ -100,6 +105,10 @@ namespace Duo.Managers
             }
         }
         private record ButtonNode(MainMenuButton Background, MainMenuButton Foreground);
+        private void ServiceButtonFocusUpdate(IInputReceiver receiver)
+        {
+            Debug.Print($"Focus Occurred: {receiver}");
+        }
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -113,6 +122,8 @@ namespace Duo.Managers
             {
                 _view = new mainView();
                 var menu = _view.menu;
+                //foreach (var button in menu.Buttons)
+                //    button.FocusUpdate += ServiceButtonFocusUpdate;
                 menu.resume.Click += (object? sender, EventArgs e) => Close();
                 menu.exit.Click += (object? sender, EventArgs e) => Pow.Globals.Game.Exit();
             }
@@ -218,6 +229,10 @@ namespace Duo.Managers
 
             if (!_initialized && _dimmer != null && _buttonNodes != null)
                 _initialized = true;
+
+            if (_initialized && _state == RunningStates.Running)
+                foreach (var button in _view.menu.Buttons)
+                    _buttonNodes[button.Message].Background.Selected = button.IsFocused;
 
             if (_state == RunningStates.Starting)
             {

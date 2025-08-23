@@ -7,13 +7,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Duo.Utilities.Shaders
 {
     public class WindedFeature : FeatureManager<WindedEffect>
     {
+        private float _glowIntensity;
         private Layers _layer = Layers.MenuForeground;
         public override Layers Layer { get => _layer; set => _layer = value; }
+        public float GlowIntensity
+        {
+            get => _glowIntensity;
+            set
+            {
+                Debug.Assert(value >= 0 && value <= 1.0f);
+                _glowIntensity = value;
+            }
+        }
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _glowIntensity = 0;
+        }
         public override void UpdateEffect(in Matrix viewProjection)
         {
             base.UpdateEffect(in viewProjection);
@@ -24,7 +40,8 @@ namespace Duo.Utilities.Shaders
                     width: Parent.Texture.Width, 
                     height: Parent.Texture.Height),
                 regionSize: Parent.Region.Size,
-                regionOffset: Parent.Region.Location.ToVector2());
+                regionOffset: Parent.Region.Location.ToVector2(),
+                glowIntensity: _glowIntensity);
         }
     }
 }

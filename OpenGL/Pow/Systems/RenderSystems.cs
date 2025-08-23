@@ -82,7 +82,8 @@ namespace Pow.Systems
                     {
                         var manager = component.Manager;
                         if (manager.Show && 
-                            manager.Layer == layer && 
+                            manager.Layer == layer &&
+                            manager.Visibility > 0 &&
                             manager.PositionMode == positionMode &&
                             ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||
                              (manager.PositionMode == PositionModes.Map && _windowMapBounds.Intersects(manager.Bounds))))
@@ -95,6 +96,7 @@ namespace Pow.Systems
                         var manager = component.Manager;
                         if (manager.Layer == layer && 
                             manager.Features.Count > 0 &&
+                            manager.Visibility > 0 &&
                             ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||
                              (manager.PositionMode == PositionModes.Map && _windowMapBounds.Intersects(manager.Bounds))))
                         {
