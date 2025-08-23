@@ -139,7 +139,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
 {
     float4 pixelColor = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
     float4 glowPixel = glow(input.TextureCoordinates) * pulse() * GlowColor * GlowIntensitiy;
-    float4 output = pixelColor + glowPixel;
+    float4 output = (pixelColor + glowPixel) * input.Color;
     return output;
 }
 
