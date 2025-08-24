@@ -151,7 +151,7 @@ namespace Pow.Utilities.Gum
         }
         public void MonoDraw()
         {
-            if (_visibility.EqualsWithTolerance(0)) return;
+            if (_visibility == 0) return;
             Globals.SpriteBatch.Draw(
                 texture: _renderTarget,
                 position: _position,

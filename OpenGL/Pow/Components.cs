@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework;
 using Pow.Utilities.Physics;
 using Pow.Utilities.Control;
 using Pow.Utilities.Gum;
+using Pow.Utilities.ParticleEffects;
 
 namespace Pow.Components
 {
@@ -53,6 +54,12 @@ namespace Pow.Components
     {
         public GumManager Manager;
         public void Initialize(in Entity entity) => Manager = Globals.Runner.GumGenerator.Acquire();
+        public readonly void Dispose() => Manager.Return();
+    }
+    public struct ParticleEffectComponent : IDisposable, IEntityInitialize
+    {
+        public ParticleEffectManager Manager;
+        public void Initialize(in Entity entity) => Manager = Globals.Runner.ParticleEffectGenerator.Acquire();
         public readonly void Dispose() => Manager.Return();
     }
     public record struct PositionComponent(Vector2 Vector);

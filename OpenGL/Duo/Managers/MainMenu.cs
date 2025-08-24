@@ -64,7 +64,7 @@ namespace Duo.Managers
                 if (_selected == value) return;
                 _selected = value;
                 _windedFeature.GlowIntensity = _selected ? 1.0f : 0.0f;
-                _windedFeature.EffectScale = _selected ? 1.15f : 1.0f;
+                _windedFeature.EffectScale = _selected ? 1.10f : 1.0f;
             }
         }
         public override void Initialize(PolygonNode node)

@@ -18,14 +18,19 @@ namespace Pow.Systems
     {
         private readonly QueryDescription _allAnimationComponents;
         private readonly ForEach<AnimationComponent> _updateAnimationComponents;
+        private readonly QueryDescription _allParticleEffectComponents;
+        private readonly ForEach<ParticleEffectComponent> _updateParticleEffectComponents;
         public RenderUpdateSystem(World world) : base(world) 
         {
             _allAnimationComponents = new QueryDescription().WithAll<AnimationComponent>();
+            _updateParticleEffectComponents = new((ref ParticleEffectComponent component) => component.Manager.Update());
+            _allParticleEffectComponents = new QueryDescription().WithAll<ParticleEffectComponent>();
             _updateAnimationComponents = new((ref AnimationComponent component) => component.Manager.Update());
         }
         public override void Update(in GameTime t)
         {
             GumService.Default.Update(t);
+            World.ParallelQuery(_allParticleEffectComponents, _updateParticleEffectComponents);
             World.ParallelQuery(_allAnimationComponents, _updateAnimationComponents);
             base.Update(t);
         }
@@ -35,6 +40,8 @@ namespace Pow.Systems
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly static Directions[] _directions = Enum.GetValues<Directions>();
         private readonly static PositionModes[] _positionModes = Enum.GetValues<PositionModes>();
+        private readonly QueryDescription _allParticleEffectComponents;
+        private readonly Dictionary<(Layers, PositionModes), ForEach<ParticleEffectComponent>> _drawParticleEffectComponents;
         private readonly QueryDescription _allAnimationComponents;
         private readonly Dictionary<(Layers, PositionModes), ForEach<AnimationComponent>> _drawAnimationComponents;
         private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawFeatureAnimationComponents;
@@ -72,9 +79,22 @@ namespace Pow.Systems
                 { PositionModes.Map, _camera.Projection },
                 { PositionModes.Screen, _camera.Projection },
             };
-            _allAnimationComponents = new QueryDescription().WithAny<AnimationComponent>();
+            _allParticleEffectComponents = new QueryDescription().WithAll<ParticleEffectComponent>();
             {
-                var screenIntersects = 
+                _drawParticleEffectComponents = [];
+                foreach (var layer in _layers)
+                    foreach (var positionMode in _positionModes)
+                        _drawParticleEffectComponents.Add((layer, positionMode), new((ref ParticleEffectComponent component) =>
+                        {
+                            var manager = component.Manager;
+                            if (manager.Show &&
+                                manager.Layer == layer &&
+                                manager.PositionMode == positionMode)
+                                manager.Draw();
+                        }));
+            }
+            _allAnimationComponents = new QueryDescription().WithAll<AnimationComponent>();
+            {
                 _drawAnimationComponents = [];
                 foreach (var layer in _layers)
                     foreach (var positionMode in _positionModes)
@@ -233,6 +253,14 @@ namespace Pow.Systems
 
                     // Draw features (i.e. shader effects)
                     World.Query(_allAnimationComponents, _drawFeatureAnimationComponents[layer]);
+
+                    // Draw particle effects
+                    foreach (var positionMode in _positionModes.AsSpan())
+                    {
+                        spriteBatch.Begin(transformMatrix: _viewMatrices[positionMode], samplerState: SamplerState.PointClamp);
+                        World.Query(_allParticleEffectComponents, _drawParticleEffectComponents[(layer, positionMode)]);
+                        spriteBatch.End();
+                    }
 
                     // Draw gum components.
                     foreach (var positionMode in _positionModes.AsSpan())
