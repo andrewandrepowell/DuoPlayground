@@ -219,7 +219,6 @@ namespace Pow.Systems
 
             // Configure view and view projection matrices.
             _viewMatrices[PositionModes.Map] = _camera.View;
-            _viewProjectionMatrices[PositionModes.Screen] = _camera.Projection;
             _viewProjectionMatrices[PositionModes.Map] = _camera.ViewProjection;
 
             // Perform mono draw step of all gum components.

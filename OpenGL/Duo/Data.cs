@@ -44,6 +44,10 @@ namespace Duo.Data
         MainMenuButtonBackground,
         MainMenuButtonForeground
     }
+    internal enum ParticleEffects
+    {
+        MenuWind
+    }
     internal enum Boxes { Cat, Root, RootBlockage, Collectible }
     internal enum Masks { UIGuide }
     public enum EntityTypes { 
@@ -386,6 +390,10 @@ namespace Duo.Data
                 indices: [0],
                 period: 0,
                 repeat: false);
+            //
+            runner.ParticleEffectGenerator.Configure(
+                id: (int)ParticleEffects.MenuWind,
+                createParticleEffect: Utilities.ParticleEffects.CreateMenuWindParticleEffect);
             // entities
             runner.AddEntityType((int)EntityTypes.DuoRunner, world => world.Create(
                 new StatusComponent(), 
@@ -436,6 +444,7 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new ControlComponent(),
+                new ParticleEffectComponent(),
                 new GOCustomComponent<MainMenu>()));
             runner.AddEntityType((int)EntityTypes.MainMenuButton, world => world.Create(
                 new StatusComponent(),

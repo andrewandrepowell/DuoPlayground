@@ -11,6 +11,7 @@ using Pow.Utilities;
 using Pow.Utilities.Animations;
 using Pow.Utilities.Control;
 using Pow.Utilities.Gum;
+using Pow.Utilities.ParticleEffects;
 using Pow.Utilities.UA;
 using System;
 using System.Collections.Generic;
@@ -98,6 +99,7 @@ namespace Duo.Managers
         private mainView _view;
         private Dimmer _dimmer;
         private UAManager _uaManager;
+        private ParticleEffectManager _particleEffectManager;
         private RunningStates _state;
         private float _period;
         private float _time;
@@ -160,6 +162,16 @@ namespace Duo.Managers
                         })));
                 }
                 _buttonNodes = null;
+            }
+            {
+                _particleEffectManager = Entity.Get<ParticleEffectComponent>().Manager;
+                _particleEffectManager.Initialize(id: (int)ParticleEffects.MenuWind);
+                _particleEffectManager.Layer = Layers.FarFront;
+                _particleEffectManager.PositionMode = PositionModes.Screen;
+                _particleEffectManager.Pausable = false;
+                _particleEffectManager.Show = false;
+                var effect = _particleEffectManager.Effect;
+                effect.Position = new(x:0, y: Globals.GameWindowSize.Height / 2);
             }
             { 
                 _dimmer = null;
@@ -277,6 +289,7 @@ namespace Duo.Managers
             Pow.Globals.GamePause();
             GumManager.Visibility = 0;
             _buttonVisibility = 0;
+            _particleEffectManager.Show = true;
             _dimmer.Start();
             _period = _dimmer.Period;
             _time = _dimmer.Period;
@@ -315,6 +328,7 @@ namespace Duo.Managers
             menu.ResetFocus();
             GumManager.Visibility = 0;
             _buttonVisibility = 0;
+            _particleEffectManager.Show = false;
             _time = 0;
             _state = RunningStates.Waiting;
         }

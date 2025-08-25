@@ -115,10 +115,12 @@ namespace Pow.Utilities
             _initializeSystem.Add<PhysicsComponent>();
             _initializeSystem.Add<ControlComponent>();
             _initializeSystem.Add<GumComponent>();
+            _initializeSystem.Add<ParticleEffectComponent>();
             _destroySystem.Add<AnimationComponent>();
             _destroySystem.Add<PhysicsComponent>();
             _destroySystem.Add<ControlComponent>();
             _destroySystem.Add<GumComponent>();
+            _destroySystem.Add<ParticleEffectComponent>();
 
             // Let the parent initialize.
             _parent.Initialize(this);
