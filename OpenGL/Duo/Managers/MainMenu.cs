@@ -26,8 +26,8 @@ namespace Duo.Managers
     {
         private static readonly ReadOnlyDictionary<Modes, Layers> _layers = new(new Dictionary<Modes, Layers>() 
         {
-            { Modes.Background, Layers.Menu },
-            { Modes.Foreground, Layers.MenuForeground },
+            { Modes.Background, Layers.FarMenu },
+            { Modes.Foreground, Layers.CloseMenu },
         });
         private static readonly ReadOnlyDictionary<Modes, Animations> _animations = new(new Dictionary<Modes, Animations>()
         {
@@ -63,8 +63,16 @@ namespace Duo.Managers
             {
                 if (_selected == value) return;
                 _selected = value;
-                _windedFeature.GlowIntensity = _selected ? 1.0f : 0.0f;
-                _windedFeature.EffectScale = _selected ? 1.10f : 1.0f;
+                if (_selected)
+                {
+                    _windedFeature.GlowIntensity = 1.0f;
+                    _windedFeature.EffectScale = 1.1f;
+                }
+                else
+                {
+                    _windedFeature.GlowIntensity = 0.0f;
+                    _windedFeature.EffectScale = 1.0f;
+                }
             }
         }
         public override void Initialize(PolygonNode node)
@@ -125,7 +133,7 @@ namespace Duo.Managers
             {
                 GumManager.Initialize(_view.Visual);
                 GumManager.Position = GumManager.Origin;
-                GumManager.Layer = Layers.MenuComponent;
+                GumManager.Layer = Layers.MidMenu;
                 GumManager.PositionMode = PositionModes.Screen;
                 GumManager.Visibility = 0;
             }

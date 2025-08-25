@@ -26,7 +26,8 @@ namespace Pow.Utilities
         Ground, Protag, Foreground, 
         Interface, InterfaceComponent, 
         Dimmer, 
-        Menu, MenuComponent, MenuForeground, 
+        FarMenu, MidMenu, CloseMenu,
+        FarFront, MidFront, CloseFront,
         Box 
     }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }

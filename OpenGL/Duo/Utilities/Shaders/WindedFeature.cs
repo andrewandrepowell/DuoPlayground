@@ -15,7 +15,7 @@ namespace Duo.Utilities.Shaders
     {
         private float _glowIntensity;
         private float _effectScale;
-        private Layers _layer = Layers.MenuForeground;
+        private Layers _layer;
         public override Layers Layer { get => _layer; set => _layer = value; }
         public float GlowIntensity
         {
