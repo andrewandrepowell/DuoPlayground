@@ -15,7 +15,6 @@ namespace Duo.Utilities
 {
     internal static partial class ParticleEffects
     {
-
         internal static ParticleEffect CreateMenuWindParticleEffect()
         {
             var textureRegions = CreateTexture2DRegions(
@@ -28,7 +27,7 @@ namespace Duo.Utilities
                 profile: new ExtendedLineProfile()
                 {
                     Axis = new(x: 0, y: 1),
-                    Direction = new(x: 1, y: +0.25f),
+                    Direction = new(x: 1, y: +0.1f),
                     Cone = MathHelper.Pi * 0.1f,
                     Length = Globals.GameWindowSize.Height,
                 })

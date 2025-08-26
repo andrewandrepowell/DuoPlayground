@@ -171,7 +171,7 @@ namespace Duo.Managers
                 _particleEffectManager.Pausable = false;
                 _particleEffectManager.Show = false;
                 var effect = _particleEffectManager.Effect;
-                effect.Position = new(x:0, y: Globals.GameWindowSize.Height / 2);
+                effect.Position = new(x:0, y: Globals.GameWindowSize.Height * 0.4f);
             }
             { 
                 _dimmer = null;
