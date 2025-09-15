@@ -219,6 +219,30 @@
 /processorParam:TextureFormat=Color
 /build:images/test_tileset_0.png
 
+#begin images/title_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/title_0.png
+
+#begin images/title_background_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/title_background_0.png
+
 #begin images/ui_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -307,4 +331,9 @@
 /importer:TiledMapTilesetImporter
 /processor:TiledMapTilesetProcessor
 /build:tiled/test_tileset_2.tsx
+
+#begin tiled/title_map_0.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/title_map_0.tmx
 

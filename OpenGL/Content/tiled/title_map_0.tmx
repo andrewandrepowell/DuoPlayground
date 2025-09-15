@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="12">
+ <objectgroup id="2" name="objects_game_0">
+  <object id="1" x="16" y="320">
+   <properties>
+    <property name="Animation" value="TitleBackground"/>
+    <property name="EntityType" value="Background"/>
+    <property name="Layer" value="FarSky"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="2" x="16" y="288" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Title Background</text>
+  </object>
+  <object id="3" x="16" y="352">
+   <properties>
+    <property name="Animation" value="TitleRoots"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="MidSky"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="4" x="16" y="320" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Title Layers</text>
+  </object>
+  <object id="5" x="48" y="352">
+   <properties>
+    <property name="Animation" value="TitleBush1"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="CloseSky"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="6" x="80" y="352">
+   <properties>
+    <property name="Animation" value="TitleBush0"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="FarMountain"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="7" x="112" y="352">
+   <properties>
+    <property name="Animation" value="TitleRock"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="MidMountain"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="8" x="144" y="352">
+   <properties>
+    <property name="Animation" value="TitleSign"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="Background"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="9" x="176" y="352">
+   <properties>
+    <property name="Animation" value="TitleGrass"/>
+    <property name="EntityType" value="Image"/>
+    <property name="Layer" value="Ground"/>
+    <property name="Position" value="320, 144"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="10" x="16" y="352" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Gum</text>
+  </object>
+  <object id="11" x="16" y="384">
+   <properties>
+    <property name="Animation" value="TitleGrass"/>
+    <property name="EntityType" value="TitleMenu"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+ </objectgroup>
+</map>

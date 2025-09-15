@@ -5,7 +5,6 @@ using Pow.Utilities;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
-using nkast.Aether.Physics2D.Dynamics.Joints;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ using Duo.Utilities;
 namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
-    internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2 }
+    internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2, Title }
     internal enum Sprites 
     { 
         Cat, Pixel, Platform, Background, PurpleHillsBackground,
@@ -26,6 +25,8 @@ namespace Duo.Data
         UI,
         Clock,
         MainMenuButtonBackground, MainMenuButtonForeground,
+        Title, TitleBackground,
+        Image
     }
     internal enum Animations 
     { 
@@ -42,7 +43,10 @@ namespace Duo.Data
         UIOpening, UIIdle, UITwitch,
         Clock,
         MainMenuButtonBackground,
-        MainMenuButtonForeground
+        MainMenuButtonForeground,
+        TitleGrass, TitleSign, TitleRock, TitleBush0, TitleBush1, TitleRoots,
+        TitleBackground,
+        Image
     }
     internal enum ParticleEffects
     {
@@ -65,6 +69,8 @@ namespace Duo.Data
         Background,
         UI,
         UIIcon,
+        Image,
+        TitleMenu
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -78,6 +84,7 @@ namespace Duo.Data
             runner.Map.Configure((int)Maps.LevelDebug0, "tiled/test_map_0");
             runner.Map.Configure((int)Maps.LevelDebug1, "tiled/test_map_1");
             runner.Map.Configure((int)Maps.LevelDebug2, "tiled/test_map_2");
+            runner.Map.Configure((int)Maps.Title, "tiled/title_map_0");
             // sprites / animations.
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Cat, 
@@ -390,7 +397,74 @@ namespace Duo.Data
                 indices: [0],
                 period: 0,
                 repeat: false);
-            //
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Title,
+                assetName: "images/title_0",
+                regionSize: new(480, 256),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleGrass,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleSign,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 1,
+                indices: [1],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleRock,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 2,
+                indices: [2],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleBush0,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 3,
+                indices: [3],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleBush1,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 4,
+                indices: [4],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleRoots,
+                spriteId: (int)Sprites.Title,
+                spriteAnimationId: 5,
+                indices: [5],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.TitleBackground,
+                assetName: "images/title_background_0",
+                regionSize: new(640, 480),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleBackground,
+                spriteId: (int)Sprites.TitleBackground,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            // particles
             runner.ParticleEffectGenerator.Configure(
                 id: (int)ParticleEffects.MenuWind,
                 createParticleEffect: Utilities.ParticleEffects.CreateMenuWindParticleEffect);
@@ -458,6 +532,14 @@ namespace Duo.Data
                 new StatusComponent(),
                 new AnimationComponent(),
                 new GOCustomComponent<Background>()));
+            runner.AddEntityType((int)EntityTypes.Image, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<Image>()));
+            runner.AddEntityType((int)EntityTypes.TitleMenu, world => world.Create(
+                new StatusComponent(),
+                new GumComponent(),
+                new GOCustomComponent<TitleMenu>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -473,6 +555,8 @@ namespace Duo.Data
             runner.AddGOCustomManager<MainMenuButton>();
             runner.AddGOCustomManager<Dimmer>();
             runner.AddGOCustomManager<Background>();
+            runner.AddGOCustomManager<Image>();
+            runner.AddGOCustomManager<TitleMenu>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -490,6 +574,8 @@ namespace Duo.Data
             duoRunner.AddEnvironment<MainMenuButton>(EntityTypes.MainMenuButton);
             duoRunner.AddEnvironment<Dimmer>(EntityTypes.Dimmer);
             duoRunner.AddEnvironment<Background>(EntityTypes.Background);
+            duoRunner.AddEnvironment<Image>(EntityTypes.Image);
+            duoRunner.AddEnvironment<TitleMenu>(EntityTypes.TitleMenu);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 

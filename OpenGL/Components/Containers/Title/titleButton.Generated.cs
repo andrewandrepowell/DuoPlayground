@@ -40,7 +40,7 @@ partial class titleButton : MonoGameGum.Forms.Controls.FrameworkElement
         set => buttonContainer.Message = value;
     }
 
-    public float ButtonRotation
+    public float buttonContainerRotation
     {
         get => buttonContainer.Visual.Rotation;
         set => buttonContainer.Visual.Rotation = value;
