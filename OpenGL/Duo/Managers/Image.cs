@@ -1,5 +1,7 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
+using Duo.Utilities.Shaders;
+using Duo.Utilities.Shaders.Duo.Utilities.Shaders;
 using Microsoft.Xna.Framework;
 using Pow.Components;
 using Pow.Utilities;
@@ -16,7 +18,9 @@ namespace Duo.Managers
 {
     internal class Image : Environment
     {
+        private readonly static Random _random = new Random();
         private AnimationManager _animationManager;
+        private Shaders? _shader;
         private static Vector2? GetVector(ReadOnlyDictionary<string, string> parameters, string vector)
         {
             if (parameters.ContainsKey(vector))
@@ -35,6 +39,10 @@ namespace Duo.Managers
                 return null;
             }
         }
+        public enum Shaders
+        {
+            WindedBush
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -45,11 +53,36 @@ namespace Duo.Managers
             var position = GetVector(parameters: node.Parameters, vector: "Position");
             Debug.Assert(position.HasValue);
             _animationManager.Position = position.Value;
+            {
+                var shaderString = node.Parameters.GetValueOrDefault("Shader", "None");
+                _shader = (shaderString == "None") ? null : Enum.Parse<Shaders>(shaderString);
+                if (_shader != null)
+                {
+                    switch (_shader)
+                    {
+                        case Shaders.WindedBush:
+                            {
+                                var feature = _animationManager.CreateFeature<WindedBushFeature, WindedBushEffect>();
+                                feature.Layer = _animationManager.Layer;
+                                feature.Seed = _random.NextSingle() * 100.0f;
+                                _animationManager.Show = false;
+                            }
+                            break;
+                        default:
+                            Debug.Assert(false);
+                            break;
+                    }
+                }
+            }
         }
         public Vector2 Position
         {
             get => _animationManager.Position;
             set => _animationManager.Position = value;
+        }
+        public Shaders? Shader
+        {
+            get => _shader;
         }
     }
 }

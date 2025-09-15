@@ -30,6 +30,7 @@
     <property name="EntityType" value="Image"/>
     <property name="Layer" value="CloseSky"/>
     <property name="Position" value="320, 144"/>
+    <property name="Shader" value="WindedBush"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -39,6 +40,7 @@
     <property name="EntityType" value="Image"/>
     <property name="Layer" value="FarMountain"/>
     <property name="Position" value="320, 144"/>
+    <property name="Shader" value="WindedBush"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
