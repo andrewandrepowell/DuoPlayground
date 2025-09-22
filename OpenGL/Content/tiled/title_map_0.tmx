@@ -18,6 +18,7 @@
     <property name="EntityType" value="Image"/>
     <property name="Layer" value="MidSky"/>
     <property name="Position" value="320, 144"/>
+    <property name="Shader" value="WindedTitleRoots"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>

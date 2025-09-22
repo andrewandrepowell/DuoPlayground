@@ -51,6 +51,12 @@
 /processorParam:DebugMode=Auto
 /build:effects/winded_2.fx
 
+#begin effects/winded_3.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/winded_3.fx
+
 #begin images/background_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
