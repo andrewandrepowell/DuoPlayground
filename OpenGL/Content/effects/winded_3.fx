@@ -14,7 +14,7 @@ sampler2D SpriteTextureSampler = sampler_state
 };
 
 static const float Pi = 3.14159265359f;
-static const float SwayPeriod = 5.0f;
+static const float SwayPeriod = 10.0f;
 static const float SwayRadAmplitude = Pi / 64.0f;
 
 float Time;

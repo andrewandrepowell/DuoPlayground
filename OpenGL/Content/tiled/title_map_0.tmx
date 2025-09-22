@@ -6,6 +6,7 @@
     <property name="Animation" value="TitleBackground"/>
     <property name="EntityType" value="Background"/>
     <property name="Layer" value="FarSky"/>
+    <property name="Velocity" value="0, -4"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
