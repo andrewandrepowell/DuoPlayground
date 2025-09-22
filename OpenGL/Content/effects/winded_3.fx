@@ -14,8 +14,8 @@ sampler2D SpriteTextureSampler = sampler_state
 };
 
 static const float Pi = 3.14159265359f;
-static const float SwayPeriod = 4.0f;
-static const float SwayXAmplitude = 18.0f;
+static const float SwayPeriod = 5.0f;
+static const float SwayRadAmplitude = Pi / 64.0f;
 
 float Time;
 Matrix ViewProjection;
@@ -42,10 +42,25 @@ float2x2 rotate(float rads)
     return float2x2(cos(rads), -sin(rads), sin(rads), cos(rads));
 }
 
+float2 sway(float2 position, float2 uv, float seed)
+{
+    float2 regionPosition = uv * SpriteTextureSize - SpriteTextureRegionOffset;
+    float2 originPosition = (position - regionPosition) + SpriteTextureRegionSize / 2.0f;
+    float timeCoef = Time / SwayPeriod;
+    float diminishAmplitudeCoef = (1.0f - regionPosition.y / SpriteTextureRegionSize.y);
+    float val0Coef = (cos(2 * Pi * timeCoef) + 1.0f) / 2.0f;
+    float radCoef = lerp(-SwayRadAmplitude, SwayRadAmplitude, val0Coef) * diminishAmplitudeCoef;
+    float2x2 rotateMatrix = rotate(radCoef);
+    float2 rotatedPosition = mul(position - originPosition, rotateMatrix) + originPosition;
+    return rotatedPosition;
+}
+
 VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output;
-    output.Position = mul(input.Position, ViewProjection);
+    float2 swayedPosition = sway(input.Position.xy, input.TextureCoordinates, input.TextureCoordinates.x + input.TextureCoordinates.y);
+    output.Position = mul(float4(swayedPosition, input.Position.zw), ViewProjection);
+    //output.Position = mul(input.Position, ViewProjection);
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
     return output;
