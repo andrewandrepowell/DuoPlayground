@@ -41,7 +41,8 @@ namespace Duo.Managers
         }
         public enum Shaders
         {
-            WindedBush
+            WindedBush,
+            WindedGrass
         }
         public override void Initialize(PolygonNode node)
         {
@@ -65,6 +66,13 @@ namespace Duo.Managers
                                 var feature = _animationManager.CreateFeature<WindedBushFeature, WindedBushEffect>();
                                 feature.Layer = _animationManager.Layer;
                                 feature.Seed = _random.NextSingle() * 100.0f;
+                                _animationManager.Show = false;
+                            }
+                            break;
+                        case Shaders.WindedGrass:
+                            {
+                                var feature = _animationManager.CreateFeature<WindedGrassFeature, WindedGrassEffect>();
+                                feature.Layer = _animationManager.Layer;
                                 _animationManager.Show = false;
                             }
                             break;
