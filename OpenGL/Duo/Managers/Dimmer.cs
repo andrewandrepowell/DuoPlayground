@@ -32,7 +32,7 @@ namespace Duo.Managers
             _animationManager.Scale = (Vector2)Globals.GameWindowSize;
             _animationManager.Position = Vector2.Zero;
             _animationManager.Color = (Color)typeof(Color).GetProperty(node.Parameters.GetValueOrDefault("Color", "Black")).GetValue(typeof(Color));
-            _dimness = float.Parse(node.Parameters.GetValueOrDefault("Period", "0.50"));
+            _dimness = float.Parse(node.Parameters.GetValueOrDefault("Dimness", "0.50"));
             Debug.Assert(_dimness >= 0);
             _period = float.Parse(node.Parameters.GetValueOrDefault("Period", "0.25"));
             Debug.Assert(_period >= 0);

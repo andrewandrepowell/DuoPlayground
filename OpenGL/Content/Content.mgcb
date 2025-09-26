@@ -27,6 +27,12 @@
 /processorParam:DebugMode=Auto
 /build:effects/pulse_glow_0.fx
 
+#begin effects/pulse_glow_1.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/pulse_glow_1.fx
+
 #begin effects/shine_0.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -140,6 +146,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/menu_button_2.png
+
+#begin images/menu_button_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/menu_button_3.png
 
 #begin images/particles_0.png
 /importer:TextureImporter

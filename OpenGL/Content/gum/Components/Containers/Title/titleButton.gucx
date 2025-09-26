@@ -5,6 +5,11 @@
   <State>
     <Name>Default</Name>
     <Variable>
+      <Type>ButtonCategory</Type>
+      <Name>ButtonCategoryState</Name>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>string</Type>
       <Name>buttonContainer.Message</Name>
       <ExposedAsName>Message</ExposedAsName>
@@ -55,10 +60,38 @@
       <SetsValue>true</SetsValue>
     </Variable>
   </State>
+  <Category>
+    <Name>ButtonCategory</Name>
+    <State>
+      <Name>Enabled</Name>
+    </State>
+    <State>
+      <Name>Disabled</Name>
+    </State>
+    <State>
+      <Name>Highlighted</Name>
+    </State>
+    <State>
+      <Name>Pushed</Name>
+    </State>
+    <State>
+      <Name>HighlightedFocused</Name>
+    </State>
+    <State>
+      <Name>Focused</Name>
+    </State>
+    <State>
+      <Name>DisabledFocused</Name>
+    </State>
+  </Category>
   <Instance>
     <Name>buttonContainer</Name>
     <BaseType>Containers/Title/titleButtonContainer</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>
-  <Behaviors />
+  <Behaviors>
+    <ElementBehaviorReference>
+      <BehaviorName>ButtonBehavior</BehaviorName>
+    </ElementBehaviorReference>
+  </Behaviors>
 </ComponentSave>

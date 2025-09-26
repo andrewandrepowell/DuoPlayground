@@ -25,6 +25,7 @@ namespace Duo.Data
         UI,
         Clock,
         MainMenuButtonBackground, MainMenuButtonForeground,
+        TitleMenuButton,
         Title, TitleBackground,
         Image
     }
@@ -44,6 +45,7 @@ namespace Duo.Data
         Clock,
         MainMenuButtonBackground,
         MainMenuButtonForeground,
+        TitleMenuButton,
         TitleGrass, TitleSign, TitleRock, TitleBush0, TitleBush1, TitleRoots,
         TitleBackground,
         Image
@@ -70,7 +72,8 @@ namespace Duo.Data
         UI,
         UIIcon,
         Image,
-        TitleMenu
+        TitleMenu,
+        TitleMenuButton
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -398,6 +401,22 @@ namespace Duo.Data
                 period: 0,
                 repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.TitleMenuButton,
+                assetName: "images/menu_button_3",
+                regionSize: new(192, 69),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TitleMenuButton,
+                spriteId: (int)Sprites.TitleMenuButton,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Title,
                 assetName: "images/title_0",
                 regionSize: new(480, 256),
@@ -540,6 +559,10 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<TitleMenu>()));
+            runner.AddEntityType((int)EntityTypes.TitleMenuButton, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<TitleMenuButton>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -557,6 +580,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Background>();
             runner.AddGOCustomManager<Image>();
             runner.AddGOCustomManager<TitleMenu>();
+            runner.AddGOCustomManager<TitleMenuButton>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -576,6 +600,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Background>(EntityTypes.Background);
             duoRunner.AddEnvironment<Image>(EntityTypes.Image);
             duoRunner.AddEnvironment<TitleMenu>(EntityTypes.TitleMenu);
+            duoRunner.AddEnvironment<TitleMenuButton>(EntityTypes.TitleMenuButton);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
