@@ -92,7 +92,7 @@
     <property name="Dimness" value="1"/>
     <property name="EntityType" value="Dimmer"/>
     <property name="ID" value="TitleDimmer"/>
-    <property name="Period" value="2"/>
+    <property name="Period" value="1"/>
     <property name="State" value="Running"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
