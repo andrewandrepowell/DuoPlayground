@@ -100,5 +100,13 @@ namespace Duo.Managers
         {
             get => _shader;
         }
+        public void Play(Animations animation) => _animationManager.Play((int)animation);
+        public Animations Animation => (Animations)_animationManager.AnimationId;
+        public bool Running => _animationManager.Running;
+        public float Visibility
+        {
+            get => _animationManager.Visibility;
+            set => _animationManager.Visibility = value;
+        }
     }
 }

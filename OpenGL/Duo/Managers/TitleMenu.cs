@@ -4,6 +4,7 @@ using Duo.Utilities.Shaders;
 using DuoGum.Components;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using MonoGame.Extended.Screens.Transitions;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
@@ -79,6 +80,8 @@ namespace Duo.Managers
         private ReadOnlyDictionary<string, TitleMenuButton> _buttons;
         private string _dimmerID;
         private Dimmer _dimmer;
+        private string _transitionID;
+        private Image _transition;
         private RunningStates _state;
         public override void Initialize(PolygonNode node)
         {
@@ -109,6 +112,10 @@ namespace Duo.Managers
                 _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
             }
             {
+                _transition = null;
+                _transitionID = node.Parameters.GetValueOrDefault("TransitionID", "Transition");
+            }
+            {
                 _state = RunningStates.Waiting;
                 _initialized = false;
             }
@@ -132,6 +139,12 @@ namespace Duo.Managers
             {
                 _dimmer = Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
                 Debug.Assert(_dimmer.State == RunningStates.Running);
+            }
+
+            if (_transition == null)
+            {
+                _transition = Globals.DuoRunner.Environments.OfType<Image>().Where(i => i.ID == _transitionID).First();
+                //Debug.Assert(!_transition.Running);
             }
            
             if (_buttons == null)
@@ -169,11 +182,12 @@ namespace Duo.Managers
             }
 #endif
             // Initialize when all relevant components are initialized,
-            if (!_initialized && _dimmer != null && _buttons != null)
+            if (!_initialized && _dimmer != null && _buttons != null && _transition != null && !_transition.Running)
             {
                 _initialized = true;
                 Open();
             }
+            _debugWait -= Pow.Globals.GameTime.GetElapsedSeconds();
 
             // If running (i.e. not dimming or brightening) then make sure the focused button is selected,
             if (_initialized && _state == RunningStates.Running)
@@ -181,9 +195,9 @@ namespace Duo.Managers
                     _buttons[gumButton.Message].Selected = gumButton.IsFocused;
 
             // Update state once dimmer component is finished its operation.
-            if (_state == RunningStates.Starting && _dimmer.State == RunningStates.Waiting)
+            if (_state == RunningStates.Starting && _dimmer.State == RunningStates.Waiting && !_transition.Running)
                 ForceOpen();
-            else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Running)
+            else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Running && !_transition.Running)
                 ForceClose();
         }
         public void Open()
@@ -191,8 +205,11 @@ namespace Duo.Managers
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Waiting);
             Debug.Assert(_dimmer.State == RunningStates.Running);
+            Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionRunning);
             Debug.Assert(!_view.buttons.ButtonFocused);
             _dimmer.Stop();
+            _transition.Play(Animations.TransitionStopping);
+            _transition.Visibility = 1;
             _state = RunningStates.Starting;
         }
         public void Close()
@@ -200,11 +217,13 @@ namespace Duo.Managers
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Running);
             Debug.Assert(_dimmer.State == RunningStates.Waiting);
-            Debug.Assert(Pow.Globals.GamePaused);
+            Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionWaiting);
             Debug.Assert(_view.buttons.ButtonFocused);
             var menu = _view.buttons;
             menu.ResetFocus();
             _dimmer.Start();
+            _transition.Play(Animations.TransitionStarting);
+            _transition.Visibility = 1;
             _state = RunningStates.Stopping;
         }
         private void ForceOpen()
@@ -213,6 +232,8 @@ namespace Duo.Managers
             menu.ResetFocus();
             menu.start.IsFocused = true;
             _dimmer.ForceStop();
+            _transition.Play(Animations.TransitionWaiting);
+            _transition.Visibility = 0;
             _state = RunningStates.Running;
         }
         private void ForceClose()
@@ -221,6 +242,8 @@ namespace Duo.Managers
             var menu = _view.buttons;
             menu.ResetFocus();
             _dimmer.ForceStart();
+            _transition.Play(Animations.TransitionRunning);
+            _transition.Visibility = 1;
             _state = RunningStates.Waiting;
         }
     }

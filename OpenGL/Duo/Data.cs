@@ -27,7 +27,9 @@ namespace Duo.Data
         MainMenuButtonBackground, MainMenuButtonForeground,
         TitleMenuButton,
         Title, TitleBackground,
-        Image
+        Transition,
+        Image,
+
     }
     internal enum Animations 
     { 
@@ -48,6 +50,7 @@ namespace Duo.Data
         TitleMenuButton,
         TitleGrass, TitleSign, TitleRock, TitleBush0, TitleBush1, TitleRoots,
         TitleBackground,
+        TransitionWaiting, TransitionStarting, TransitionRunning, TransitionStopping, 
         Image
     }
     internal enum ParticleEffects
@@ -482,6 +485,44 @@ namespace Duo.Data
                 spriteAnimationId: 0,
                 indices: [0],
                 period: 0,
+                repeat: false);
+
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Transition,
+                assetName: "images/branch_transition_0",
+                regionSize: new(640, 480),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TransitionWaiting,
+                spriteId: (int)Sprites.Transition,
+                spriteAnimationId: 0,
+                indices: [7],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TransitionStarting,
+                spriteId: (int)Sprites.Transition,
+                spriteAnimationId: 1,
+                indices: [6, 5, 4, 3, 2, 1],
+                period: 0.25f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TransitionRunning,
+                spriteId: (int)Sprites.Transition,
+                spriteAnimationId: 2,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.TransitionStopping,
+                spriteId: (int)Sprites.Transition,
+                spriteAnimationId: 3,
+                indices: [1, 2, 3, 4, 5, 6],
+                period: 0.25f,
                 repeat: false);
             // particles
             runner.ParticleEffectGenerator.Configure(

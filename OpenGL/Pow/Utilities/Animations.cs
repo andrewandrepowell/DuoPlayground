@@ -446,7 +446,7 @@ namespace Pow.Utilities.Animations
             _frame = 0;
             _index = _node.Indices[_frame];
             ServiceFrameUpdated?.Invoke();
-            _running = true;
+            _running = _node.Period > 0;
         }
         public void Stop()
         {
