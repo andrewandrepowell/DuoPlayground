@@ -5,6 +5,7 @@ using DuoGum.Components;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using MonoGame.Extended.Screens.Transitions;
+using MonoGameGum.Forms.Controls;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
@@ -92,6 +93,9 @@ namespace Duo.Managers
                 GumManager.Position = GumManager.Origin;
                 GumManager.Layer = Layers.MidSky;
                 GumManager.PositionMode = PositionModes.Screen;
+            }
+            {
+                _view.buttons.exit.Click += (object? sender, EventArgs e) => Close();
             }
             {
                 foreach (var button in _view.buttons.Buttons)
@@ -187,7 +191,6 @@ namespace Duo.Managers
                 _initialized = true;
                 Open();
             }
-            _debugWait -= Pow.Globals.GameTime.GetElapsedSeconds();
 
             // If running (i.e. not dimming or brightening) then make sure the focused button is selected,
             if (_initialized && _state == RunningStates.Running)
@@ -238,13 +241,14 @@ namespace Duo.Managers
         }
         private void ForceClose()
         {
-            Pow.Globals.GameResume();
             var menu = _view.buttons;
             menu.ResetFocus();
             _dimmer.ForceStart();
             _transition.Play(Animations.TransitionRunning);
             _transition.Visibility = 1;
             _state = RunningStates.Waiting;
+
+            Pow.Globals.Game.Exit();
         }
     }
 }
