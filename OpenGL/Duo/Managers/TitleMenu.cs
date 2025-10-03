@@ -84,9 +84,18 @@ namespace Duo.Managers
         private string _transitionID;
         private Image _transition;
         private RunningStates _state;
+        private Action _nextAction;
+#if DEBUG
+        private float _debugWait;
+#endif
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
+#if DEBUG
+            {
+                _debugWait = 1;
+            }
+#endif
             {
                 _view = new titleView();
                 GumManager.Initialize(_view.Visual);
@@ -95,7 +104,8 @@ namespace Duo.Managers
                 GumManager.PositionMode = PositionModes.Screen;
             }
             {
-                _view.buttons.exit.Click += (object? sender, EventArgs e) => Close();
+                _view.buttons.start.Click += (object? sender, EventArgs e) => Transition(Start);
+                _view.buttons.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
             }
             {
                 foreach (var button in _view.buttons.Buttons)
@@ -118,6 +128,9 @@ namespace Duo.Managers
             {
                 _transition = null;
                 _transitionID = node.Parameters.GetValueOrDefault("TransitionID", "Transition");
+            }
+            {
+                _nextAction = null;
             }
             {
                 _state = RunningStates.Waiting;
@@ -148,7 +161,6 @@ namespace Duo.Managers
             if (_transition == null)
             {
                 _transition = Globals.DuoRunner.Environments.OfType<Image>().Where(i => i.ID == _transitionID).First();
-                //Debug.Assert(!_transition.Running);
             }
            
             if (_buttons == null)
@@ -188,9 +200,23 @@ namespace Duo.Managers
             // Initialize when all relevant components are initialized,
             if (!_initialized && _dimmer != null && _buttons != null && _transition != null && !_transition.Running)
             {
-                _initialized = true;
-                Open();
+#if DEBUG
+                if (_debugWait <= 0)
+                {
+#endif
+                    _initialized = true;
+                    Open();
+#if DEBUG
+                }
+#endif
             }
+
+#if DEBUG
+            if (_debugWait > 0)
+            {
+                _debugWait -= Pow.Globals.GameTime.GetElapsedSeconds();
+            }
+#endif
 
             // If running (i.e. not dimming or brightening) then make sure the focused button is selected,
             if (_initialized && _state == RunningStates.Running)
@@ -201,9 +227,18 @@ namespace Duo.Managers
             if (_state == RunningStates.Starting && _dimmer.State == RunningStates.Waiting && !_transition.Running)
                 ForceOpen();
             else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Running && !_transition.Running)
+            {
                 ForceClose();
+
+                // Perform next action.
+                if (_nextAction != null)
+                {
+                    _nextAction();
+                    _nextAction = null;
+                }
+            }
         }
-        public void Open()
+        private void Open()
         {
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Waiting);
@@ -215,7 +250,7 @@ namespace Duo.Managers
             _transition.Visibility = 1;
             _state = RunningStates.Starting;
         }
-        public void Close()
+        private void Close()
         {
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Running);
@@ -247,8 +282,15 @@ namespace Duo.Managers
             _transition.Play(Animations.TransitionRunning);
             _transition.Visibility = 1;
             _state = RunningStates.Waiting;
-
-            Pow.Globals.Game.Exit();
+        }
+        private void Transition(Action nextAction)
+        {
+            _nextAction = nextAction;
+            Close();
+        }
+        private void Start()
+        {
+            Pow.Globals.Runner.Map.LoadNext((int)Maps.LevelDebug2);
         }
     }
 }

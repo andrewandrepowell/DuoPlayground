@@ -28,6 +28,7 @@ namespace Pow.Utilities
         public string GumProjectFile { get; }
         public void Initialize(Runner runner);
         public void Initialize(Map.MapNode node);
+        public void Cleanup();
     }
     public class Runner : IDisposable, IMapParent
     {
@@ -68,7 +69,11 @@ namespace Pow.Utilities
         private void ServiceDestroyEntities()
         {
             while (_destroyEntities.TryDequeue(out var node))
-                _ecsWorld.Destroy(node.Entity);
+            {
+                if (_ecsWorld.IsAlive(node.Entity))
+                    _ecsWorld.Destroy(node.Entity);
+            }
+
         }
         public Runner(IRunnerParent parent)
         {
@@ -140,6 +145,7 @@ namespace Pow.Utilities
             _initialized = true;
         }
         public void Initialize(Map.MapNode node) => _parent.Initialize(node);
+        public void Cleanup() => _parent.Cleanup();
         public Camera Camera => _camera;
         public Map Map => _map;
         public AnimationGenerator AnimationGenerator => _animationGenerator;

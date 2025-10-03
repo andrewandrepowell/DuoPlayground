@@ -717,5 +717,11 @@ namespace Duo.Data
             foreach (ref var polygonNode in node.PolygonNodes.AsSpan())
                 duoRunner.AddEnvironment(polygonNode);
         }
+        public void Cleanup()
+        {
+            var duoRunner = Globals.DuoRunner;
+            foreach (var environment in  duoRunner.Environments)
+                duoRunner.RemoveEnvironment(environment);
+        }
     }
 }
