@@ -76,7 +76,8 @@ namespace Duo.Data
         UIIcon,
         Image,
         TitleMenu,
-        TitleMenuButton
+        TitleMenuButton,
+        TransitionBranches
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -604,6 +605,9 @@ namespace Duo.Data
                 new StatusComponent(),
                 new AnimationComponent(),
                 new GOCustomComponent<TitleMenuButton>()));
+            runner.AddEntityType((int)EntityTypes.TransitionBranches, world => world.Create(
+                new StatusComponent(),
+                new GOCustomComponent<TransitionBranches>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -622,6 +626,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Image>();
             runner.AddGOCustomManager<TitleMenu>();
             runner.AddGOCustomManager<TitleMenuButton>();
+            runner.AddGOCustomManager<TransitionBranches>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -642,6 +647,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Image>(EntityTypes.Image);
             duoRunner.AddEnvironment<TitleMenu>(EntityTypes.TitleMenu);
             duoRunner.AddEnvironment<TitleMenuButton>(EntityTypes.TitleMenuButton);
+            duoRunner.AddEnvironment<TransitionBranches>(EntityTypes.TransitionBranches);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
