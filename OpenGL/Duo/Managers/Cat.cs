@@ -104,7 +104,7 @@ namespace Duo.Managers
                 {
                     _ui.Pinecones += 1;
                 }
-                if (_ui.Action != UI.Actions.Opening)
+                if (_ui.Action == UI.Actions.Idle || _ui.Action == UI.Actions.Twitching)
                 { 
                     _ui.Twitch();
                 }

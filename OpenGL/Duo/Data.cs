@@ -43,7 +43,7 @@ namespace Duo.Data
         TreeRootIdle, TreeRootDeath, TreeRootTwitch,
         RootBlockageIdle, RootBlockageDeath, RootBlockageTwitch,
         PineCone,
-        UIOpening, UIIdle, UITwitch,
+        UIWaiting, UIOpening, UIIdle, UITwitch,
         Clock,
         MainMenuButtonBackground,
         MainMenuButtonForeground,
@@ -77,7 +77,8 @@ namespace Duo.Data
         Image,
         TitleMenu,
         TitleMenuButton,
-        TransitionBranches
+        TransitionBranches,
+        LevelController
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -356,6 +357,13 @@ namespace Duo.Data
                 indices: [21, 22, 23, 22, 21, 22, 23, 24, 25],
                 period: 0.1f,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.UIWaiting,
+                spriteId: (int)Sprites.UI,
+                spriteAnimationId: 3,
+                indices: [26],
+                period: 0f,
+                repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Clock,
                 assetName: "images/clock_0",
@@ -508,7 +516,7 @@ namespace Duo.Data
                 animationId: (int)Animations.TransitionStarting,
                 spriteId: (int)Sprites.Transition,
                 spriteAnimationId: 1,
-                indices: [6, 5, 4, 3, 2, 1],
+                indices: [7, 6, 5, 4, 3, 2, 1, 0],
                 period: 0.25f,
                 repeat: false);
             runner.AnimationGenerator.ConfigureAnimation(
@@ -522,7 +530,7 @@ namespace Duo.Data
                 animationId: (int)Animations.TransitionStopping,
                 spriteId: (int)Sprites.Transition,
                 spriteAnimationId: 3,
-                indices: [1, 2, 3, 4, 5, 6],
+                indices: [0, 1, 2, 3, 4, 5, 6, 7],
                 period: 0.25f,
                 repeat: false);
             // particles
@@ -608,6 +616,9 @@ namespace Duo.Data
             runner.AddEntityType((int)EntityTypes.TransitionBranches, world => world.Create(
                 new StatusComponent(),
                 new GOCustomComponent<TransitionBranches>()));
+            runner.AddEntityType((int)EntityTypes.LevelController, world => world.Create(
+                new StatusComponent(),
+                new GOCustomComponent<LevelController>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -627,6 +638,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<TitleMenu>();
             runner.AddGOCustomManager<TitleMenuButton>();
             runner.AddGOCustomManager<TransitionBranches>();
+            runner.AddGOCustomManager<LevelController>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -648,6 +660,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<TitleMenu>(EntityTypes.TitleMenu);
             duoRunner.AddEnvironment<TitleMenuButton>(EntityTypes.TitleMenuButton);
             duoRunner.AddEnvironment<TransitionBranches>(EntityTypes.TransitionBranches);
+            duoRunner.AddEnvironment<LevelController>(EntityTypes.LevelController);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 

@@ -79,10 +79,8 @@ namespace Duo.Managers
         private bool _initialized;
         private titleView _view;
         private ReadOnlyDictionary<string, TitleMenuButton> _buttons;
-        private string _dimmerID;
-        private Dimmer _dimmer;
-        private string _transitionID;
-        private Image _transition;
+        private TransitionBranches _branches;
+        private string _branchesID;
         private RunningStates _state;
         private Action _nextAction;
 #if DEBUG
@@ -122,12 +120,8 @@ namespace Duo.Managers
                 _buttons = null;
             }
             {
-                _dimmer = null;
-                _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
-            }
-            {
-                _transition = null;
-                _transitionID = node.Parameters.GetValueOrDefault("TransitionID", "Transition");
+                _branches = null;
+                _branchesID = node.Parameters.GetValueOrDefault("BranchesID", "TitleTransitionBranches");
             }
             {
                 _nextAction = null;
@@ -152,15 +146,14 @@ namespace Duo.Managers
         {
             base.Update();
 
-            if (_dimmer == null)
+            if (_branches == null)
             {
-                _dimmer = Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
-                Debug.Assert(_dimmer.State == RunningStates.Running);
-            }
-
-            if (_transition == null)
-            {
-                _transition = Globals.DuoRunner.Environments.OfType<Image>().Where(i => i.ID == _transitionID).First();
+                var branches = Globals.DuoRunner.Environments.OfType<TransitionBranches>().Where(branches => branches.ID == _branchesID).First();
+                if (branches.Initialized)
+                {
+                    _branches = branches;
+                    Debug.Assert(_branches.State == RunningStates.Waiting);
+                }
             }
            
             if (_buttons == null)
@@ -198,7 +191,7 @@ namespace Duo.Managers
             }
 #endif
             // Initialize when all relevant components are initialized,
-            if (!_initialized && _dimmer != null && _buttons != null && _transition != null && !_transition.Running)
+            if (!_initialized && _branches != null)
             {
 #if DEBUG
                 if (_debugWait <= 0)
@@ -224,9 +217,9 @@ namespace Duo.Managers
                     _buttons[gumButton.Message].Selected = gumButton.IsFocused;
 
             // Update state once dimmer component is finished its operation.
-            if (_state == RunningStates.Starting && _dimmer.State == RunningStates.Waiting && !_transition.Running)
+            if (_state == RunningStates.Starting && _branches.State == RunningStates.Running)
                 ForceOpen();
-            else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Running && !_transition.Running)
+            else if (_state == RunningStates.Stopping && _branches.State == RunningStates.Waiting)
             {
                 ForceClose();
 
@@ -242,26 +235,20 @@ namespace Duo.Managers
         {
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Waiting);
-            Debug.Assert(_dimmer.State == RunningStates.Running);
-            Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionRunning);
+            Debug.Assert(_branches.State == RunningStates.Waiting);
             Debug.Assert(!_view.buttons.ButtonFocused);
-            _dimmer.Stop();
-            _transition.Play(Animations.TransitionStopping);
-            _transition.Visibility = 1;
+            _branches.Open();
             _state = RunningStates.Starting;
         }
         private void Close()
         {
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Running);
-            Debug.Assert(_dimmer.State == RunningStates.Waiting);
-            Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionWaiting);
+            Debug.Assert(_branches.State == RunningStates.Running);
             Debug.Assert(_view.buttons.ButtonFocused);
             var menu = _view.buttons;
             menu.ResetFocus();
-            _dimmer.Start();
-            _transition.Play(Animations.TransitionStarting);
-            _transition.Visibility = 1;
+            _branches.Close();
             _state = RunningStates.Stopping;
         }
         private void ForceOpen()
@@ -269,18 +256,14 @@ namespace Duo.Managers
             var menu = _view.buttons;
             menu.ResetFocus();
             menu.start.IsFocused = true;
-            _dimmer.ForceStop();
-            _transition.Play(Animations.TransitionWaiting);
-            _transition.Visibility = 0;
+            _branches.ForceOpen();
             _state = RunningStates.Running;
         }
         private void ForceClose()
         {
             var menu = _view.buttons;
             menu.ResetFocus();
-            _dimmer.ForceStart();
-            _transition.Play(Animations.TransitionRunning);
-            _transition.Visibility = 1;
+            _branches.ForceClose();
             _state = RunningStates.Waiting;
         }
         private void Transition(Action nextAction)

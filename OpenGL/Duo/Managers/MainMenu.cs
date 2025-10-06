@@ -94,6 +94,8 @@ namespace Duo.Managers
     }
     internal class MainMenu : GumObject, IUserAction, IControl
     {
+        private const float _dimmerDimness = 0.5f;
+        private const float _dimmerPeriod = 0.25f;
         private bool _initialized = false;
         private string _dimmerID;
         private mainView _view;
@@ -290,6 +292,8 @@ namespace Duo.Managers
             GumManager.Visibility = 0;
             _buttonVisibility = 0;
             _particleEffectManager.Show = true;
+            _dimmer.Dimness = _dimmerDimness;
+            _dimmer.Period = _dimmerPeriod;
             _dimmer.Start();
             _period = _dimmer.Period;
             _time = _dimmer.Period;
@@ -306,6 +310,8 @@ namespace Duo.Managers
             menu.ResetFocus();
             GumManager.Visibility = 1;
             _buttonVisibility = 1;
+            _dimmer.Dimness = _dimmerDimness;
+            _dimmer.Period = _dimmerPeriod;
             _dimmer.Stop();
             _period = _dimmer.Period;
             _time = _dimmer.Period;

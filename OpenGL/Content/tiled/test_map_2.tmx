@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="55">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="58">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_1.tsx"/>
  <tileset firstgid="577" source="test_tileset_2.tsx"/>
@@ -942,8 +942,10 @@
   </object>
   <object id="5" x="32" y="2704">
    <properties>
+    <property name="Dimness" value="1"/>
     <property name="EntityType" value="Dimmer"/>
     <property name="ID" value="MainMenuDimmer"/>
+    <property name="State" value="Running"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -1023,6 +1025,7 @@
   <object id="47" x="160" y="2704">
    <properties>
     <property name="EntityType" value="UI"/>
+    <property name="ID" value="MainUI"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -1043,6 +1046,33 @@
   </object>
   <object id="54" x="32" y="2736" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Background Parallax</text>
+  </object>
+  <object id="55" x="32" y="2672">
+   <properties>
+    <property name="Animation" value="TransitionRunning"/>
+    <property name="EntityType" value="Image"/>
+    <property name="ID" value="MainTransition"/>
+    <property name="Layer" value="Transition"/>
+    <property name="Position" value="320, 240"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="56" x="64" y="2672">
+   <properties>
+    <property name="DimmerID" value="MainMenuDimmer"/>
+    <property name="EntityType" value="TransitionBranches"/>
+    <property name="ID" value="MainTransitionBranches"/>
+    <property name="TransitionID" value="MainTransition"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="57" x="192" y="2704">
+   <properties>
+    <property name="BranchesID" value="MainTransitionBranches"/>
+    <property name="EntityType" value="LevelController"/>
+    <property name="UIID" value="MainUI"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
  </objectgroup>
  <objectgroup id="3" name="objects_cat_0">

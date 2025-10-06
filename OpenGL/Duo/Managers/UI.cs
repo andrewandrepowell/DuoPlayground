@@ -88,6 +88,7 @@ namespace Duo.Managers
         private readonly static SizeF _size = new(192, 128);
         private readonly static ReadOnlyDictionary<Actions, AnimationGroups> _actionAnimationGroupMap = new(new Dictionary<Actions, AnimationGroups>() 
         {
+            { Actions.Waiting, AnimationGroups.Waiting },
             { Actions.Opening, AnimationGroups.Opening },
             { Actions.Idle, AnimationGroups.Idle },
             { Actions.Twitching, AnimationGroups.Twitching },   
@@ -144,8 +145,8 @@ namespace Duo.Managers
             if (!_initialized) return;
             _pineConeUiIcon.Text = $"{_pinecones}";
         }
-        public enum Actions { Opening, Idle, Twitching }
-        public enum AnimationGroups { Opening, Idle, Twitching }
+        public enum Actions { Waiting, Opening, Idle, Twitching }
+        public enum AnimationGroups { Waiting, Opening, Idle, Twitching }
         public Actions Action => _action;
         public int Pinecones
         {
@@ -169,6 +170,9 @@ namespace Duo.Managers
             }
             {
                 _animationGroupManager = new(_animationManager);
+                _animationGroupManager.Configure(
+                    groupId: (int)AnimationGroups.Waiting,
+                    group: new PlaySingleGroup((int)Animations.UIWaiting));
                 _animationGroupManager.Configure(
                     groupId: (int)AnimationGroups.Opening,
                     group: new PlaySingleGroup((int)Animations.UIOpening));
@@ -216,7 +220,7 @@ namespace Duo.Managers
             {
                 _pinecones = 0;
             }
-            UpdateAction(Actions.Opening);
+            UpdateAction(Actions.Waiting);
             {
                 _animationManager.Position = new(
                     // x: gameWindowSize.Width / 2,
@@ -231,11 +235,17 @@ namespace Duo.Managers
             Globals.DuoRunner.RemoveEnvironment(_pineConeUiIcon);
             Globals.DuoRunner.RemoveEnvironment(_clockConeUiIcon);
         }
+        public void Open()
+        {
+            Debug.Assert(_action == Actions.Waiting);
+            UpdateAction(Actions.Opening);
+        }
         public void Twitch()
         {
             Debug.Assert(_action != Actions.Opening);
             UpdateAction(Actions.Twitching);
         }
+        public bool Initialized => _initialized;
         public override void Update()
         {
             base.Update();
@@ -256,7 +266,7 @@ namespace Duo.Managers
             }
             if ((_action == Actions.Opening || _action == Actions.Twitching) && !_animationGroupManager.Running)
                 UpdateAction(Actions.Idle);
-            if (_action != Actions.Opening)
+            if (_action == Actions.Twitching || _action == Actions.Idle)
                 _timer.Update();
         }
     }

@@ -21,7 +21,7 @@ internal class TransitionBranches : Environment
     {
         base.Initialize(node);
         {
-            _dimmer = null;
+            _dimmer = null; 
             _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
         }
         {
@@ -76,6 +76,7 @@ internal class TransitionBranches : Environment
         Debug.Assert(_dimmer.State == RunningStates.Running);
         Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionRunning);
         _dimmer.Dimness = 1;
+        _dimmer.Period = 2f;
         _dimmer.Stop();
         _transition.Play(Animations.TransitionStopping);
         _transition.Visibility = 1;
@@ -88,6 +89,7 @@ internal class TransitionBranches : Environment
         Debug.Assert(_dimmer.State == RunningStates.Waiting);
         Debug.Assert(!_transition.Running && _transition.Animation == Animations.TransitionWaiting);
         _dimmer.Dimness = 1;
+        _dimmer.Period = 2f;
         _dimmer.Start();
         _transition.Play(Animations.TransitionStarting);
         _transition.Visibility = 1;
@@ -95,7 +97,6 @@ internal class TransitionBranches : Environment
     }
     public void ForceOpen()
     {
-        _dimmer.Dimness = 1;
         _dimmer.ForceStop();
         _transition.Play(Animations.TransitionWaiting);
         _transition.Visibility = 0;
@@ -103,7 +104,6 @@ internal class TransitionBranches : Environment
     }
     public void ForceClose()
     {
-        _dimmer.Dimness = 1;
         _dimmer.ForceStart();
         _transition.Play(Animations.TransitionRunning);
         _transition.Visibility = 1;
