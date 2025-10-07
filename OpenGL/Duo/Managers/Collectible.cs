@@ -78,6 +78,8 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
+            if (Pow.Globals.GamePaused)
+                return;
             if (Action == Actions.Interacting && _time > 0)
                 _time -= Pow.Globals.GameTime.GetElapsedSeconds();
         }

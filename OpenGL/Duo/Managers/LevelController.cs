@@ -15,6 +15,8 @@ internal class LevelController : Environment
     private UI _ui;
     private string _branchesID;
     private TransitionBranches _branches;
+    private string _mainID;
+    private MainMenu _main;
     private States _state;
     public enum States { Waiting, OpeningBranches, OpeningUI, Running }
     public override void Initialize(PolygonNode node)
@@ -29,7 +31,11 @@ internal class LevelController : Environment
         }
         {
             _branches = null;
-            _branchesID = node.Parameters.GetValueOrDefault("BranchesID", "branches");
+            _branchesID = node.Parameters.GetValueOrDefault("BranchesID", "Branches");
+        }
+        {
+            _main = null;
+            _mainID = node.Parameters.GetValueOrDefault("MainID", "Main");
         }
         {
             _state = States.Waiting;
@@ -61,7 +67,18 @@ internal class LevelController : Environment
             }
         }
 
-        if (!_initialized && _ui != null && _branches != null)
+        if (_main == null)
+        {
+            Debug.Assert(!_initialized);
+            var main = Globals.DuoRunner.Environments.OfType<MainMenu>().Where(main => main.ID == _mainID).First();
+            if (main.Initialized)
+            {
+                Debug.Assert(main.State == RunningStates.Waiting);
+                _main = main;
+            }
+        }
+
+        if (!_initialized && _ui != null && _branches != null && _main != null)
         {
             _initialized = true;
             _branches.Open();

@@ -51,6 +51,9 @@ namespace Pow.Utilities.Physics
         internal void Return(PhysicsManager manager)
         {
             Debug.Assert(_initialized);
+            var fixtures = manager.Body.FixtureList.ToArray();
+            foreach (var fixture in fixtures)
+                manager.Body.Remove(fixture);
             _world.RemoveAsync(manager.Body);
             _managerPool.Enqueue(manager);
         }

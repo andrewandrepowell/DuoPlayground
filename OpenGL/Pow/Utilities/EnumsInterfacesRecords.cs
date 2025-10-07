@@ -25,10 +25,12 @@ namespace Pow.Utilities
         FarTree, MidTree, Background, 
         Ground, Protag, Foreground, 
         Interface, InterfaceComponent,
-        Transition,
-        Dimmer, 
+        MenuTransition,
+        MenuDimmer, 
         FarMenu, MidMenu, CloseMenu,
         FarFront, MidFront, CloseFront,
+        BranchesTransition,
+        BranchesDimmer,
         Box 
     }
     public enum EntityStates { Initializing, Running, Destroying, Destroyed }

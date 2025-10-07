@@ -84,14 +84,12 @@
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="13" x="16" y="384" width="96" height="16">
-   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Dimmer</text>
-  </object>
-  <object id="14" x="16" y="416">
+  <object id="14" x="80" y="288">
    <properties>
     <property name="Dimness" value="1"/>
     <property name="EntityType" value="Dimmer"/>
     <property name="ID" value="TitleDimmer"/>
+    <property name="Layer" value="BranchesDimmer"/>
     <property name="Period" value="1"/>
     <property name="State" value="Running"/>
    </properties>
@@ -100,17 +98,17 @@
   <object id="15" x="16" y="256" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Transition</text>
   </object>
-  <object id="16" x="16" y="288">
+  <object id="16" x="48" y="288">
    <properties>
     <property name="Animation" value="TransitionRunning"/>
     <property name="EntityType" value="Image"/>
     <property name="ID" value="TitleTransition"/>
-    <property name="Layer" value="Transition"/>
+    <property name="Layer" value="BranchesTransition"/>
     <property name="Position" value="320, 240"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="17" x="48" y="288">
+  <object id="17" x="16" y="288">
    <properties>
     <property name="DimmerID" value="TitleDimmer"/>
     <property name="EntityType" value="TransitionBranches"/>

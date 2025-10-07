@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="58">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="59">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_1.tsx"/>
  <tileset firstgid="577" source="test_tileset_2.tsx"/>
@@ -928,8 +928,10 @@
  <objectgroup id="4" name="objects_game_0">
   <object id="3" x="160" y="2672">
    <properties>
-    <property name="DimmerID" value="MainMenuDimmer"/>
+    <property name="BranchesID" value="MainTransitionBranches"/>
+    <property name="DimmerID" value="MainDimmer"/>
     <property name="EntityType" value="MainMenu"/>
+    <property name="ID" value="MainID"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -940,12 +942,13 @@
    </properties>
    <polygon points="0,0 16,0 16,16 0,16"/>
   </object>
-  <object id="5" x="32" y="2704">
+  <object id="5" x="192" y="2672">
    <properties>
-    <property name="Dimness" value="1"/>
+    <property name="Dimness" value="0.5"/>
     <property name="EntityType" value="Dimmer"/>
-    <property name="ID" value="MainMenuDimmer"/>
-    <property name="State" value="Running"/>
+    <property name="ID" value="MainDimmer"/>
+    <property name="Layer" value="MenuDimmer"/>
+    <property name="State" value="Waiting"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -1032,9 +1035,6 @@
   <object id="48" x="32" y="2640" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Transition</text>
   </object>
-  <object id="50" x="32" y="2672" width="96" height="16">
-   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Dimmer</text>
-  </object>
   <object id="51" x="32" y="2704" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Camera</text>
   </object>
@@ -1047,22 +1047,23 @@
   <object id="54" x="32" y="2736" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Background Parallax</text>
   </object>
-  <object id="55" x="32" y="2672">
+  <object id="55" x="64" y="2672">
    <properties>
     <property name="Animation" value="TransitionRunning"/>
     <property name="EntityType" value="Image"/>
-    <property name="ID" value="MainTransition"/>
-    <property name="Layer" value="Transition"/>
+    <property name="ID" value="TransitionImage"/>
+    <property name="Layer" value="BranchesTransition"/>
+    <property name="Pauseable" value="false"/>
     <property name="Position" value="320, 240"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="56" x="64" y="2672">
+  <object id="56" x="32" y="2672">
    <properties>
-    <property name="DimmerID" value="MainMenuDimmer"/>
+    <property name="DimmerID" value="TransitionDimmer"/>
     <property name="EntityType" value="TransitionBranches"/>
     <property name="ID" value="MainTransitionBranches"/>
-    <property name="TransitionID" value="MainTransition"/>
+    <property name="TransitionID" value="TransitionImage"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -1070,7 +1071,18 @@
    <properties>
     <property name="BranchesID" value="MainTransitionBranches"/>
     <property name="EntityType" value="LevelController"/>
+    <property name="MainID" value="MainID"/>
     <property name="UIID" value="MainUI"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="58" x="96" y="2672">
+   <properties>
+    <property name="Dimness" value="1"/>
+    <property name="EntityType" value="Dimmer"/>
+    <property name="ID" value="TransitionDimmer"/>
+    <property name="Layer" value="BranchesDimmer"/>
+    <property name="State" value="Running"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>

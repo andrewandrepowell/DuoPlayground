@@ -28,7 +28,7 @@ namespace Duo.Managers
             _animationManager = Entity.Get<AnimationComponent>().Manager;
             _animationManager.Play((int)Animations.Pixel);
             _animationManager.PositionMode = PositionModes.Screen;
-            _animationManager.Layer = Layers.Dimmer;
+            _animationManager.Layer = Enum.Parse<Layers>(node.Parameters.GetValueOrDefault("Layer", "MenuDimmer"));
             _animationManager.Scale = (Vector2)Globals.GameWindowSize;
             _animationManager.Position = Vector2.Zero;
             _animationManager.Color = (Color)typeof(Color).GetProperty(node.Parameters.GetValueOrDefault("Color", "Black")).GetValue(typeof(Color));

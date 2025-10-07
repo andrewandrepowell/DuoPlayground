@@ -52,6 +52,7 @@ namespace Duo.Managers
             _animationManager.Play((int)Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("Animation", "Background")));
             _animationManager.Layer = Enum.Parse<Layers>(node.Parameters.GetValueOrDefault("Layer", "FarSky"));
             _animationManager.PositionMode = Enum.Parse<PositionModes>(node.Parameters.GetValueOrDefault("PositionMode", "Screen"));
+            _animationManager.Pauseable = bool.Parse(node.Parameters.GetValueOrDefault("Pauseable", "true"));
             var position = GetVector(parameters: node.Parameters, vector: "Position");
             Debug.Assert(position.HasValue);
             _animationManager.Position = position.Value;

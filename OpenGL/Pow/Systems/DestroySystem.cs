@@ -37,8 +37,9 @@ namespace Pow.Systems
             ref var statusComponent = ref entity.Get<StatusComponent>();
             if (statusComponent.State != EntityStates.Destroying)
                 return;
-            foreach (ref var componentType in World.GetComponentTypes(entity).AsSpan())
-                if (_componentNodes.TryGetValue(componentType, out var componentNode))
+            var componentTypes = World.GetComponentTypes(entity);
+            for (var i = componentTypes.Length - 1; i >= 0; i--) 
+                if (_componentNodes.TryGetValue(componentTypes[i], out var componentNode))
                     componentNode.Dispose(in entity);
             statusComponent.State = EntityStates.Running;
         }
