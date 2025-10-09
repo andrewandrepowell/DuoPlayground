@@ -81,6 +81,12 @@ partial class mainButton : MonoGameGum.Forms.Controls.Button
         set => background.TextureTop = value;
     }
 
+    public int textFontSize
+    {
+        get => text.FontSize;
+        set => text.FontSize = value;
+    }
+
     public string Message
     {
         get => text.Text;

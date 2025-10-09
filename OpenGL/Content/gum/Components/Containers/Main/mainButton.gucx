@@ -149,6 +149,7 @@
       <Type>int</Type>
       <Name>text.FontSize</Name>
       <Value xsi:type="xsd:int">20</Value>
+      <ExposedAsName>textFontSize</ExposedAsName>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
