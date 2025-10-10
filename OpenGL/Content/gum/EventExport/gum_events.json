@@ -98,6 +98,41 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2025-10-09T12:12:26.2198309Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-10-10T03:09:07.7830531Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-10T03:09:34.2199233Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).background",
+        "OldName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-10T03:09:38.5933447Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-10T03:12:40.1263185Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).text",
+        "OldName": "Containers/Options/optionsButton (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-10T03:12:44.6802722Z"
       }
     ]
   }
