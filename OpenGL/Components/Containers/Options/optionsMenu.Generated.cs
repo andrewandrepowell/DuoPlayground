@@ -32,10 +32,9 @@ partial class optionsMenu : MonoGameGum.Forms.Controls.FrameworkElement
             return gue;
         });
     }
-    public ContainerRuntime buttons { get; protected set; }
-    public mainButtonBox sfx { get; protected set; }
-    public mainButtonBox music { get; protected set; }
-    public mainButtonBox fvw { get; protected set; }
+    public optionsSlider music { get; protected set; }
+    public optionsSlider sfx { get; protected set; }
+    public optionsRadio fw { get; protected set; }
 
     public optionsMenu(InteractiveGue visual) : base(visual) { }
     public optionsMenu()
@@ -47,10 +46,9 @@ partial class optionsMenu : MonoGameGum.Forms.Controls.FrameworkElement
     protected override void ReactToVisualChanged()
     {
         base.ReactToVisualChanged();
-        buttons = this.Visual?.GetGraphicalUiElementByName("buttons") as ContainerRuntime;
-        sfx = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButtonBox>(this.Visual,"sfx");
-        music = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButtonBox>(this.Visual,"music");
-        fvw = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<mainButtonBox>(this.Visual,"fvw");
+        music = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsSlider>(this.Visual,"music");
+        sfx = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsSlider>(this.Visual,"sfx");
+        fw = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsRadio>(this.Visual,"fw");
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

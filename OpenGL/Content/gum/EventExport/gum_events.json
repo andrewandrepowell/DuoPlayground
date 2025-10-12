@@ -133,6 +133,384 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2025-10-10T03:12:44.6802722Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T02:42:59.6575192Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).container",
+        "OldName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T02:43:13.341953Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T17:55:27.7207413Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).container_a",
+        "OldName": "Containers/Options/optionsButton (Container).container",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T17:55:51.2623316Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).container_b",
+        "OldName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T17:55:57.3074094Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).background_a",
+        "OldName": "Containers/Options/optionsButton (Container).background",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T18:08:43.7518293Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).text_b",
+        "OldName": "Containers/Options/optionsButton (Container).text",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T18:09:23.9796589Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T18:11:15.6082136Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).background_c",
+        "OldName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T18:11:35.4029304Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T18:29:12.6327806Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).container_c",
+        "OldName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T18:29:17.1898842Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T18:33:28.6872156Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).pointer",
+        "OldName": "Containers/Options/optionsButton (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T18:33:50.6720565Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsMenu (Container).Containers/Main/mainButtonBox sfx in Containers/Options/optionsMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T19:02:23.998667Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsMenu (Container).Containers/Main/mainButtonBox music in Containers/Options/optionsMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T19:02:23.9996704Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).optionsButtonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T19:02:35.9238864Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).music",
+        "OldName": "Containers/Options/optionsMenu (Container).optionsButtonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T19:04:51.7895118Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).optionsButtonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T19:05:10.8845799Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).SFX",
+        "OldName": "Containers/Options/optionsMenu (Container).optionsButtonInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T19:05:15.3347066Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).sfx",
+        "OldName": "Containers/Options/optionsMenu (Container).SFX",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T19:05:18.8459664Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T19:08:26.3081891Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsButton (Container).container",
+        "OldName": "Containers/Options/optionsButton (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T19:08:34.2433205Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsSlider",
+        "OldName": "Containers/Options/optionsButton",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-10-11T21:02:20.9932415Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsSlider1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-10-11T22:07:46.2013042Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio",
+        "OldName": "Containers/Options/optionsSlider1",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-10-11T22:08:06.1007051Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheckbox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2025-10-11T22:11:16.7936566Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck",
+        "OldName": "Containers/Options/optionsCheckbox",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2025-10-11T22:11:25.4235035Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:12:18.1376214Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).checkbox",
+        "OldName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:12:26.2543024Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:14:29.2124175Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).background",
+        "OldName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:14:38.8294541Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:16:47.2536473Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).checkmark",
+        "OldName": "Containers/Options/optionsCheck (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:16:53.1858559Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).box",
+        "OldName": "Containers/Options/optionsCheck (Container).background",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:16:57.4988566Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:19:53.9968462Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsCheck (Container).text",
+        "OldName": "Containers/Options/optionsCheck (Container).TextInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:20:59.2918195Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsRadio (Container).Container container_b in Containers/Options/optionsRadio (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:25:22.2839067Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsRadio (Container).Sprite background_c in Containers/Options/optionsRadio (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:25:22.45576Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsRadio (Container).Sprite pointer in Containers/Options/optionsRadio (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:25:22.5098161Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsRadio (Container).Container container_c in Containers/Options/optionsRadio (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:25:22.5719734Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).optionsCheckInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:25:42.0537719Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsRadio (Container).Containers/Options/optionsCheck optionsCheckInstance in Containers/Options/optionsRadio (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:26:05.291169Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:26:11.9421339Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).container_b",
+        "OldName": "Containers/Options/optionsRadio (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:26:17.3529593Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).optionsCheckInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:32:24.933943Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).box_c_0",
+        "OldName": "Containers/Options/optionsRadio (Container).optionsCheckInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:32:45.7755463Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).optionsCheckInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:33:01.7382483Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsRadio (Container).box_c_1",
+        "OldName": "Containers/Options/optionsRadio (Container).optionsCheckInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:33:15.8165855Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsMenu (Container).Containers/Main/mainButtonBox fvw in Containers/Options/optionsMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-11T22:37:37.1070049Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).optionsRadioInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-11T22:38:11.57746Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsMenu (Container).fw",
+        "OldName": "Containers/Options/optionsMenu (Container).optionsRadioInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-11T22:38:20.965012Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Containers/Options/optionsMenu (Container).Container buttons in Containers/Options/optionsMenu (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2025-10-12T01:12:47.5337248Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsView (Container).optionsMenuInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-10-12T01:15:32.1202248Z"
+      },
+      {
+        "NewName": "Containers/Options/optionsView (Container).options",
+        "OldName": "Containers/Options/optionsView (Container).optionsMenuInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2025-10-12T01:18:19.0009534Z"
       }
     ]
   }

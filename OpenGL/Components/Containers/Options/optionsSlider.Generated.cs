@@ -1,4 +1,4 @@
-//Code for Containers/Options/optionsButton (Container)
+//Code for Containers/Options/optionsSlider (Container)
 using GumRuntime;
 using MonoGameGum.GueDeriving;
 using Gum.Converters;
@@ -11,7 +11,7 @@ using RenderingLibrary.Graphics;
 using System.Linq;
 
 namespace DuoGum.Components;
-partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
+partial class optionsSlider : MonoGameGum.Forms.Controls.Button
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void RegisterRuntimeType()
@@ -19,17 +19,52 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
         var template = new MonoGameGum.Forms.VisualTemplate((vm, createForms) =>
         {
             var visual = new MonoGameGum.GueDeriving.ContainerRuntime();
-            var element = ObjectFinder.Self.GetElementSave("Containers/Options/optionsButton");
+            var element = ObjectFinder.Self.GetElementSave("Containers/Options/optionsSlider");
             element.SetGraphicalUiElement(visual, RenderingLibrary.SystemManagers.Default);
-            if(createForms) visual.FormsControlAsObject = new optionsButton(visual);
+            if(createForms) visual.FormsControlAsObject = new optionsSlider(visual);
             return visual;
         });
-        MonoGameGum.Forms.Controls.FrameworkElement.DefaultFormsTemplates[typeof(optionsButton)] = template;
-        ElementSaveExtensions.RegisterGueInstantiation("Containers/Options/optionsButton", () => 
+        MonoGameGum.Forms.Controls.FrameworkElement.DefaultFormsTemplates[typeof(optionsSlider)] = template;
+        ElementSaveExtensions.RegisterGueInstantiation("Containers/Options/optionsSlider", () => 
         {
             var gue = template.CreateContent(null, true) as InteractiveGue;
             return gue;
         });
+    }
+    public enum ButtonCategory
+    {
+        Enabled,
+        Disabled,
+        Highlighted,
+        Pushed,
+        HighlightedFocused,
+        Focused,
+        DisabledFocused,
+    }
+
+    ButtonCategory? _buttonCategoryState;
+    public ButtonCategory? ButtonCategoryState
+    {
+        get => _buttonCategoryState;
+        set
+        {
+            _buttonCategoryState = value;
+            if(value != null)
+            {
+                if(Visual.Categories.ContainsKey("ButtonCategory"))
+                {
+                    var category = Visual.Categories["ButtonCategory"];
+                    var state = category.States.Find(item => item.Name == value.ToString());
+                    this.Visual.ApplyState(state);
+                }
+                else
+                {
+                    var category = ((Gum.DataTypes.ElementSave)this.Visual.Tag).Categories.FirstOrDefault(item => item.Name == "ButtonCategory");
+                    var state = category.States.Find(item => item.Name == value.ToString());
+                    this.Visual.ApplyState(state);
+                }
+            }
+        }
     }
     public SpriteRuntime background_a { get; protected set; }
     public TextRuntime text_b { get; protected set; }
@@ -70,8 +105,8 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
         set => text_b.Text = value;
     }
 
-    public optionsButton(InteractiveGue visual) : base(visual) { }
-    public optionsButton()
+    public optionsSlider(InteractiveGue visual) : base(visual) { }
+    public optionsSlider()
     {
 
 

@@ -1,4 +1,4 @@
-//Code for Containers/Options/optionsButton (Container)
+//Code for Containers/Options/optionsSlider1 (Container)
 using GumRuntime;
 using MonoGameGum.GueDeriving;
 using Gum.Converters;
@@ -11,7 +11,7 @@ using RenderingLibrary.Graphics;
 using System.Linq;
 
 namespace DuoGum.Components;
-partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
+partial class optionsSlider1 : MonoGameGum.Forms.Controls.FrameworkElement
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void RegisterRuntimeType()
@@ -19,13 +19,13 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
         var template = new MonoGameGum.Forms.VisualTemplate((vm, createForms) =>
         {
             var visual = new MonoGameGum.GueDeriving.ContainerRuntime();
-            var element = ObjectFinder.Self.GetElementSave("Containers/Options/optionsButton");
+            var element = ObjectFinder.Self.GetElementSave("Containers/Options/optionsSlider1");
             element.SetGraphicalUiElement(visual, RenderingLibrary.SystemManagers.Default);
-            if(createForms) visual.FormsControlAsObject = new optionsButton(visual);
+            if(createForms) visual.FormsControlAsObject = new optionsSlider1(visual);
             return visual;
         });
-        MonoGameGum.Forms.Controls.FrameworkElement.DefaultFormsTemplates[typeof(optionsButton)] = template;
-        ElementSaveExtensions.RegisterGueInstantiation("Containers/Options/optionsButton", () => 
+        MonoGameGum.Forms.Controls.FrameworkElement.DefaultFormsTemplates[typeof(optionsSlider1)] = template;
+        ElementSaveExtensions.RegisterGueInstantiation("Containers/Options/optionsSlider1", () => 
         {
             var gue = template.CreateContent(null, true) as InteractiveGue;
             return gue;
@@ -70,8 +70,8 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
         set => text_b.Text = value;
     }
 
-    public optionsButton(InteractiveGue visual) : base(visual) { }
-    public optionsButton()
+    public optionsSlider1(InteractiveGue visual) : base(visual) { }
+    public optionsSlider1()
     {
 
 

@@ -6,38 +6,44 @@
     <Name>Default</Name>
     <Variable>
       <Type>ChildrenLayout</Type>
-      <Name>buttons.ChildrenLayout</Name>
+      <Name>ChildrenLayout</Name>
       <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>string</Type>
+      <Name>fw.box_c_0textText</Name>
+      <Value xsi:type="xsd:string">Full</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>fw.box_c_1textText</Name>
+      <Value xsi:type="xsd:string">Window</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>fw.Parent</Name>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>float</Type>
-      <Name>buttons.Height</Name>
-      <Value xsi:type="xsd:float">0</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>DimensionUnitType</Type>
-      <Name>buttons.HeightUnits</Name>
-      <Value xsi:type="xsd:int">4</Value>
+      <Name>fw.Rotation</Name>
+      <Value xsi:type="xsd:float">2</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>float</Type>
-      <Name>buttons.Width</Name>
-      <Value xsi:type="xsd:float">0</Value>
+      <Name>fw.text_bFontScale</Name>
+      <Value xsi:type="xsd:float">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
-      <Type>DimensionUnitType</Type>
-      <Name>buttons.WidthUnits</Name>
-      <Value xsi:type="xsd:int">4</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>ChildrenLayout</Type>
-      <Name>ChildrenLayout</Name>
-      <Value xsi:type="xsd:int">2</Value>
+      <Type>string</Type>
+      <Name>fw.text_bText</Name>
+      <Value xsi:type="xsd:string">View
+</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -53,45 +59,49 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
-      <Type>string</Type>
-      <Name>fvw.buttonMessage</Name>
-      <Value xsi:type="xsd:string">Full / Window</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>int</Type>
-      <Name>fvw.buttontextFontSize</Name>
-      <Value xsi:type="xsd:int">15</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>string</Type>
-      <Name>fvw.Parent</Name>
-      <Value xsi:type="xsd:string">buttons</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>string</Type>
-      <Name>music.buttonMessage</Name>
-      <Value xsi:type="xsd:string">Music</Value>
+      <Type>float</Type>
+      <Name>music.containerRotation</Name>
+      <Value xsi:type="xsd:float">3</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>string</Type>
       <Name>music.Parent</Name>
-      <Value xsi:type="xsd:string">buttons</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>music.Rotation</Name>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>string</Type>
-      <Name>sfx.buttonMessage</Name>
-      <Value xsi:type="xsd:string">SFX</Value>
+      <Name>music.text_bText</Name>
+      <Value xsi:type="xsd:string">Music</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>sfx.containerRotation</Name>
+      <Value xsi:type="xsd:float">-3</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>string</Type>
       <Name>sfx.Parent</Name>
-      <Value xsi:type="xsd:string">buttons</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>sfx.Rotation</Name>
+      <Value xsi:type="xsd:float">0</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>sfx.text_bText</Name>
+      <Value xsi:type="xsd:string">SFX</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -139,24 +149,23 @@
     </Variable>
   </State>
   <Instance>
-    <Name>buttons</Name>
-    <BaseType>Container</BaseType>
+    <Name>music</Name>
+    <BaseType>Containers/Options/optionsSlider</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>
   <Instance>
     <Name>sfx</Name>
-    <BaseType>Containers/Main/mainButtonBox</BaseType>
+    <BaseType>Containers/Options/optionsSlider</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>
   <Instance>
-    <Name>music</Name>
-    <BaseType>Containers/Main/mainButtonBox</BaseType>
+    <Name>fw</Name>
+    <BaseType>Containers/Options/optionsRadio</BaseType>
     <DefinedByBase>false</DefinedByBase>
   </Instance>
-  <Instance>
-    <Name>fvw</Name>
-    <BaseType>Containers/Main/mainButtonBox</BaseType>
-    <DefinedByBase>false</DefinedByBase>
-  </Instance>
-  <Behaviors />
+  <Behaviors>
+    <ElementBehaviorReference>
+      <BehaviorName>MenuBehavior</BehaviorName>
+    </ElementBehaviorReference>
+  </Behaviors>
 </ComponentSave>
