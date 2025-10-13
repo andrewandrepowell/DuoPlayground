@@ -18,7 +18,7 @@ sampler2D SpriteTextureSampler = sampler_state
 static const float GlowPeriod = 1.0f;
 // static const float4 GlowColor = float4(243.0f, 233.0f, 220.0f, 255.0f) / 255.0f;
 // static const float4 GlowColor = float4(26.0f, 58.0f, 58.0f, 255.0f) / 255.0f;
-static const float4 GlowColor = float4(0.0f, 0.0f, 0.0f, 255.0f) / 255.0f;
+// static const float4 GlowColor = float4(0.0f, 0.0f, 0.0f, 255.0f) / 255.0f;
 static const int GlowRadius = 2;
 static const int GlowWidth = GlowRadius * 2 + 1;
 static const int GlowArea = GlowWidth * GlowWidth;
@@ -29,6 +29,7 @@ static const float GlowBrighten = 1.0f;
 float Time;
 float2 SpriteTextureSize;
 float GlowIntensitiy;
+float4 GlowColor;
 
 struct VertexShaderOutput
 {

@@ -5,6 +5,18 @@
   <State>
     <Name>Default</Name>
     <Variable>
+      <Type>float</Type>
+      <Name>back.containerRotation</Name>
+      <Value xsi:type="xsd:float">-2</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>string</Type>
+      <Name>back.text_bText</Name>
+      <Value xsi:type="xsd:string">Back</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>ChildrenLayout</Type>
       <Name>ChildrenLayout</Name>
       <Value xsi:type="xsd:int">1</Value>
@@ -19,31 +31,13 @@
     <Variable>
       <Type>string</Type>
       <Name>fw.box_c_1textText</Name>
-      <Value xsi:type="xsd:string">Window</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>string</Type>
-      <Name>fw.Parent</Name>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>float</Type>
-      <Name>fw.Rotation</Name>
-      <Value xsi:type="xsd:float">2</Value>
-      <SetsValue>true</SetsValue>
-    </Variable>
-    <Variable>
-      <Type>float</Type>
-      <Name>fw.text_bFontScale</Name>
-      <Value xsi:type="xsd:float">1</Value>
+      <Value xsi:type="xsd:string">Screen</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
       <Type>string</Type>
       <Name>fw.text_bText</Name>
-      <Value xsi:type="xsd:string">View
-</Value>
+      <Value xsi:type="xsd:string">View</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -148,6 +142,11 @@
       <SetsValue>true</SetsValue>
     </Variable>
   </State>
+  <Instance>
+    <Name>back</Name>
+    <BaseType>Containers/Options/optionsButton</BaseType>
+    <DefinedByBase>false</DefinedByBase>
+  </Instance>
   <Instance>
     <Name>music</Name>
     <BaseType>Containers/Options/optionsSlider</BaseType>

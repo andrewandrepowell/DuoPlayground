@@ -28,6 +28,8 @@ namespace Pow.Utilities
         MenuTransition,
         MenuDimmer, 
         FarMenu, MidMenu, CloseMenu,
+        OptionsDimmer,
+        FarOptionsMenu, OptionsMenu,
         FarFront, MidFront, CloseFront,
         BranchesTransition,
         BranchesDimmer,

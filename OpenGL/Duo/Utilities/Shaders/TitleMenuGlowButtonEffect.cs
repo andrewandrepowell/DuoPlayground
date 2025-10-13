@@ -16,9 +16,11 @@ namespace Duo.Utilities.Shaders
         private readonly EffectParameter _timeEP;
         private readonly EffectParameter _spriteTextureSizeEP;
         private readonly EffectParameter _glowIntensitiyEP;
+        private readonly EffectParameter _glowColorEP;
         private float _time;
         private SizeF _textureSize;
         private float _glowIntensity;
+        private Color _glowColor;
         public override Effect Effect => _effect;
         public TitleMenuGlowButtonEffect()
         {
@@ -26,11 +28,13 @@ namespace Duo.Utilities.Shaders
             _timeEP = _effect.Parameters["Time"];
             _spriteTextureSizeEP = _effect.Parameters["SpriteTextureSize"];
             _glowIntensitiyEP = _effect.Parameters["GlowIntensitiy"];
+            _glowColorEP = _effect.Parameters["GlowColor"];
         }
         public void Configure(
             in float time,
             in SizeF textureSize,
-            in float glowIntensity)
+            in float glowIntensity,
+            in Color glowColor)
         {
             if (_time != time)
             {
@@ -46,6 +50,11 @@ namespace Duo.Utilities.Shaders
             {
                 _glowIntensity = glowIntensity;
                 _glowIntensitiyEP.SetValue(glowIntensity);
+            }
+            if (_glowColor != glowColor)
+            {
+                _glowColor = glowColor;
+                _glowColorEP.SetValue(glowColor.ToVector4());
             }
         }
     }

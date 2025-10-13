@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace DuoGum.Components
 {
-    partial class optionsRadio
+    partial class optionsRadio : OptionsButtons
     {
         partial void CustomInitialize()
         {

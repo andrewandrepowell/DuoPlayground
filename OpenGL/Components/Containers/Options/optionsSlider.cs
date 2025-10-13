@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace DuoGum.Components
 {
-    partial class optionsSlider
+    partial class optionsSlider : OptionsButtons
     {
         partial void CustomInitialize()
         {

@@ -12,7 +12,7 @@ using RenderingLibrary.Graphics;
 using System.Linq;
 
 namespace DuoGum.Components;
-partial class optionsMenu : MonoGameGum.Forms.Controls.FrameworkElement
+partial class optionsMenu : MonoGameGum.Forms.Controls.Menu
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void RegisterRuntimeType()
@@ -32,6 +32,7 @@ partial class optionsMenu : MonoGameGum.Forms.Controls.FrameworkElement
             return gue;
         });
     }
+    public optionsButton back { get; protected set; }
     public optionsSlider music { get; protected set; }
     public optionsSlider sfx { get; protected set; }
     public optionsRadio fw { get; protected set; }
@@ -46,6 +47,7 @@ partial class optionsMenu : MonoGameGum.Forms.Controls.FrameworkElement
     protected override void ReactToVisualChanged()
     {
         base.ReactToVisualChanged();
+        back = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsButton>(this.Visual,"back");
         music = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsSlider>(this.Visual,"music");
         sfx = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsSlider>(this.Visual,"sfx");
         fw = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<optionsRadio>(this.Visual,"fw");

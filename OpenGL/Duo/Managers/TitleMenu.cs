@@ -71,6 +71,7 @@ namespace Duo.Managers
             _buttonFeature = _animationManager.CreateFeature<TitleMenuGlowButtonFeature, TitleMenuGlowButtonEffect>();
             _buttonFeature.Layer = _layer;
             _buttonFeature.GlowIntensity = 0.0f;
+            _buttonFeature.GlowColor = Color.Black;
             _selected = false;
         }
     }
@@ -81,6 +82,8 @@ namespace Duo.Managers
         private ReadOnlyDictionary<string, TitleMenuButton> _buttons;
         private TransitionBranches _branches;
         private string _branchesID;
+        private OptionsMenu _options;
+        private string _optionsID;
         private RunningStates _state;
         private Action _nextAction;
 #if DEBUG
@@ -103,6 +106,7 @@ namespace Duo.Managers
             }
             {
                 _view.buttons.start.Click += (object? sender, EventArgs e) => Transition(Start);
+                _view.buttons.options.Click += (object? sender, EventArgs e) => OpenOptions();
                 _view.buttons.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
             }
             {
@@ -122,6 +126,10 @@ namespace Duo.Managers
             {
                 _branches = null;
                 _branchesID = node.Parameters.GetValueOrDefault("BranchesID", "TitleTransitionBranches");
+            }
+            {
+                _options = null;
+                _optionsID = node.Parameters.GetValueOrDefault("OptionsID", "Options");
             }
             {
                 _nextAction = null;
@@ -145,6 +153,17 @@ namespace Duo.Managers
         public override void Update()
         {
             base.Update();
+
+            if (_options == null)
+            {
+                var options = Globals.DuoRunner.Environments.OfType<OptionsMenu>().Where(options => options.ID == _optionsID).First();
+                if (options.Initialized)
+                {
+                    _options = options;
+                    Debug.Assert(_options.State == RunningStates.Waiting);
+                    _options.BackAction = CloseOptions;
+                }
+            }
 
             if (_branches == null)
             {
@@ -191,7 +210,7 @@ namespace Duo.Managers
             }
 #endif
             // Initialize when all relevant components are initialized,
-            if (!_initialized && _branches != null)
+            if (!_initialized && _branches != null && _options != null)
             {
 #if DEBUG
                 if (_debugWait <= 0)
@@ -212,7 +231,7 @@ namespace Duo.Managers
 #endif
 
             // If running (i.e. not dimming or brightening) then make sure the focused button is selected,
-            if (_initialized && _state == RunningStates.Running)
+            if (_initialized && _state == RunningStates.Running && _options.State == RunningStates.Waiting)
                 foreach (var gumButton in _view.buttons.Buttons)
                     _buttons[gumButton.Message].Selected = gumButton.IsFocused;
 
@@ -220,22 +239,14 @@ namespace Duo.Managers
             if (_state == RunningStates.Starting && _branches.State == RunningStates.Running)
                 ForceOpen();
             else if (_state == RunningStates.Stopping && _branches.State == RunningStates.Waiting)
-            {
                 ForceClose();
-
-                // Perform next action.
-                if (_nextAction != null)
-                {
-                    _nextAction();
-                    _nextAction = null;
-                }
-            }
         }
         private void Open()
         {
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Waiting);
             Debug.Assert(_branches.State == RunningStates.Waiting);
+            Debug.Assert(_options.State == RunningStates.Waiting);
             Debug.Assert(!_view.buttons.ButtonFocused);
             _branches.Open();
             _state = RunningStates.Starting;
@@ -245,6 +256,7 @@ namespace Duo.Managers
             Debug.Assert(_initialized);
             Debug.Assert(_state == RunningStates.Running);
             Debug.Assert(_branches.State == RunningStates.Running);
+            Debug.Assert(_options.State == RunningStates.Waiting);
             Debug.Assert(_view.buttons.ButtonFocused);
             var menu = _view.buttons;
             menu.ResetFocus();
@@ -265,6 +277,8 @@ namespace Duo.Managers
             menu.ResetFocus();
             _branches.ForceClose();
             _state = RunningStates.Waiting;
+            _nextAction?.Invoke();
+            _nextAction = null;
         }
         private void Transition(Action nextAction)
         {
@@ -274,6 +288,28 @@ namespace Duo.Managers
         private void Start()
         {
             Pow.Globals.Runner.Map.LoadNext((int)Maps.LevelDebug2);
+        }
+        private void OpenOptions()
+        {
+            Debug.Assert(_initialized);
+            Debug.Assert(_state == RunningStates.Running);
+            Debug.Assert(_branches.State == RunningStates.Running);
+            Debug.Assert(_options.State == RunningStates.Waiting);
+            Debug.Assert(_view.buttons.ButtonFocused);
+            var menu = _view.buttons;
+            menu.ResetFocus();
+            _options.Open();
+        }
+        private void CloseOptions()
+        {
+            Debug.Assert(_initialized);
+            Debug.Assert(_state == RunningStates.Running);
+            Debug.Assert(_branches.State == RunningStates.Running);
+            Debug.Assert(_options.State == RunningStates.Waiting);
+            Debug.Assert(!_view.buttons.ButtonFocused);
+            var menu = _view.buttons;
+            menu.ResetFocus();
+            menu.options.IsFocused = true;
         }
     }
 }

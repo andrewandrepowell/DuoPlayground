@@ -29,6 +29,7 @@ namespace Duo.Data
         Title, TitleBackground,
         Transition,
         Image,
+        OptionsButton
 
     }
     internal enum Animations 
@@ -51,7 +52,9 @@ namespace Duo.Data
         TitleGrass, TitleSign, TitleRock, TitleBush0, TitleBush1, TitleRoots,
         TitleBackground,
         TransitionWaiting, TransitionStarting, TransitionRunning, TransitionStopping, 
-        Image
+        Image,
+        OptionsButtonBushful,
+        OptionsButtonBushless
     }
     internal enum ParticleEffects
     {
@@ -78,7 +81,9 @@ namespace Duo.Data
         TitleMenu,
         TitleMenuButton,
         TransitionBranches,
-        LevelController
+        LevelController,
+        OptionsMenu,
+        OptionsMenuButton
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -495,7 +500,6 @@ namespace Duo.Data
                 indices: [0],
                 period: 0,
                 repeat: false);
-
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Transition,
                 assetName: "images/branch_transition_0",
@@ -532,6 +536,29 @@ namespace Duo.Data
                 spriteAnimationId: 3,
                 indices: [0, 1, 2, 3, 4, 5, 6, 7],
                 period: 0.25f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.OptionsButton,
+                assetName: "images/menu_button_4",
+                regionSize: new(352, 96),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.OptionsButtonBushful,
+                spriteId: (int)Sprites.OptionsButton,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.OptionsButtonBushless,
+                spriteId: (int)Sprites.OptionsButton,
+                spriteAnimationId: 1,
+                indices: [1],
+                period: 0,
                 repeat: false);
             // particles
             runner.ParticleEffectGenerator.Configure(
@@ -619,6 +646,14 @@ namespace Duo.Data
             runner.AddEntityType((int)EntityTypes.LevelController, world => world.Create(
                 new StatusComponent(),
                 new GOCustomComponent<LevelController>()));
+            runner.AddEntityType((int)EntityTypes.OptionsMenu, world => world.Create(
+                new StatusComponent(),
+                new GumComponent(),
+                new GOCustomComponent<OptionsMenu>()));
+            runner.AddEntityType((int)EntityTypes.OptionsMenuButton, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new GOCustomComponent<OptionsMenuButton>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -639,6 +674,8 @@ namespace Duo.Data
             runner.AddGOCustomManager<TitleMenuButton>();
             runner.AddGOCustomManager<TransitionBranches>();
             runner.AddGOCustomManager<LevelController>();
+            runner.AddGOCustomManager<OptionsMenu>();
+            runner.AddGOCustomManager<OptionsMenuButton>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -661,6 +698,8 @@ namespace Duo.Data
             duoRunner.AddEnvironment<TitleMenuButton>(EntityTypes.TitleMenuButton);
             duoRunner.AddEnvironment<TransitionBranches>(EntityTypes.TransitionBranches);
             duoRunner.AddEnvironment<LevelController>(EntityTypes.LevelController);
+            duoRunner.AddEnvironment<OptionsMenu>(EntityTypes.OptionsMenu);
+            duoRunner.AddEnvironment<OptionsMenuButton>(EntityTypes.OptionsMenuButton);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 

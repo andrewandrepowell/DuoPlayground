@@ -11,7 +11,7 @@ using RenderingLibrary.Graphics;
 using System.Linq;
 
 namespace DuoGum.Components;
-partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
+partial class optionsButton : MonoGameGum.Forms.Controls.Button
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void RegisterRuntimeType()
@@ -31,13 +31,44 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
             return gue;
         });
     }
+    public enum ButtonCategory
+    {
+        Enabled,
+        Disabled,
+        Highlighted,
+        Pushed,
+        HighlightedFocused,
+        Focused,
+        DisabledFocused,
+    }
+
+    ButtonCategory? _buttonCategoryState;
+    public ButtonCategory? ButtonCategoryState
+    {
+        get => _buttonCategoryState;
+        set
+        {
+            _buttonCategoryState = value;
+            if(value != null)
+            {
+                if(Visual.Categories.ContainsKey("ButtonCategory"))
+                {
+                    var category = Visual.Categories["ButtonCategory"];
+                    var state = category.States.Find(item => item.Name == value.ToString());
+                    this.Visual.ApplyState(state);
+                }
+                else
+                {
+                    var category = ((Gum.DataTypes.ElementSave)this.Visual.Tag).Categories.FirstOrDefault(item => item.Name == "ButtonCategory");
+                    var state = category.States.Find(item => item.Name == value.ToString());
+                    this.Visual.ApplyState(state);
+                }
+            }
+        }
+    }
     public SpriteRuntime background_a { get; protected set; }
     public TextRuntime text_b { get; protected set; }
     public ContainerRuntime container_a { get; protected set; }
-    public ContainerRuntime container_b { get; protected set; }
-    public SpriteRuntime background_c { get; protected set; }
-    public ContainerRuntime container_c { get; protected set; }
-    public SpriteRuntime pointer { get; protected set; }
     public ContainerRuntime container { get; protected set; }
 
     public int background_aTextureTop
@@ -50,12 +81,6 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
     {
         get => container.Rotation;
         set => container.Rotation = value;
-    }
-
-    public float pointerX
-    {
-        get => pointer.X;
-        set => pointer.X = value;
     }
 
     public int text_bFontSize
@@ -83,10 +108,6 @@ partial class optionsButton : MonoGameGum.Forms.Controls.FrameworkElement
         background_a = this.Visual?.GetGraphicalUiElementByName("background_a") as SpriteRuntime;
         text_b = this.Visual?.GetGraphicalUiElementByName("text_b") as TextRuntime;
         container_a = this.Visual?.GetGraphicalUiElementByName("container_a") as ContainerRuntime;
-        container_b = this.Visual?.GetGraphicalUiElementByName("container_b") as ContainerRuntime;
-        background_c = this.Visual?.GetGraphicalUiElementByName("background_c") as SpriteRuntime;
-        container_c = this.Visual?.GetGraphicalUiElementByName("container_c") as ContainerRuntime;
-        pointer = this.Visual?.GetGraphicalUiElementByName("pointer") as SpriteRuntime;
         container = this.Visual?.GetGraphicalUiElementByName("container") as ContainerRuntime;
         CustomInitialize();
     }

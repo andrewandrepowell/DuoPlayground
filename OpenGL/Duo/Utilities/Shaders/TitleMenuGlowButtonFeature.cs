@@ -15,7 +15,9 @@ namespace Duo.Utilities.Shaders
     {
         private float _glowIntensity;
         private Layers _layer;
+        private Color _glowColor;
         public override Layers Layer { get => _layer; set => _layer = value; }
+        public Color GlowColor { get => _glowColor; set => _glowColor = value; }
         public float GlowIntensity
         {
             get => _glowIntensity;
@@ -38,7 +40,8 @@ namespace Duo.Utilities.Shaders
                 textureSize: new SizeF(
                     width: Parent.Texture.Width, 
                     height: Parent.Texture.Height),
-                glowIntensity: _glowIntensity);
+                glowIntensity: _glowIntensity,
+                glowColor: _glowColor);
         }
     }
 }
