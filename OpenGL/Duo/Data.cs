@@ -649,6 +649,7 @@ namespace Duo.Data
             runner.AddEntityType((int)EntityTypes.OptionsMenu, world => world.Create(
                 new StatusComponent(),
                 new GumComponent(),
+                new ControlComponent(),
                 new GOCustomComponent<OptionsMenu>()));
             runner.AddEntityType((int)EntityTypes.OptionsMenuButton, world => world.Create(
                 new StatusComponent(),

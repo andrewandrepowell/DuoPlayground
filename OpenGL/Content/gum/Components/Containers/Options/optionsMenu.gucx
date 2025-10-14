@@ -29,6 +29,12 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>bool</Type>
+      <Name>fw.box_c_1checkmarkVisible</Name>
+      <Value xsi:type="xsd:boolean">false</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>string</Type>
       <Name>fw.box_c_1textText</Name>
       <Value xsi:type="xsd:string">Screen</Value>

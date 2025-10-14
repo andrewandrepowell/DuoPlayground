@@ -81,10 +81,22 @@ partial class optionsRadio : MonoGameGum.Forms.Controls.Button
         set => background_a.TextureTop = value;
     }
 
+    public bool box_c_0checkmarkVisible
+    {
+        get => box_c_0.checkmarkVisible;
+        set => box_c_0.checkmarkVisible = value;
+    }
+
     public string box_c_0textText
     {
         get => box_c_0.textText;
         set => box_c_0.textText = value;
+    }
+
+    public bool box_c_1checkmarkVisible
+    {
+        get => box_c_1.checkmarkVisible;
+        set => box_c_1.checkmarkVisible = value;
     }
 
     public string box_c_1textText

@@ -3,11 +3,14 @@ using Duo.Data;
 using Duo.Utilities.Shaders;
 using DuoGum.Components;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
+using Pow.Utilities.Control;
 using Pow.Utilities.ParticleEffects;
+using Pow.Utilities.UA;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -74,7 +77,7 @@ internal class OptionsMenuButton : Environment
         _selected = false;
     }
 }
-internal class OptionsMenu : GumObject
+internal class OptionsMenu : GumObject, IUserAction, IControl
 {
     private const float _dimmerDimness = 0.5f;
     private const float _dimmerPeriod = 0.25f;
@@ -88,6 +91,7 @@ internal class OptionsMenu : GumObject
     private float _time;
     private string _dimmerID;
     private Dimmer _dimmer;
+    private UAManager _uaManager;
     private float _buttonVisibility
     {
         set
@@ -100,6 +104,14 @@ internal class OptionsMenu : GumObject
         }
     }
     private Action _backAction;
+    private record struct ButtonControl(string ID, Controls Control);
+    private ReadOnlyDictionary<ButtonControl, Action> _buttonControlActions;
+    public Keys[] ControlKeys => _uaManager.ControlKeys;
+    public Buttons[] ControlButtons => _uaManager.ControlButtons;
+    public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
+    public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
+    public void UpdateControl(ButtonStates buttonState, Buttons button) => _uaManager.UpdateControl(buttonState, button);
+    public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
     public override void Initialize(PolygonNode node)
     {
         base.Initialize(node);
@@ -131,6 +143,23 @@ internal class OptionsMenu : GumObject
         {
             _dimmer = null;
             _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
+        }
+        {
+            Entity.Get<ControlComponent>().Manager.Initialize(this);
+            _uaManager = Globals.DuoRunner.UAGenerator.Acquire();
+            _uaManager.Initialize(this);
+        }
+        {
+            var buttonControlActions = new Dictionary<ButtonControl, Action>()
+            {
+                { new(ID: _view.options.music.text_bText, Control: Controls.MoveLeft), TurnDownMusic },
+                { new(ID: _view.options.music.text_bText, Control: Controls.MoveRight), TurnUpMusic },
+                { new(ID: _view.options.sfx.text_bText, Control: Controls.MoveLeft), TurnDownSFX },
+                { new(ID: _view.options.sfx.text_bText, Control: Controls.MoveRight), TurnUpSFX },
+                { new(ID: _view.options.fw.text_bText, Control: Controls.MoveLeft), ToggleView },
+                { new(ID: _view.options.fw.text_bText, Control: Controls.MoveRight), ToggleView }
+            };
+            _buttonControlActions = new(buttonControlActions);
         }
         {
             _backAction = null;
@@ -212,6 +241,19 @@ internal class OptionsMenu : GumObject
         else if (_state == RunningStates.Stopping && _dimmer.State == RunningStates.Waiting)
             ForceClose();
     }
+    public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
+    {
+        if (!_initialized || _state != RunningStates.Running) return;
+        var control = (Controls)actionId;
+        foreach (ref var button in _view.options.Buttons.AsSpan())
+        {
+            if (button.IsFocused && buttonState == ButtonStates.Pressed)
+            {
+                if (_buttonControlActions.TryGetValue(new(ID: button.text_bText, Control: control), out var action))
+                    action();
+            }
+        }
+    }
     public RunningStates State => _state;
     public bool Initialized => _initialized;
     public Action BackAction
@@ -277,5 +319,30 @@ internal class OptionsMenu : GumObject
         _time = 0;
         _state = RunningStates.Waiting;
         _backAction?.Invoke();
+    }
+    private void TurnUpMusic()
+    {
+        var button = _view.options.music;
+        button.pointerX = System.Math.Min(button.pointerX + 10, 100);
+    }
+    private void TurnDownMusic()
+    {
+        var button = _view.options.music;
+        button.pointerX = System.Math.Max(button.pointerX - 10, 0);
+    }
+    private void TurnUpSFX()
+    {
+        var button = _view.options.sfx;
+        button.pointerX = System.Math.Min(button.pointerX + 10, 100);
+    }
+    private void TurnDownSFX()
+    {
+        var button = _view.options.sfx;
+        button.pointerX = System.Math.Max(button.pointerX - 10, 0);
+    }
+    private void ToggleView()
+    {
+        _view.options.fw.box_c_0checkmarkVisible = !_view.options.fw.box_c_0checkmarkVisible;
+        _view.options.fw.box_c_1checkmarkVisible = !_view.options.fw.box_c_1checkmarkVisible;
     }
 }
