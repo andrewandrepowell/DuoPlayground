@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="59">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="62">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_1.tsx"/>
  <tileset firstgid="577" source="test_tileset_2.tsx"/>
@@ -932,6 +932,7 @@
     <property name="DimmerID" value="MainDimmer"/>
     <property name="EntityType" value="MainMenu"/>
     <property name="ID" value="MainID"/>
+    <property name="OptionsID" value="MainOptions"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
@@ -1083,6 +1084,25 @@
     <property name="ID" value="TransitionDimmer"/>
     <property name="Layer" value="BranchesDimmer"/>
     <property name="State" value="Running"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="59" x="160" y="2592" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Options Menu</text>
+  </object>
+  <object id="60" x="160" y="2624">
+   <properties>
+    <property name="DimmerID" value="OptionsDimmer"/>
+    <property name="EntityType" value="OptionsMenu"/>
+    <property name="ID" value="MainOptions"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="61" x="192" y="2624">
+   <properties>
+    <property name="EntityType" value="Dimmer"/>
+    <property name="ID" value="OptionsDimmer"/>
+    <property name="Layer" value="OptionsDimmer"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>

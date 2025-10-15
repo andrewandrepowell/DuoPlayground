@@ -101,6 +101,8 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private string _dimmerID;
     private Dimmer _dimmer;
     private string _branchesID;
+    private OptionsMenu _options;
+    private string _optionsID;
     private TransitionBranches _branches;
     private mainView _view;
     private UAManager _uaManager;
@@ -139,6 +141,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
             var menu = _view.menu;
             menu.resume.Click += (object? sender, EventArgs e) => Close();
             menu.title.Click += (object? sender, EventArgs e) => Transition(Title);
+            menu.options.Click += (object? sender, EventArgs e) => OpenOptions();
             menu.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
         }
         {
@@ -180,15 +183,19 @@ internal class MainMenu : GumObject, IUserAction, IControl
             _particleEffectManager.Pausable = false;
             _particleEffectManager.Show = false;
             var effect = _particleEffectManager.Effect;
-            effect.Position = new(x:0, y: Globals.GameWindowSize.Height * 0.4f);
+            effect.Position = new(x: 0, y: Globals.GameWindowSize.Height * 0.4f);
         }
-        { 
+        {
             _dimmer = null;
             _dimmerID = node.Parameters.GetValueOrDefault("DimmerID", "Dimmer");
         }
         {
             _branches = null;
             _branchesID = node.Parameters.GetValueOrDefault("BranchesID", "Branches");
+        }
+        {
+            _options = null;
+            _optionsID = node.Parameters.GetValueOrDefault("OptionsID", "Options");
         }
         {
             Entity.Get<ControlComponent>().Manager.Initialize(this);
@@ -221,7 +228,26 @@ internal class MainMenu : GumObject, IUserAction, IControl
 
         _dimmer ??= Globals.DuoRunner.Environments.OfType<Dimmer>().Where(dimmer => dimmer.ID == _dimmerID).First();
 
-        _branches ??= Globals.DuoRunner.Environments.OfType<TransitionBranches>().Where(branches => branches.ID == _branchesID).First();
+        if (_branches == null)
+        {
+            var branches = Globals.DuoRunner.Environments.OfType<TransitionBranches>().Where(branches => branches.ID == _branchesID).First();
+            if (branches.Initialized)
+            {
+                _branches = branches;
+                Debug.Assert(_branches.State == RunningStates.Waiting);
+            }
+        }
+
+        if (_options == null)
+        {
+            var options = Globals.DuoRunner.Environments.OfType<OptionsMenu>().Where(options => options.ID == _optionsID).First();
+            if (options.Initialized)
+            {
+                _options = options;
+                Debug.Assert(_options.State == RunningStates.Waiting);
+                _options.BackAction = CloseOptions;
+            }
+        }
 
         if (_buttonNodes == null)
         {
@@ -260,7 +286,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
         }
 #endif
 
-        if (!_initialized && _dimmer != null && _buttonNodes != null && _branches != null)
+        if (!_initialized && _dimmer != null && _buttonNodes != null && _branches != null && _options != null)
             _initialized = true;
 
         if (_initialized && _state == RunningStates.Running)
@@ -375,5 +401,28 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private void Title()
     {
         Pow.Globals.Runner.Map.LoadNext((int)Maps.Title);
+    }
+    private void OpenOptions()
+    {
+        Debug.Assert(_initialized);
+        Debug.Assert(_state == RunningStates.Running);
+        Debug.Assert(_dimmer.State == RunningStates.Running);
+        Debug.Assert(Pow.Globals.GamePaused);
+        Debug.Assert(_view.menu.ButtonFocused);
+        Debug.Assert(_branches.State == RunningStates.Running);
+        var menu = _view.menu;
+        menu.ResetFocus();
+        _options.Open();
+    }
+    private void CloseOptions()
+    {
+        Debug.Assert(_initialized);
+        Debug.Assert(_state == RunningStates.Running);
+        Debug.Assert(_dimmer.State == RunningStates.Running);
+        Debug.Assert(Pow.Globals.GamePaused);
+        Debug.Assert(!_view.menu.ButtonFocused);
+        Debug.Assert(_branches.State == RunningStates.Running);
+        var menu = _view.menu;
+        menu.options.IsFocused = true;
     }
 }

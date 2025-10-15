@@ -272,7 +272,6 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
         Debug.Assert(_state == RunningStates.Waiting);
         Debug.Assert(_dimmer.State == RunningStates.Waiting);
         Debug.Assert(!_view.options.ButtonFocused);
-        Pow.Globals.GamePause();
         GumManager.Visibility = 0;
         _buttonVisibility = 0;
         _dimmer.Dimness = _dimmerDimness;
@@ -311,7 +310,6 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
     }
     private void ForceClose()
     {
-        Pow.Globals.GameResume();
         var menu = _view.options;
         menu.ResetFocus();
         GumManager.Visibility = 0;

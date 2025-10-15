@@ -308,7 +308,6 @@ namespace Duo.Managers
             Debug.Assert(_options.State == RunningStates.Waiting);
             Debug.Assert(!_view.buttons.ButtonFocused);
             var menu = _view.buttons;
-            menu.ResetFocus();
             menu.options.IsFocused = true;
         }
     }
