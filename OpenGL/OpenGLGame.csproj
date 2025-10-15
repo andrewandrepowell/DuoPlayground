@@ -40,6 +40,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Content\config\options.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Content\images\button_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

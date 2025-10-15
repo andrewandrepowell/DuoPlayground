@@ -5,6 +5,7 @@ using DuoGum.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGameGum.Forms.Controls;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
@@ -15,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Duo.Managers;
@@ -79,6 +82,7 @@ internal class OptionsMenuButton : Environment
 }
 internal class OptionsMenu : GumObject, IUserAction, IControl
 {
+    private const string _assetName = "config/options.json";
     private const float _dimmerDimness = 0.5f;
     private const float _dimmerPeriod = 0.25f;
     private static readonly Layers _layer = Layers.OptionsMenu;
@@ -104,8 +108,13 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
         }
     }
     private Action _backAction;
+    private ViewModes _viewMode;
+    private float _musicVolume;
+    private float _sfxVolume;
+    private bool _fixFocus;
     private record struct ButtonControl(string ID, Controls Control);
     private ReadOnlyDictionary<ButtonControl, Action> _buttonControlActions;
+    public enum ViewModes { Full, Window };
     public Keys[] ControlKeys => _uaManager.ControlKeys;
     public Buttons[] ControlButtons => _uaManager.ControlButtons;
     public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
@@ -124,7 +133,12 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
             GumManager.Visibility = 0;
         }
         {
+            Load();
+        }
+        {
             _view.options.back.Click += (object? sender, EventArgs e) => Close();
+            _fixFocus = false;
+            _view.options.back.LostFocus += (object? sender, EventArgs e) => FixFocus();
         }
         {
             foreach (var button in _view.options.Buttons)
@@ -221,6 +235,13 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
             foreach (var button in _view.options.Buttons)
                 _buttons[button.text_bText].Selected = button.IsFocused;
 
+        if (_fixFocus)
+        {
+            _view.options.ResetFocus();
+            _view.options.fw.IsFocused = true;
+            _fixFocus = false;
+        }
+
         if (_state == RunningStates.Starting)
         {
             var visibility = MathHelper.Lerp(1, 0, _time / _period);
@@ -266,6 +287,53 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
             _backAction = value;
         }
     }
+    public ViewModes ViewMode
+    {
+        get => _viewMode;
+        set
+        {
+            if (value == _viewMode) return;
+            _viewMode = value;
+            switch (_viewMode)
+            {
+                case ViewModes.Full:
+                    {
+                        _view.options.fw.box_c_0checkmarkVisible = true;
+                        _view.options.fw.box_c_1checkmarkVisible = false;
+                    }
+                    break;
+                case ViewModes.Window:
+                    {
+                        _view.options.fw.box_c_0checkmarkVisible = false;
+                        _view.options.fw.box_c_1checkmarkVisible = true;
+                    }
+                    break;
+            }
+
+        }
+    }
+    public float MusicVolume
+    {
+        get => _musicVolume;
+        set
+        {
+            if (value == _musicVolume) return;
+            _musicVolume = MathHelper.Clamp(value, 0, 100);
+            var button = _view.options.music;
+            button.pointerX = _musicVolume;
+        }
+    }
+    public float SFXVolume
+    {
+        get => _sfxVolume;
+        set
+        {
+            if (value == _sfxVolume) return;
+            _sfxVolume = MathHelper.Clamp(value, 0, 100);
+            var button = _view.options.sfx;
+            button.pointerX = _sfxVolume;
+        }
+    }
     public void Open()
     {
         Debug.Assert(_initialized);
@@ -296,6 +364,7 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
         _dimmer.Stop();
         _period = _dimmer.Period;
         _time = _dimmer.Period;
+        Save();
         _state = RunningStates.Stopping;
     }
     private void ForceOpen()
@@ -318,29 +387,32 @@ internal class OptionsMenu : GumObject, IUserAction, IControl
         _state = RunningStates.Waiting;
         _backAction?.Invoke();
     }
-    private void TurnUpMusic()
+    private void TurnUpMusic() => MusicVolume += 10;
+    private void TurnDownMusic() => MusicVolume -= 10;
+    private void TurnUpSFX() => SFXVolume += 10;
+    private void TurnDownSFX() => SFXVolume -= 10;
+    private void ToggleView() => ViewMode = (ViewMode == ViewModes.Full) ? ViewModes.Window : ViewModes.Full;
+    private void FixFocus()
     {
-        var button = _view.options.music;
-        button.pointerX = System.Math.Min(button.pointerX + 10, 100);
+        if (!_view.options.ButtonFocused && _state == RunningStates.Running)
+            _fixFocus = true;
     }
-    private void TurnDownMusic()
+    private void Load()
     {
-        var button = _view.options.music;
-        button.pointerX = System.Math.Max(button.pointerX - 10, 0);
+        var path = Path.Combine(Pow.Globals.Game.Content.RootDirectory, _assetName);
+        var text = File.ReadAllText(path);
+        var root = JsonNode.Parse(text);
+        MusicVolume = (float)root["MusicVolume"];
+        SFXVolume = (float)root["SFXVolume"];
+        ViewMode = Enum.Parse<ViewModes>(root["ViewMode"].ToString());
     }
-    private void TurnUpSFX()
+    private void Save()
     {
-        var button = _view.options.sfx;
-        button.pointerX = System.Math.Min(button.pointerX + 10, 100);
-    }
-    private void TurnDownSFX()
-    {
-        var button = _view.options.sfx;
-        button.pointerX = System.Math.Max(button.pointerX - 10, 0);
-    }
-    private void ToggleView()
-    {
-        _view.options.fw.box_c_0checkmarkVisible = !_view.options.fw.box_c_0checkmarkVisible;
-        _view.options.fw.box_c_1checkmarkVisible = !_view.options.fw.box_c_1checkmarkVisible;
+        var path = Path.Combine(Pow.Globals.Game.Content.RootDirectory, _assetName);
+        var root = new JsonObject();
+        root["MusicVolume"] = MusicVolume;
+        root["SFXVolume"] = SFXVolume;
+        root["ViewMode"] = $"{ViewMode}";
+        File.WriteAllText(path: path, contents: root.ToJsonString(new System.Text.Json.JsonSerializerOptions() { WriteIndented = true}));
     }
 }

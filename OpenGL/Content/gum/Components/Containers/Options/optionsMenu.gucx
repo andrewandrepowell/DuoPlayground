@@ -37,7 +37,7 @@
     <Variable>
       <Type>string</Type>
       <Name>fw.box_c_1textText</Name>
-      <Value xsi:type="xsd:string">Screen</Value>
+      <Value xsi:type="xsd:string">Window</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
