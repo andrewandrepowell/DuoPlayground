@@ -112,6 +112,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private float _time;
     private ReadOnlyDictionary<string, ButtonNode> _buttonNodes;
     private Action _nextAction;
+    private bool _fixFocus;
     private float _buttonVisibility
     {
         set
@@ -143,6 +144,8 @@ internal class MainMenu : GumObject, IUserAction, IControl
             menu.title.Click += (object? sender, EventArgs e) => Transition(Title);
             menu.options.Click += (object? sender, EventArgs e) => OpenOptions();
             menu.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
+            _fixFocus = false;
+            menu.exit.LostFocus += (object? sender, EventArgs e) => FixFocus();
         }
         {
             GumManager.Initialize(_view.Visual);
@@ -289,6 +292,14 @@ internal class MainMenu : GumObject, IUserAction, IControl
         if (!_initialized && _dimmer != null && _buttonNodes != null && _branches != null && _options != null)
             _initialized = true;
 
+        // Hack solution to resolve the looping of focus on the buttons.
+        if (_fixFocus)
+        {
+            _view.menu.ResetFocus();
+            _view.menu.resume.IsFocused = true;
+            _fixFocus = false;
+        }
+
         if (_initialized && _state == RunningStates.Running)
             foreach (var button in _view.menu.Buttons)
                 _buttonNodes[button.Message].Background.Selected = button.IsFocused;
@@ -424,5 +435,10 @@ internal class MainMenu : GumObject, IUserAction, IControl
         Debug.Assert(_branches.State == RunningStates.Running);
         var menu = _view.menu;
         menu.options.IsFocused = true;
+    }
+    private void FixFocus()
+    {
+        if (!_view.menu.ButtonFocused && _state == RunningStates.Running)
+            _fixFocus = true;
     }
 }
