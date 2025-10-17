@@ -86,6 +86,7 @@ namespace Duo.Managers
         private string _optionsID;
         private RunningStates _state;
         private Action _nextAction;
+        private bool _fixFocus;
 #if DEBUG
         private float _debugWait;
 #endif
@@ -108,6 +109,8 @@ namespace Duo.Managers
                 _view.buttons.start.Click += (object? sender, EventArgs e) => Transition(Start);
                 _view.buttons.options.Click += (object? sender, EventArgs e) => OpenOptions();
                 _view.buttons.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
+                _fixFocus = false;
+                _view.buttons.exit.LostFocus += (object? sender, EventArgs e) => FixFocus();
             }
             {
                 foreach (var button in _view.buttons.Buttons)
@@ -230,6 +233,14 @@ namespace Duo.Managers
             }
 #endif
 
+            // Hack solution to resolve the looping of focus on the buttons.
+            if (_fixFocus)
+            {
+                _view.buttons.ResetFocus();
+                _view.buttons.start.IsFocused = true;
+                _fixFocus = false;
+            }
+
             // If running (i.e. not dimming or brightening) then make sure the focused button is selected,
             if (_initialized && _state == RunningStates.Running && _options.State == RunningStates.Waiting)
                 foreach (var gumButton in _view.buttons.Buttons)
@@ -309,6 +320,11 @@ namespace Duo.Managers
             Debug.Assert(!_view.buttons.ButtonFocused);
             var menu = _view.buttons;
             menu.options.IsFocused = true;
+        }
+        private void FixFocus()
+        {
+            if (!_view.buttons.ButtonFocused && _state == RunningStates.Running)
+                _fixFocus = true;
         }
     }
 }
