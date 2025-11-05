@@ -16,7 +16,7 @@ using Duo.Utilities;
 namespace Duo.Data
 {
     internal enum Controls { MoveLeft, MoveRight, Jump, Interact, Menu }
-    internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2, Title }
+    internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2, Title, Intro }
     internal enum Sprites 
     { 
         Cat, Pixel, Platform, Background, PurpleHillsBackground,
@@ -98,6 +98,7 @@ namespace Duo.Data
             runner.Map.Configure((int)Maps.LevelDebug1, "tiled/test_map_1");
             runner.Map.Configure((int)Maps.LevelDebug2, "tiled/test_map_2");
             runner.Map.Configure((int)Maps.Title, "tiled/title_map_0");
+            runner.Map.Configure((int)Maps.Intro, "tiled/intro_map_0");
             // sprites / animations.
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Cat, 

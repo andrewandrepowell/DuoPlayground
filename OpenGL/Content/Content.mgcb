@@ -342,6 +342,11 @@
 /processor:TiledMapProcessor
 /build:tiled/collectible_boxes_0.tmx
 
+#begin tiled/intro_map_0.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:tiled/intro_map_0.tmx
+
 #begin tiled/root_blockage_0.tsx
 /importer:TiledMapTilesetImporter
 /processor:TiledMapTilesetProcessor

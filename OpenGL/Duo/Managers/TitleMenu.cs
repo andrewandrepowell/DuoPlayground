@@ -298,7 +298,7 @@ namespace Duo.Managers
         }
         private void Start()
         {
-            Pow.Globals.Runner.Map.LoadNext((int)Maps.LevelDebug2);
+            Pow.Globals.Runner.Map.LoadNext((int)Maps.Intro);
         }
         private void OpenOptions()
         {
