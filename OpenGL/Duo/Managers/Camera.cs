@@ -17,6 +17,7 @@ namespace Duo.Managers
         private Modes _mode;
         private RectangleF _trackBox = new();
         private bool _updateMode;
+        private RectangleF _mapBoundary;
         public DuoObject DuoObjectTracked => _duoObjectTracked;
         public Modes Mode
         {
@@ -34,13 +35,26 @@ namespace Duo.Managers
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
-            var camera = Pow.Globals.Runner.Camera;
-            _trackID = node.Parameters["TrackID"];
-            _duoObjectTracked = null;
-            _mode = Modes.BoxTrack;
-            _updateMode = true;
-            camera.Origin = -(Vector2)(Globals.GameWindowSize / 2);
-            camera.Zoom = 1f;
+            {
+                _trackID = node.Parameters["TrackID"];
+                _duoObjectTracked = null;
+                _mode = Modes.BoxTrack;
+                _updateMode = true;
+            }
+            {
+                var camera = Pow.Globals.Runner.Camera;
+                camera.Origin = -(Vector2)(Globals.GameWindowSize / 2);
+                camera.Zoom = 1f;
+            }
+            {
+                var tiledMap = Pow.Globals.Runner.Map.Node.Map;
+                var halfGameWindowSize = (Globals.GameWindowSize / 2);
+                var leftMapBoundary = halfGameWindowSize.Width;
+                var rightMapBoundary = tiledMap.WidthInPixels - halfGameWindowSize.Width;
+                var topMapBoundary = halfGameWindowSize.Height;
+                var bottomMapBoundary = tiledMap.HeightInPixels - halfGameWindowSize.Height;
+                _mapBoundary = new(x: leftMapBoundary, y: topMapBoundary, width: rightMapBoundary-leftMapBoundary, height: bottomMapBoundary-topMapBoundary);
+            }
         }
         public override void Cleanup()
         {
@@ -84,17 +98,34 @@ namespace Duo.Managers
                     {
                         if (!_trackBox.Contains(_duoObjectTracked.Position))
                         {
-                            var newPosition = _trackBox.Position;
+                            // Update track box position based on tracked duo object.
+                            var newTrackPosition = _trackBox.Position;
                             if (_trackBox.Left > _duoObjectTracked.Position.X)
-                                newPosition.X -= _trackBox.Left - _duoObjectTracked.Position.X;
+                                newTrackPosition.X -= _trackBox.Left - _duoObjectTracked.Position.X;
                             if (_trackBox.Right < _duoObjectTracked.Position.X)
-                                newPosition.X -= _trackBox.Right - _duoObjectTracked.Position.X;
+                                newTrackPosition.X -= _trackBox.Right - _duoObjectTracked.Position.X;
                             if (_trackBox.Top > _duoObjectTracked.Position.Y)
-                                newPosition.Y -= _trackBox.Top - _duoObjectTracked.Position.Y;
+                                newTrackPosition.Y -= _trackBox.Top - _duoObjectTracked.Position.Y;
                             if (_trackBox.Bottom < _duoObjectTracked.Position.Y)
-                                newPosition.Y -= _trackBox.Bottom - _duoObjectTracked.Position.Y;
-                            _trackBox.Position = newPosition;
+                                newTrackPosition.Y -= _trackBox.Bottom - _duoObjectTracked.Position.Y;
+                            _trackBox.Position = newTrackPosition;
+
+                            // Update camera position based on track position.
                             camera.Position = _trackBox.Position + (Vector2)_trackBox.Size / 2;
+                        }
+
+                        if (!_mapBoundary.Contains(camera.Position))
+                        {
+                            var newCameraPosition = camera.Position;
+                            if (camera.Position.X < _mapBoundary.Left)
+                                newCameraPosition.X = _mapBoundary.Left;
+                            if (camera.Position.X > _mapBoundary.Right)
+                                newCameraPosition.X = _mapBoundary.Right;
+                            if (camera.Position.Y < _mapBoundary.Top)
+                                newCameraPosition.Y = _mapBoundary.Top;
+                            if (camera.Position.Y > _mapBoundary.Bottom)
+                                newCameraPosition.Y = _mapBoundary.Bottom;
+                            camera.Position = newCameraPosition;
                         }
                     }
                     break;
