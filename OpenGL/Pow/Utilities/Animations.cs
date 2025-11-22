@@ -29,6 +29,7 @@ namespace Pow.Utilities.Animations
         private Layers _layer;
         private PositionModes _positionMode;
         private Color _color;
+        private BlendState _blendState;
         private float _visibility;
         private bool _pauseable;
         private bool _show;

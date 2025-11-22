@@ -245,7 +245,10 @@ namespace Pow.Systems
                     // Draw animations.
                     foreach (var positionMode in _positionModes.AsSpan())
                     {
-                        spriteBatch.Begin(transformMatrix: _viewMatrices[positionMode], samplerState: SamplerState.PointClamp);
+                        spriteBatch.Begin(
+                            transformMatrix: _viewMatrices[positionMode], 
+                            samplerState: SamplerState.PointClamp,
+                            blendState: BlendState.AlphaBlend);
                         World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, positionMode)]);
                         spriteBatch.End();
                     }
