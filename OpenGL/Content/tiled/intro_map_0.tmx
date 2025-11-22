@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="24">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="26">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_3.tsx"/>
  <tileset firstgid="3137" source="test_tileset_4.tsx"/>
@@ -815,7 +815,7 @@
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="3" x="32" y="1952">
+  <object id="3" x="32" y="1920">
    <properties>
     <property name="EntityType" value="Camera"/>
     <property name="TrackID" value="Protag"/>
@@ -842,7 +842,7 @@
   <object id="6" x="32" y="1872" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Transition</text>
   </object>
-  <object id="7" x="32" y="1936" width="96" height="16">
+  <object id="7" x="32" y="1904" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Camera</text>
   </object>
   <object id="8" x="160" y="1872" width="96" height="16">
@@ -890,10 +890,10 @@
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="14" x="160" y="1824" width="96" height="16">
+  <object id="14" x="160" y="1840" width="96" height="16">
    <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Options Menu</text>
   </object>
-  <object id="15" x="160" y="1856">
+  <object id="15" x="160" y="1872">
    <properties>
     <property name="DimmerID" value="OptionsDimmer"/>
     <property name="EntityType" value="OptionsMenu"/>
@@ -901,13 +901,28 @@
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
-  <object id="16" x="192" y="1856">
+  <object id="16" x="192" y="1872">
    <properties>
     <property name="EntityType" value="Dimmer"/>
     <property name="ID" value="OptionsDimmer"/>
     <property name="Layer" value="OptionsDimmer"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="24" x="32" y="1968">
+   <properties>
+    <property name="Animation" value="FireplaceFlame"/>
+    <property name="EntityType" value="Image"/>
+    <property name="ID" value="FireplaceFlame0"/>
+    <property name="Layer" value="Background"/>
+    <property name="Pauseable" value="false"/>
+    <property name="Position" value="1632.0, 1819.0"/>
+    <property name="PositionMode" value="Map"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="25" x="32" y="1936" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1">Fireplace Flame</text>
   </object>
  </objectgroup>
  <objectgroup id="4" name="objects_surface_0">

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework.Input;
 using Duo.Utilities;
+using Arch.Core;
 
 
 namespace Duo.Data
@@ -29,7 +30,8 @@ namespace Duo.Data
         Title, TitleBackground,
         Transition,
         Image,
-        OptionsButton
+        OptionsButton,
+        FireplaceFlame,
 
     }
     internal enum Animations 
@@ -54,7 +56,8 @@ namespace Duo.Data
         TransitionWaiting, TransitionStarting, TransitionRunning, TransitionStopping, 
         Image,
         OptionsButtonBushful,
-        OptionsButtonBushless
+        OptionsButtonBushless,
+        FireplaceFlame,
     }
     internal enum ParticleEffects
     {
@@ -561,6 +564,22 @@ namespace Duo.Data
                 indices: [1],
                 period: 0,
                 repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.FireplaceFlame,
+                assetName: "images/fireplace_flame_0",
+                regionSize: new(91, 41),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.FireplaceFlame,
+                spriteId: (int)Sprites.FireplaceFlame,
+                spriteAnimationId: 0,
+                indices: Enumerable.Range(0, 60).ToArray(),
+                period: (float)1 / 60,
+                repeat: true);
             // particles
             runner.ParticleEffectGenerator.Configure(
                 id: (int)ParticleEffects.MenuWind,
