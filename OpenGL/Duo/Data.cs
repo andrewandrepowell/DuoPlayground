@@ -31,8 +31,7 @@ namespace Duo.Data
         Transition,
         Image,
         OptionsButton,
-        FireplaceFlame,
-
+        FireplaceFlame, FireplaceGlow
     }
     internal enum Animations 
     { 
@@ -57,7 +56,7 @@ namespace Duo.Data
         Image,
         OptionsButtonBushful,
         OptionsButtonBushless,
-        FireplaceFlame,
+        FireplaceFlame, FireplaceGlow
     }
     internal enum ParticleEffects
     {
@@ -576,6 +575,22 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.FireplaceFlame,
                 spriteId: (int)Sprites.FireplaceFlame,
+                spriteAnimationId: 0,
+                indices: Enumerable.Range(0, 60).ToArray(),
+                period: (float)1 / 60,
+                repeat: true);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.FireplaceGlow,
+                assetName: "images/fireplace_glow_0",
+                regionSize: new(339, 339),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.FireplaceGlow,
+                spriteId: (int)Sprites.FireplaceGlow,
                 spriteAnimationId: 0,
                 indices: Enumerable.Range(0, 60).ToArray(),
                 period: (float)1 / 60,

@@ -3,6 +3,7 @@ using Duo.Data;
 using Duo.Utilities.Shaders;
 using Duo.Utilities.Shaders.Duo.Utilities.Shaders;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
@@ -39,6 +40,20 @@ namespace Duo.Managers
                 return null;
             }
         }
+        private static BlendState GetBlendState(ReadOnlyDictionary<string, string> parameters)
+        {
+            if (parameters.TryGetValue(key: "BlendState", out var value))
+            {
+                var propertyInfo = typeof(BlendState).GetField(
+                    name: value, 
+                    bindingAttr: System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                return (BlendState)propertyInfo.GetValue(obj: null);
+            }
+            else
+            {
+                return BlendState.AlphaBlend;
+            }
+        }
         public enum Shaders
         {
             WindedBush,
@@ -53,6 +68,7 @@ namespace Duo.Managers
             _animationManager.Layer = Enum.Parse<Layers>(node.Parameters.GetValueOrDefault("Layer", "FarSky"));
             _animationManager.PositionMode = Enum.Parse<PositionModes>(node.Parameters.GetValueOrDefault("PositionMode", "Screen"));
             _animationManager.Pauseable = bool.Parse(node.Parameters.GetValueOrDefault("Pauseable", "true"));
+            _animationManager.BlendState = GetBlendState(node.Parameters);
             var position = GetVector(parameters: node.Parameters, vector: "Position");
             Debug.Assert(position.HasValue);
             _animationManager.Position = position.Value;

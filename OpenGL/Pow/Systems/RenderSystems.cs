@@ -40,10 +40,11 @@ namespace Pow.Systems
         private readonly static Layers[] _layers = Enum.GetValues<Layers>();
         private readonly static Directions[] _directions = Enum.GetValues<Directions>();
         private readonly static PositionModes[] _positionModes = Enum.GetValues<PositionModes>();
+        private readonly static BlendState[] _blendStates = [BlendState.Additive, BlendState.AlphaBlend];
         private readonly QueryDescription _allParticleEffectComponents;
         private readonly Dictionary<(Layers, PositionModes), ForEach<ParticleEffectComponent>> _drawParticleEffectComponents;
         private readonly QueryDescription _allAnimationComponents;
-        private readonly Dictionary<(Layers, PositionModes), ForEach<AnimationComponent>> _drawAnimationComponents;
+        private readonly Dictionary<(Layers, PositionModes, BlendState), ForEach<AnimationComponent>> _drawAnimationComponents;
         private readonly Dictionary<Layers, ForEach<AnimationComponent>> _drawFeatureAnimationComponents;
         private readonly QueryDescription _allGumComponents;
         private readonly Dictionary<Layers, ForEach<GumComponent>> _gumDrawGumComponents;
@@ -98,17 +99,19 @@ namespace Pow.Systems
                 _drawAnimationComponents = [];
                 foreach (var layer in _layers)
                     foreach (var positionMode in _positionModes)
-                    _drawAnimationComponents.Add((layer, positionMode), new((ref AnimationComponent component) =>
-                    {
-                        var manager = component.Manager;
-                        if (manager.Show && 
-                            manager.Layer == layer &&
-                            manager.Visibility > 0 &&
-                            manager.PositionMode == positionMode &&
-                            ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||
-                             (manager.PositionMode == PositionModes.Map && _windowMapBounds.Intersects(manager.Bounds))))
-                            manager.Draw();
-                    }));
+                        foreach (var blendState in _blendStates)
+                            _drawAnimationComponents.Add((layer, positionMode, blendState), new((ref AnimationComponent component) =>
+                            {
+                                var manager = component.Manager;
+                                if (manager.Show && 
+                                    manager.Layer == layer &&
+                                    manager.Visibility > 0 &&
+                                    manager.PositionMode == positionMode &&
+                                    manager.BlendState == blendState &&
+                                    ((manager.PositionMode == PositionModes.Screen && _windowScreenBounds.Intersects(manager.Bounds)) ||
+                                     (manager.PositionMode == PositionModes.Map && _windowMapBounds.Intersects(manager.Bounds))))
+                                    manager.Draw();
+                            }));
                 _drawFeatureAnimationComponents = [];
                 foreach (var layer in _layers)
                     _drawFeatureAnimationComponents.Add(layer, new((ref AnimationComponent component) =>
@@ -245,12 +248,15 @@ namespace Pow.Systems
                     // Draw animations.
                     foreach (var positionMode in _positionModes.AsSpan())
                     {
-                        spriteBatch.Begin(
-                            transformMatrix: _viewMatrices[positionMode], 
-                            samplerState: SamplerState.PointClamp,
-                            blendState: BlendState.AlphaBlend);
-                        World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, positionMode)]);
-                        spriteBatch.End();
+                        foreach (var blendState in _blendStates.AsSpan())
+                        {
+                            spriteBatch.Begin(
+                                transformMatrix: _viewMatrices[positionMode],
+                                samplerState: SamplerState.PointClamp,
+                                blendState: blendState);
+                            World.Query(_allAnimationComponents, _drawAnimationComponents[(layer, positionMode, blendState)]);
+                            spriteBatch.End();
+                        }
                     }
 
                     // Draw features (i.e. shader effects)

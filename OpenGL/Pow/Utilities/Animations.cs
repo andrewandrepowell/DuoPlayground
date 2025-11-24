@@ -218,6 +218,16 @@ namespace Pow.Utilities.Animations
                 return _animationNode.SpriteNode.Sprite.Bounds;
             }
         }
+        public BlendState BlendState
+        {
+            get => _blendState;
+            set
+            {
+                Debug.Assert(_animationId != null);
+                if (_blendState == value) return;
+                _blendState = value;
+            }
+        }
         public Layers Layer { get => _layer; set => _layer = value; }
         public PositionModes PositionMode { get => _positionMode; set => _positionMode = value; }
         public bool Pauseable { get => _pauseable; set => _pauseable = value; }
@@ -283,6 +293,7 @@ namespace Pow.Utilities.Animations
             _pauseable = true;
             _show = true;
             _serviceFrameUpdated = null;
+            _blendState = BlendState.AlphaBlend;
             _acquired = true;
         }
         public void Return()

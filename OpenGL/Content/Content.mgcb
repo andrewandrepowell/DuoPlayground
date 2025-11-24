@@ -147,6 +147,18 @@
 /processorParam:TextureFormat=Color
 /build:images/fireplace_flame_0.png
 
+#begin images/fireplace_glow_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/fireplace_glow_0.png
+
 #begin images/menu_button_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
