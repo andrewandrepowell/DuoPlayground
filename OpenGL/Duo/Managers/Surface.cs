@@ -32,7 +32,8 @@ namespace Duo.Managers
         private readonly Dictionary<Fixture, FixtureNode> _fixtureNodes = [];
         public enum Modes { Static, Move }
         public enum MoveStates { ToStart, ToEnd }
-        public record FixtureNode(Vector2 Normal);
+        public enum CollisionModes { None, Normal, OneWay }
+        public record FixtureNode(Vector2 Normal, CollisionModes CollisionMode);
         public Modes Mode => _mode;
         public MoveStates MoveState
         {
@@ -97,13 +98,16 @@ namespace Duo.Managers
                         edgeShape.Vertex3 = (node.Vertices[vertex3Index] - origin) / Globals.PixelsPerMeter;
                         edgeShape.HasVertex3 = true;
                     }
+                    var collisionMode = Enum.Parse<CollisionModes>(node.Parameters.GetValueOrDefault($"CollisionMode{i}", "Normal"));
                     var fixture = new Fixture(edgeShape);
                     fixture.Friction = 0.2f;
                     fixture.Restitution = 0.0f;
-                    fixture.CollisionCategories = Category.Cat1;
-                    var fixtureNode = new FixtureNode(Normal: normal);
+                    var fixtureNode = new FixtureNode(
+                        Normal: normal,
+                        CollisionMode: collisionMode);
                     _fixtureNodes.Add(fixture, fixtureNode);
                     body.Add(fixture);
+                    fixture.CollisionCategories = ((collisionMode == CollisionModes.Normal) ? Category.Cat1 : Category.None) | Category.Cat2;
                 }
                 body.Position = (node.Position + origin) / Globals.PixelsPerMeter;
                 body.Tag = this;

@@ -178,13 +178,22 @@ namespace Duo.Utilities.Physics
                     var fixture = new Fixture(shape);
                     fixture.Friction = (boxType == BoxTypes.Collide)?_stillFriction:0;
                     fixture.IsSensor = isSensor;
-                    fixture.CollisionCategories = Category.Cat1;
                     var boxNode = new BoxNode(
                         BoxType: boxType,
                         Direction: direction);
                     _fixtureToBoxNodeMap[fixture] = boxNode;
                     _boxNodeToFixtureMap[boxNode] = fixture;
                     _body.Add(fixture);
+                    if (isSensor)
+                    {
+                        fixture.CollisionCategories = Category.Cat1|Category.Cat2;
+                        fixture.CollidesWith = Category.Cat1|Category.Cat2;
+                    }
+                    else
+                    {
+                        fixture.CollisionCategories = Category.Cat1;
+                        fixture.CollidesWith = Category.Cat1;
+                    } 
                 }
                 CreateFixture(BoxTypes.Collide, null, node.Collide, false);
                 CreateFixture(BoxTypes.Ground, null, node.Ground, true);
@@ -261,6 +270,15 @@ namespace Duo.Utilities.Physics
                 var bin = _fixtureBins[boxNode];
                 Debug.Assert(!bin.Contains(otherFixture));
                 _fixtureBins[boxNode].Add(otherFixture);
+
+                if (otherFixture.Body.Tag is Surface surface)
+                {
+                    var fixtureNode = surface.GetFixtureNode(otherFixture);
+                    Debug.Print($"BEGIN DEBUG: {fixtureNode}, {boxNode}, {thisFixture.CollisionCategories},, {otherFixture.CollisionCategories}");
+                    if (fixtureNode.CollisionMode == Surface.CollisionModes.OneWay && boxNode == new BoxNode(BoxTypes.Ground, null))
+                        otherFixture.CollisionCategories = Category.Cat1|Category.Cat2;
+                }
+                
             }
             return true;
         }
@@ -273,6 +291,14 @@ namespace Duo.Utilities.Physics
                 var bin = _fixtureBins[boxNode];
                 Debug.Assert(bin.Contains(otherFixture));
                 _fixtureBins[boxNode].Remove(otherFixture);
+
+                if (otherFixture.Body.Tag is Surface surface)
+                {
+                    var fixtureNode = surface.GetFixtureNode(otherFixture);
+                    Debug.Print($"END DEBUG: {fixtureNode}, {boxNode}, {thisFixture.CollisionCategories},, {otherFixture.CollisionCategories}");
+                    if (fixtureNode.CollisionMode == Surface.CollisionModes.OneWay && boxNode == new BoxNode(BoxTypes.Ground, null))
+                        otherFixture.CollisionCategories = Category.Cat2;
+                }
             }
             Debug.Assert(_initialized);
         }
