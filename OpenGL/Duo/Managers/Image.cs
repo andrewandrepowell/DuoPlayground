@@ -22,18 +22,25 @@ namespace Duo.Managers
         private readonly static Random _random = new Random();
         private AnimationManager _animationManager;
         private Shaders? _shader;
-        private static Vector2? GetVector(ReadOnlyDictionary<string, string> parameters, string vector)
+        private static Vector2? GetVector(ReadOnlyDictionary<string, string> parameters, string vector, Vector2? nodePosition = null)
         {
             if (parameters.ContainsKey(vector))
             {
-                var components = parameters
-                    .GetValueOrDefault(vector, "0, 0")
-                    .Split(",")
-                    .Select(x => x.Trim())
-                    .Select(x => float.Parse(x))
-                    .ToArray();
-                Debug.Assert(components.Length == 2);
-                return new Vector2(x: components[0], y: components[1]);
+                if (parameters[vector] == "Node")
+                {
+                    return nodePosition.Value;
+                }
+                else
+                {
+                    var components = parameters
+                        .GetValueOrDefault(vector, "0, 0")
+                        .Split(",")
+                        .Select(x => x.Trim())
+                        .Select(x => float.Parse(x))
+                        .ToArray();
+                    Debug.Assert(components.Length == 2);
+                    return new Vector2(x: components[0], y: components[1]);
+                }
             }
             else
             {
@@ -63,13 +70,14 @@ namespace Duo.Managers
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
+            var nodePosition = node.Position + node.Vertices.Average();
             _animationManager = Entity.Get<AnimationComponent>().Manager;
             _animationManager.Play((int)Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("Animation", "Background")));
             _animationManager.Layer = Enum.Parse<Layers>(node.Parameters.GetValueOrDefault("Layer", "FarSky"));
             _animationManager.PositionMode = Enum.Parse<PositionModes>(node.Parameters.GetValueOrDefault("PositionMode", "Screen"));
             _animationManager.Pauseable = bool.Parse(node.Parameters.GetValueOrDefault("Pauseable", "true"));
             _animationManager.BlendState = GetBlendState(node.Parameters);
-            var position = GetVector(parameters: node.Parameters, vector: "Position");
+            var position = GetVector(parameters: node.Parameters, vector: "Position", nodePosition: nodePosition);
             Debug.Assert(position.HasValue);
             _animationManager.Position = position.Value;
             {
