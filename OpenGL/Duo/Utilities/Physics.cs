@@ -274,7 +274,6 @@ namespace Duo.Utilities.Physics
                 if (otherFixture.Body.Tag is Surface surface)
                 {
                     var fixtureNode = surface.GetFixtureNode(otherFixture);
-                    Debug.Print($"BEGIN DEBUG: {fixtureNode}, {boxNode}, {thisFixture.CollisionCategories},, {otherFixture.CollisionCategories}");
                     if (fixtureNode.CollisionMode == Surface.CollisionModes.OneWay && boxNode == new BoxNode(BoxTypes.Ground, null))
                         otherFixture.CollisionCategories = Category.Cat1|Category.Cat2;
                 }
@@ -295,7 +294,6 @@ namespace Duo.Utilities.Physics
                 if (otherFixture.Body.Tag is Surface surface)
                 {
                     var fixtureNode = surface.GetFixtureNode(otherFixture);
-                    Debug.Print($"END DEBUG: {fixtureNode}, {boxNode}, {thisFixture.CollisionCategories},, {otherFixture.CollisionCategories}");
                     if (fixtureNode.CollisionMode == Surface.CollisionModes.OneWay && boxNode == new BoxNode(BoxTypes.Ground, null))
                         otherFixture.CollisionCategories = Category.Cat2;
                 }
