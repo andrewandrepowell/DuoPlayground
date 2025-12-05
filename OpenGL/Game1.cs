@@ -6,6 +6,7 @@ using Pow;
 using Pow.Utilities;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 
 namespace OpenGLGame
@@ -36,15 +37,28 @@ namespace OpenGLGame
         }
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            Globals.InitializeMonoGame(
-                spriteBatch: _spriteBatch,
-                graphicsDeviceManager: _graphics,
-                game: this);
-            Globals.InitializePow(new Data());
-            Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);
-            // Globals.Runner.Map.Load((int)Maps.LevelDebug2);
-            Globals.Runner.Map.Load((int)Maps.Title);
+            try
+            {
+                _spriteBatch = new SpriteBatch(GraphicsDevice);
+                Globals.InitializeMonoGame(
+                    spriteBatch: _spriteBatch,
+                    graphicsDeviceManager: _graphics,
+                    game: this);
+                Globals.InitializePow(new Data());
+                Globals.Runner.CreateEntity((int)EntityTypes.DuoRunner);
+                // Globals.Runner.Map.Load((int)Maps.LevelDebug2);
+                Globals.Runner.Map.Load((int)Maps.Title);
+            }
+            catch (Exception e)
+            { 
+                using (StreamWriter writer = new StreamWriter(path: "error_log.txt", append: true))
+                {
+                    writer.WriteLine($"Exception Message: {e.Message}");
+                    writer.WriteLine($"Exception Stacktrace: {e.StackTrace}");
+                    writer.WriteLine("-------------------------------------");
+                }
+                throw;
+            }
         }
         protected override void EndRun()
         {
@@ -53,15 +67,41 @@ namespace OpenGLGame
         }
         protected override void Update(GameTime gameTime)
         {
-            Globals.Update(gameTime);
-            base.Update(gameTime);
+            try
+            {
+                Globals.Update(gameTime);
+                base.Update(gameTime);
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writer = new StreamWriter(path: "error_log.txt", append: true))
+                {
+                    writer.WriteLine($"Exception Message: {e.Message}");
+                    writer.WriteLine($"Exception Stacktrace: {e.StackTrace}");
+                    writer.WriteLine("-------------------------------------");
+                }
+                throw;
+            }
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            Globals.Draw();
-            base.Draw(gameTime);
+            try
+            {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+                Globals.Draw();
+                base.Draw(gameTime);
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writer = new StreamWriter(path: "error_log.txt", append: true))
+                {
+                    writer.WriteLine($"Exception Message: {e.Message}");
+                    writer.WriteLine($"Exception Stacktrace: {e.StackTrace}");
+                    writer.WriteLine("-------------------------------------");
+                }
+                throw;
+            }
         }
     }
 }
