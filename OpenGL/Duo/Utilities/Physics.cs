@@ -275,7 +275,7 @@ namespace Duo.Utilities.Physics
                 {
                     var fixtureNode = surface.GetFixtureNode(otherFixture);
                     if (fixtureNode.CollisionMode == Surface.CollisionModes.OneWay && boxNode == new BoxNode(BoxTypes.Ground, null))
-                        otherFixture.CollisionCategories = Category.Cat1|Category.Cat2;
+                        otherFixture.CollisionCategories = Category.Cat1 | Category.Cat2;
                 }
                 
             }
