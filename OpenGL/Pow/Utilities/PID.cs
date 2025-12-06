@@ -52,7 +52,6 @@ namespace Pow.Utilities
                 _totalError = T.Clamp(_totalError + error, -_integralClamp, +_integralClamp);
                 var integral = _integralCoef * _totalError;
                 _controlValue = T.Clamp(proportional + derivative + integral, -_controlClamp, +_controlClamp);
-                Debug.Print($"error={error}, proportional ={proportional}, derivative={derivative}, integral={integral}, _controlValue={_controlValue}");
                 _prevError = error;
                 _time += _period;
             }

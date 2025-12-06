@@ -20,6 +20,7 @@ namespace Pow.Utilities
         public record Node(
             Vector2[] Collide,
             Vector2[] Ground,
+            Vector2[] Ceil,
             ReadOnlyDictionary<Directions, Vector2[]> Walls,
             ReadOnlyDictionary<Directions, Vector2[]> Vaults);
         private static Node Load(string assetName)
@@ -38,6 +39,7 @@ namespace Pow.Utilities
                     Parameters: new(polygonObject.Properties.ToDictionary(kv => kv.Key, kv => kv.Value.Value))));
             Vector2[] collideBox = null;
             Vector2[] groundBox = null;
+            Vector2[] ceilBox = null;
             Dictionary<Directions, Vector2[]> wallBoxes = [];
             Dictionary<Directions, Vector2[]> vaultBoxes = [];
             foreach (var polygonNode in polygonNodes)
@@ -52,6 +54,9 @@ namespace Pow.Utilities
                             break;
                         case BoxTypes.Ground:
                             groundBox = polygonNode.Vertices.Select(vertex => vertex + polygonNode.Position - origin).ToArray();
+                            break;
+                        case BoxTypes.Ceil:
+                            ceilBox = polygonNode.Vertices.Select(vertex => vertex + polygonNode.Position - origin).ToArray();
                             break;
                         case BoxTypes.Wall:
                             {
@@ -71,6 +76,7 @@ namespace Pow.Utilities
             var node = new Node(
                 Collide: collideBox,
                 Ground: groundBox,
+                Ceil: ceilBox,
                 Walls: new(wallBoxes),
                 Vaults: new(vaultBoxes));
             return node;
