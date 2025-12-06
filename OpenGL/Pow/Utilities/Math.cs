@@ -21,5 +21,11 @@ namespace Pow.Utilities
             float diff = (angle2 - angle1 + MathHelper.Pi) % MathHelper.TwoPi - MathHelper.Pi;
             return diff < -MathHelper.Pi ? diff + MathHelper.TwoPi : diff;
         }
+        public static Vector2 Vectorize(float radians)
+        {
+            return new Vector2(
+                x: (float)System.Math.Cos(radians), 
+                y: -(float)System.Math.Sin(radians));
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace Duo.Managers
             }
             _action = action;
         }
-        protected virtual bool FinishedInteracting => Action == Actions.Interacting && !AnimationManager.Running;
+        protected virtual bool FinishedInteracting => Action == Actions.Interacting && !_animationGroupManager.Running;
         public enum Actions { Waiting, Interacting, Interacted }
         public Actions Action => _action;
         protected virtual void Initialize(AnimationGroupManager manager)
@@ -104,7 +104,7 @@ namespace Duo.Managers
             base.Update();
             if (Pow.Globals.GamePaused) 
                 return;
-            if (Action == Actions.Interacting && FinishedInteracting)
+            if (FinishedInteracting)
                 FinishInteracting();
             _animationGroupManager.Update();
         }

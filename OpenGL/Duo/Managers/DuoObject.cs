@@ -20,7 +20,11 @@ namespace Duo.Managers
         private PhysicsManager _physicsManager;
         protected AnimationManager AnimationManager => _animationManager;
         protected PhysicsManager PhysicsManager => _physicsManager;
-        public Vector2 Position => _physicsManager.Body.Position * Globals.PixelsPerMeter;
+        public virtual Vector2 Position
+        {
+            get => _physicsManager.Body.Position * Globals.PixelsPerMeter;
+            set => throw new NotImplementedException();
+        }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);

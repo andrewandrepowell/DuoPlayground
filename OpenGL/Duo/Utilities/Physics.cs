@@ -206,7 +206,6 @@ namespace Duo.Utilities.Physics
                 _groundNormal = _baseGroundNormal;
             }
             {
-                var collideBoxNode = new BoxNode(BoxTypes.Collide, null);
                 foreach (ref var boxNode in _boxNodes.AsSpan())
                 {
                     _fixtureBins[boxNode].Clear();
