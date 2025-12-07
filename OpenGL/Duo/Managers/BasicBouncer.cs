@@ -33,7 +33,6 @@ internal class BasicBouncer : Bouncer
     }
     public override void Initialize(PolygonNode node)
     {
-        base.Initialize(node);
         _boxes = Enum.Parse<Boxes>(node.Parameters.GetValueOrDefault("Boxes", "BasicBouncer"));
         _layer = Enum.Parse<Layers>(node.Parameters.GetValueOrDefault("Layer", "Ground"));
         _actionAnimationMap = new()
@@ -41,5 +40,6 @@ internal class BasicBouncer : Bouncer
             { Actions.Waiting, Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("WaitAnimation", "BasicBouncerIdle")) },
             { Actions.Bouncing, Enum.Parse<Animations>(node.Parameters.GetValueOrDefault("BounceAnimation", "BasicBouncerBounce")) }
         };
+        base.Initialize(node);
     }
 }

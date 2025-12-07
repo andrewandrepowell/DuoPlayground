@@ -75,7 +75,7 @@ internal abstract class Bouncer : DuoObject
         {
             Debug.Assert(_initialized);
             _body.Rotation = value;
-            _direction = Pow.Utilities.Math.Vectorize(value);
+            _direction = Pow.Utilities.Math.Vectorize(value - MathHelper.PiOver2);
         }
     }
     public float Magnitude
@@ -140,6 +140,8 @@ internal abstract class Bouncer : DuoObject
                 fixture.IsSensor = isSensor;
                 _fixtureToBoxNodeMap[fixture] = boxType;
                 _body.Add(fixture);
+                fixture.CollisionCategories = Category.Cat1;
+                fixture.CollidesWith = Category.Cat1;
             }
             CreateFixture(boxType: BoxTypes.Collide, vertices: boxesNode.Collide, isSensor: false);
             CreateFixture(boxType: BoxTypes.Ceil, vertices: boxesNode.Ceil, isSensor: true);
@@ -209,23 +211,29 @@ internal abstract class Bouncer : DuoObject
     private bool BeginContact(Contact contact)
     {
         Debug.Assert(_initialized);
-        if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) &&
+        // Check for contacts on the current body.
+        // Ignore contacts with the sensor boxes of other bodies.
+        // We currently only care about contacts with characters.
+        if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && !otherFixture.IsSensor &&
             (otherFixture.Body.Tag is Character))
         {
 #if DEBUG
             if (otherFixture.Body.Tag is Character)
                 Debug.Assert(otherFixture.Shape is PolygonShape);
 #endif
+            // Maintain knowledge of the fixture that contacted the current box (including sensors and collide box).
             var boxNode = _fixtureToBoxNodeMap[thisFixture];
+#if DEBUG
             var bin = _fixtureBins[boxNode];
             Debug.Assert(!bin.Contains(otherFixture));
+#endif
             _fixtureBins[boxNode].Add(otherFixture);
         }
         return true;
     }
     private void EndContact(Contact contact)
     {
-        if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) &&
+        if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && !otherFixture.IsSensor &&
             (otherFixture.Body.Tag is Character))
         {
             var boxNode = _fixtureToBoxNodeMap[thisFixture];

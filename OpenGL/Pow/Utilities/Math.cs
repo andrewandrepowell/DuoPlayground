@@ -25,7 +25,7 @@ namespace Pow.Utilities
         {
             return new Vector2(
                 x: (float)System.Math.Cos(radians), 
-                y: -(float)System.Math.Sin(radians));
+                y: (float)System.Math.Sin(radians));
         }
     }
 }

@@ -256,13 +256,13 @@ namespace Duo.Utilities.Physics
         private bool BeginContact(Contact contact)
         {
             Debug.Assert(_initialized);
-            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && 
-                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable))
+            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && !otherFixture.IsSensor &&
+                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable || otherFixture.Body.Tag is Bouncer))
             {
 #if DEBUG
                 if (otherFixture.Body.Tag is Surface)
                     Debug.Assert(otherFixture.Shape is EdgeShape);
-                if (otherFixture.Body.Tag is Interactable)
+                if (otherFixture.Body.Tag is Interactable || otherFixture.Body.Tag is Bouncer)
                     Debug.Assert(otherFixture.Shape is PolygonShape);
 #endif
                 var boxNode = _fixtureToBoxNodeMap[thisFixture];
@@ -282,8 +282,8 @@ namespace Duo.Utilities.Physics
         }
         private void EndContact(Contact contact)
         {
-            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) &&
-                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable))
+            if (TryGetThisOtherFixtures(contact, out var thisFixture, out var otherFixture) && !otherFixture.IsSensor &&
+                (otherFixture.Body.Tag is Surface || otherFixture.Body.Tag is Interactable || otherFixture.Body.Tag is Bouncer))
             {
                 var boxNode = _fixtureToBoxNodeMap[thisFixture];
                 var bin = _fixtureBins[boxNode];

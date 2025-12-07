@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="192" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="85">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="192" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="86">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_3.tsx"/>
  <tileset firstgid="3137" source="test_tileset_4.tsx"/>
@@ -1737,6 +1737,15 @@
     <property name="EntityType" value="Surface"/>
    </properties>
    <polygon points="0,0 112,0 112,32 0,32"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="14" name="objects_bouncers_0">
+  <object id="85" x="1328" y="1856">
+   <properties>
+    <property name="EntityType" value="BasicBouncer"/>
+    <property name="RotationDegrees" value="45.0"/>
+   </properties>
+   <polygon points="0,0 0,-48 48,-48 48,0"/>
   </object>
  </objectgroup>
 </map>

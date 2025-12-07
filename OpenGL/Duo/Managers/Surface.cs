@@ -100,6 +100,7 @@ namespace Duo.Managers
                     }
                     var collisionMode = Enum.Parse<CollisionModes>(node.Parameters.GetValueOrDefault($"CollisionMode{i}", "Normal"));
                     var fixture = new Fixture(edgeShape);
+                    fixture.IsSensor = false;
                     fixture.Friction = 0.2f;
                     fixture.Restitution = 0.0f;
                     var fixtureNode = new FixtureNode(
