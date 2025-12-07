@@ -41,10 +41,8 @@ internal abstract class Bouncer : DuoObject
     public enum Actions { Waiting, Bouncing }
     protected abstract IReadOnlyDictionary<Actions, int> ActionAnimationGroupMap { get; }
     protected abstract Boxes Boxes { get; }
+    protected abstract void Initialize(AnimationGroupManager manager);
     protected virtual Layers Layer => Layers.Ground;
-    protected virtual void Initialize(AnimationGroupManager manager)
-    {
-    }
     public override Vector2 Position
     {
         get
@@ -157,6 +155,10 @@ internal abstract class Bouncer : DuoObject
             _animationGroupManager = new(AnimationManager);
             Initialize(manager: _animationGroupManager);
             _animationGroupManager.Initialize();
+        }
+        {
+            var animationManager = AnimationManager;
+            animationManager.Layer = Layer;
         }
         {
             UpdateAction(Actions.Waiting);

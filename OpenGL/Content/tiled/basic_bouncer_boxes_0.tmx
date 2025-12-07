@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="7" height="7" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="3">
+ <layer id="1" name="sprite_0" width="7" height="7">
+  <data encoding="csv">
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="objects_0">
+  <object id="1" x="32" y="48">
+   <properties>
+    <property name="BoxType" value="Collide"/>
+   </properties>
+   <polygon points="0,0 48,0 48,16 0,16"/>
+  </object>
+  <object id="2" x="34" y="48">
+   <properties>
+    <property name="BoxType" value="Ceil"/>
+   </properties>
+   <polygon points="0,0 0,-2 44,-2 44,0"/>
+  </object>
+ </objectgroup>
+</map>

@@ -31,7 +31,8 @@ namespace Duo.Data
         Transition,
         Image,
         OptionsButton,
-        FireplaceFlame, FireplaceGlow
+        FireplaceFlame, FireplaceGlow,
+        BasicBouncer
     }
     internal enum Animations 
     { 
@@ -56,13 +57,15 @@ namespace Duo.Data
         Image,
         OptionsButtonBushful,
         OptionsButtonBushless,
-        FireplaceFlame, FireplaceGlow
+        FireplaceFlame, FireplaceGlow,
+        BasicBouncerIdle,
+        BasicBouncerBounce
     }
     internal enum ParticleEffects
     {
         MenuWind
     }
-    internal enum Boxes { Cat, Root, RootBlockage, Collectible }
+    internal enum Boxes { Cat, Root, RootBlockage, Collectible, BasicBouncer }
     internal enum Masks { UIGuide }
     public enum EntityTypes { 
         DuoRunner, 
@@ -85,7 +88,8 @@ namespace Duo.Data
         TransitionBranches,
         LevelController,
         OptionsMenu,
-        OptionsMenuButton
+        OptionsMenuButton,
+        BasicBouncer
     }
     public class Data : IRunnerParent, IDuoRunnerParent
     {
@@ -595,6 +599,29 @@ namespace Duo.Data
                 indices: Enumerable.Range(0, 60).ToArray(),
                 period: (float)1 / 60,
                 repeat: true);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.BasicBouncer,
+                assetName: "images/basic_bouncer_0",
+                regionSize: new(112, 112),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.BasicBouncerIdle,
+                spriteId: (int)Sprites.BasicBouncer,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.BasicBouncerBounce,
+                spriteId: (int)Sprites.BasicBouncer,
+                spriteAnimationId: 1,
+                indices: Enumerable.Range(1, 14).ToArray(),
+                period: 0.050f,
+                repeat: false);
             // particles
             runner.ParticleEffectGenerator.Configure(
                 id: (int)ParticleEffects.MenuWind,
@@ -690,6 +717,11 @@ namespace Duo.Data
                 new StatusComponent(),
                 new AnimationComponent(),
                 new GOCustomComponent<OptionsMenuButton>()));
+            runner.AddEntityType((int)EntityTypes.BasicBouncer, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new PhysicsComponent(),
+                new GOCustomComponent<BasicBouncer>()));
             // custom GO managers.
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
@@ -712,6 +744,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<LevelController>();
             runner.AddGOCustomManager<OptionsMenu>();
             runner.AddGOCustomManager<OptionsMenuButton>();
+            runner.AddGOCustomManager<BasicBouncer>();
         }
         public void Initialize(DuoRunner duoRunner)
         {
@@ -736,6 +769,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<LevelController>(EntityTypes.LevelController);
             duoRunner.AddEnvironment<OptionsMenu>(EntityTypes.OptionsMenu);
             duoRunner.AddEnvironment<OptionsMenuButton>(EntityTypes.OptionsMenuButton);
+            duoRunner.AddEnvironment<BasicBouncer>(EntityTypes.BasicBouncer);
             // Boxes
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
@@ -749,6 +783,9 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Collectible,
                 assetName: "tiled/collectible_boxes_0");
+            duoRunner.BoxesGenerator.Configure(
+                id: (int)Boxes.BasicBouncer,
+                assetName: "tiled/basic_bouncer_boxes_0");
             // Masks
             duoRunner.MaskGenerator.Configure(
                 id: (int)Masks.UIGuide,
