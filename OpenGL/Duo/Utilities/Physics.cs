@@ -39,6 +39,9 @@ namespace Duo.Utilities.Physics
         private const float _moveFriction = 1f;
         private const float _airFriction = 0f;
         private const float _maxHorizontalSpeed = 3;
+        private const float _baseFling = _baseJump;
+        private const float _flingTimerMax = 1.0f;
+        private const float _impulseFlingModified = 0.15f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -70,6 +73,9 @@ namespace Duo.Utilities.Physics
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
         private bool _vaultReady;
+
+        private Vector2 _flingForce;
+        private float _flingTimerValue;
         private ServiceInteractableContact _serviceInteractableContact;
 
         private void UpdateCollideFriction(float friction)
@@ -147,6 +153,14 @@ namespace Duo.Utilities.Physics
             {
                 Debug.Assert(_initialized);
                 return _jumpTimerValue > 0;
+            }
+        }
+        public bool Flinging
+        {
+            get
+            {
+                Debug.Assert(_initialized);
+                return _flingTimerValue > 0;
             }
         }
         public void Initialize(Body body, Boxes boxes, ServiceInteractableContact serviceInteractableContact = null)
@@ -360,6 +374,20 @@ namespace Duo.Utilities.Physics
             Debug.Assert(Jumping);
             _jumpTimerValue = 0;
         }
+        public void Fling(Vector2 directionMagnitude)
+        {
+            Debug.Assert(_initialized);
+            _groundedTimerValue = 0;
+            _flingForce = directionMagnitude;
+            _flingTimerValue = _flingTimerMax;
+            var impulse = directionMagnitude * _baseFling * _impulseFlingModified;
+            _body.ApplyLinearImpulse(impulse);
+        }
+        public void ReleaseFling()
+        {
+            Debug.Assert(_initialized);
+            _flingTimerValue = 0;
+        }
         public void Update()
         {
             // https://info.sonicretro.org/Sonic_Physics_Guide
@@ -455,7 +483,7 @@ namespace Duo.Utilities.Physics
             // Update the rotation of the body.
             _body.Rotation = (float)System.Math.Atan2(_groundNormal.Y, _groundNormal.X) + MathHelper.PiOver2;
 
-            var falling = !Grounded && !Jumping;
+            var falling = !Grounded && !Jumping && !Flinging;
 
             // Update fall timer. Used in the gravity force calculations later.
             {
@@ -491,6 +519,14 @@ namespace Duo.Utilities.Physics
                 var force = direction * _baseJump * MathHelper.Lerp(0, 1, _jumpTimerValue / _jumpTimerMax);
                 _body.ApplyForce(force);
                 _jumpTimerValue -= timeElapsed;
+            }
+
+            // Update fling
+            if (Flinging)
+            {
+                var force = _flingForce * _baseFling * MathHelper.Lerp(0, 1, _flingTimerValue / _flingTimerMax);
+                _body.ApplyForce(force);
+                _flingTimerValue -= timeElapsed;
             }
 
             // Perform vault.
@@ -599,6 +635,8 @@ namespace Duo.Utilities.Physics
                 else
                     _body.LinearDamping = _airLinearDamping;
             }
+
+            //Debug.Print($"Flinging: {Flinging}, Jumping: {Jumping}, Grounded: {Grounded}, Moving: {Moving}");
         }
     }
 }

@@ -169,7 +169,7 @@ internal abstract class Bouncer : DuoObject
         {  
             Position = node.Vertices.Average() + node.Position;
             RotationDegrees = float.Parse(node.Parameters.GetValueOrDefault("RotationDegrees", "0.0"));
-            Magnitude = float.Parse(node.Parameters.GetValueOrDefault("Magnitude", "10.0"));
+            Magnitude = float.Parse(node.Parameters.GetValueOrDefault("Magnitude", "1.0"));
         }
     }
     public override void Cleanup()
