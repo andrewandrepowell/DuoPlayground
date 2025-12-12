@@ -32,7 +32,8 @@ namespace Duo.Data
         Image,
         OptionsButton,
         FireplaceFlame, FireplaceGlow,
-        BasicBouncer
+        BasicBouncer,
+        CabinBouncer
     }
     internal enum Animations 
     { 
@@ -59,7 +60,9 @@ namespace Duo.Data
         OptionsButtonBushless,
         FireplaceFlame, FireplaceGlow,
         BasicBouncerIdle,
-        BasicBouncerBounce
+        BasicBouncerBounce,
+        CabinBouncerIdle,
+        CabinBouncerBounce,
     }
     internal enum ParticleEffects
     {
@@ -620,6 +623,31 @@ namespace Duo.Data
                 spriteId: (int)Sprites.BasicBouncer,
                 spriteAnimationId: 1,
                 indices: Enumerable.Range(1, 14).ToArray(),
+                period: 0.050f,
+                repeat: false);
+
+
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.CabinBouncer,
+                assetName: "images/basic_bouncer_1",
+                regionSize: new(112, 112),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CabinBouncerIdle,
+                spriteId: (int)Sprites.CabinBouncer,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CabinBouncerBounce,
+                spriteId: (int)Sprites.CabinBouncer,
+                spriteAnimationId: 1,
+                indices: Enumerable.Range(1, 15).ToArray(),
                 period: 0.050f,
                 repeat: false);
             // particles

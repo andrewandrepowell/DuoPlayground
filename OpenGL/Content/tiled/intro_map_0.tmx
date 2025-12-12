@@ -1890,33 +1890,32 @@
   </object>
  </objectgroup>
  <objectgroup id="14" name="objects_bouncers_0">
-  <object id="85" x="208" y="1824">
-   <properties>
-    <property name="EntityType" value="BasicBouncer"/>
-    <property name="RotationDegrees" value="0"/>
-   </properties>
-   <polygon points="0,0 0,-48 48,-48 48,0"/>
-  </object>
   <object id="89" x="816" y="336">
    <properties>
+    <property name="BounceAnimation" value="CabinBouncerBounce"/>
     <property name="EntityType" value="BasicBouncer"/>
     <property name="RotationDegrees" value="0"/>
+    <property name="WaitAnimation" value="CabinBouncerIdle"/>
    </properties>
    <polygon points="0,0 0,-48 48,-48 48,0"/>
   </object>
   <object id="99" x="672" y="464">
    <properties>
+    <property name="BounceAnimation" value="CabinBouncerBounce"/>
     <property name="EntityType" value="BasicBouncer"/>
     <property name="Magnitude" value="1.50"/>
     <property name="RotationDegrees" value="0"/>
+    <property name="WaitAnimation" value="CabinBouncerIdle"/>
    </properties>
    <polygon points="0,0 0,-48 48,-48 48,0"/>
   </object>
   <object id="100" x="1264" y="320">
    <properties>
+    <property name="BounceAnimation" value="CabinBouncerBounce"/>
     <property name="EntityType" value="BasicBouncer"/>
     <property name="Magnitude" value="1.25"/>
     <property name="RotationDegrees" value="45"/>
+    <property name="WaitAnimation" value="CabinBouncerIdle"/>
    </properties>
    <polygon points="0,0 0,-48 48,-48 48,0"/>
   </object>
