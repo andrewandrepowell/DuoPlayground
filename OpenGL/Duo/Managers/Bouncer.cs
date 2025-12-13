@@ -1,5 +1,6 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
+using Duo.Utilities.Shaders;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
@@ -8,6 +9,7 @@ using Pow.Components;
 using Pow.Utilities;
 using Pow.Utilities.Animations;
 using Pow.Utilities.Physics;
+using Pow.Utilities.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,6 +45,7 @@ internal abstract class Bouncer : DuoObject
     protected abstract Boxes Boxes { get; }
     protected abstract void Initialize(AnimationGroupManager manager);
     protected virtual Layers Layer => Layers.Ground;
+    protected virtual Color GlowColor => Color.Gold;
     public override Vector2 Position
     {
         get
@@ -165,6 +168,14 @@ internal abstract class Bouncer : DuoObject
         {
             UpdateAction(Actions.Waiting);
         }
+        {
+            var floatFeature = AnimationManager.CreateFeature<FloatFeature, NullEffect>();
+            floatFeature.Layer = Layer;
+            var pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
+            pulseGlowFeature.Color = GlowColor;
+            pulseGlowFeature.Layer = Layer;
+            pulseGlowFeature.Start();
+        }
         _initialized = true;
         {  
             Position = node.Vertices.Average() + node.Position;
@@ -247,6 +258,7 @@ internal abstract class Bouncer : DuoObject
     {
         base.Update();
 
+        // Bouncers are pausable.
         if (Pow.Globals.GamePaused) 
             return;
 

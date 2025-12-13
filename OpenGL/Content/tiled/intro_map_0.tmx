@@ -1844,10 +1844,6 @@
   </object>
   <object id="88" x="1632" y="368">
    <properties>
-    <property name="CollisionMode0" value="OneWay"/>
-    <property name="CollisionMode1" value="None"/>
-    <property name="CollisionMode2" value="None"/>
-    <property name="CollisionMode3" value="None"/>
     <property name="EntityType" value="Surface"/>
    </properties>
    <polygon points="0,0 368,0 368,64 0,64"/>
