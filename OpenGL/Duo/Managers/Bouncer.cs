@@ -171,10 +171,6 @@ internal abstract class Bouncer : DuoObject
         {
             var floatFeature = AnimationManager.CreateFeature<FloatFeature, NullEffect>();
             floatFeature.Layer = Layer;
-            var pulseGlowFeature = AnimationManager.CreateFeature<PulseGlowFeature, PulseGlowEffect>();
-            pulseGlowFeature.Color = GlowColor;
-            pulseGlowFeature.Layer = Layer;
-            pulseGlowFeature.Start();
         }
         _initialized = true;
         {  
