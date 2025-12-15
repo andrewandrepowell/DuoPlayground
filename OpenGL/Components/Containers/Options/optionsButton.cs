@@ -13,7 +13,6 @@ namespace DuoGum.Components
     {
         partial void CustomInitialize()
         {
-        
         }
     }
 }

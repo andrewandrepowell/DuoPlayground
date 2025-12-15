@@ -1885,7 +1885,7 @@
   </object>
   <object id="79" x="592" y="640">
    <properties>
-    <property name="Animation" value="Platform"/>
+    <property name="Animation" value="PlatformCabin"/>
     <property name="CollisionMode0" value="OneWay"/>
     <property name="CollisionMode1" value="None"/>
     <property name="CollisionMode2" value="None"/>
@@ -1898,7 +1898,7 @@
   </object>
   <object id="80" x="80" y="640">
    <properties>
-    <property name="Animation" value="Platform"/>
+    <property name="Animation" value="PlatformCabin"/>
     <property name="CollisionMode0" value="OneWay"/>
     <property name="CollisionMode1" value="None"/>
     <property name="CollisionMode2" value="None"/>

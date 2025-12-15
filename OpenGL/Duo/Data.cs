@@ -20,7 +20,10 @@ namespace Duo.Data
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2, Title, Intro }
     internal enum Sprites 
     { 
-        Cat, Pixel, Platform, Background, PurpleHillsBackground,
+        Cat, Pixel, 
+        Platform, 
+        PlatformCabin,
+        Background, PurpleHillsBackground,
         TreeRoot, RootBlockage,
         Collectibles,
         UI,
@@ -39,7 +42,8 @@ namespace Duo.Data
     { 
         CatWalk, CatIdle, CatJump, CatFall, CatLand, 
         Pixel, 
-        Platform, 
+        Platform,
+        PlatformCabin,
         Background, PurpleHillsSkyBox, 
         PurpleHillsFarClouds, PurpleHillsMidClouds, 
         PurpleHillsFarMountains, PurpleHillsMidMountains, PurpleHillsCloseMountains,
@@ -181,6 +185,22 @@ namespace Duo.Data
             runner.AnimationGenerator.ConfigureAnimation(
                 animationId: (int)Animations.Platform,
                 spriteId: (int)Sprites.Platform,
+                spriteAnimationId: 0,
+                indices: [0],
+                period: 0,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.PlatformCabin,
+                assetName: "images/platform_2",
+                regionSize: new(224, 64),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.PlatformCabin,
+                spriteId: (int)Sprites.PlatformCabin,
                 spriteAnimationId: 0,
                 indices: [0],
                 period: 0,
