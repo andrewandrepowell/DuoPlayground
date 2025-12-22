@@ -32,6 +32,7 @@ partial class dialogueBox : MonoGameGum.Forms.Controls.FrameworkElement
         });
     }
     public SpriteRuntime background { get; protected set; }
+    public TextRuntime text { get; protected set; }
 
     public dialogueBox(InteractiveGue visual) : base(visual) { }
     public dialogueBox()
@@ -44,6 +45,7 @@ partial class dialogueBox : MonoGameGum.Forms.Controls.FrameworkElement
     {
         base.ReactToVisualChanged();
         background = this.Visual?.GetGraphicalUiElementByName("background") as SpriteRuntime;
+        text = this.Visual?.GetGraphicalUiElementByName("text") as TextRuntime;
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

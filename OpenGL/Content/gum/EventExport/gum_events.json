@@ -49,6 +49,13 @@
         "ElementType": "Components",
         "EventType": 5,
         "TimestampUtc": "2025-12-22T00:23:00.9010184Z"
+      },
+      {
+        "NewName": "Containers/Dialogue/dialogueBox (Container).text",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2025-12-22T03:15:22.878408Z"
       }
     ]
   }

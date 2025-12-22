@@ -2,14 +2,14 @@
 fileVersion=1
 
 # font settings
-fontName=Montserrat Medium
+fontName=Medodica
 charSet=0
-# 15 needs to be negative. This is how the .bmfc indicates to "match character height"
-fontSize=-15
+# 16 needs to be negative. This is how the .bmfc indicates to "match character height"
+fontSize=-16
 aa=1
 scaleH=100
-useSmoothing=0
-isBold=0
+useSmoothing=1
+isBold=1
 isItalic=0
 useUnicode=1
 disableBoxChars=1
