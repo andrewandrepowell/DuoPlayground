@@ -19,6 +19,16 @@
   <ShowLocalizationInGum>true</ShowLocalizationInGum>
   <CurrentLanguageIndex>0</CurrentLanguageIndex>
   <ComponentReference>
+    <Name>Containers/Dialogue/dialogueBox</Name>
+    <ElementType>Component</ElementType>
+    <LinkType>ReferenceOriginal</LinkType>
+  </ComponentReference>
+  <ComponentReference>
+    <Name>Containers/Dialogue/dialogueView</Name>
+    <ElementType>Component</ElementType>
+    <LinkType>ReferenceOriginal</LinkType>
+  </ComponentReference>
+  <ComponentReference>
     <Name>Containers/Hud/hudView</Name>
     <ElementType>Component</ElementType>
     <LinkType>ReferenceOriginal</LinkType>

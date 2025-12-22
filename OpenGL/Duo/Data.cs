@@ -82,7 +82,8 @@ namespace Duo.Data
         Key, 
         Door, 
         Collectible, 
-        HUD, 
+        HUD,
+        Dialogue,
         MainMenu,
         MainMenuButton,
         Dimmer, 
@@ -711,6 +712,10 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<HUD>()));
+            runner.AddEntityType((int)EntityTypes.Dialogue, world => world.Create(
+                new StatusComponent(),
+                new GumComponent(),
+                new GOCustomComponent<Dialogue>()));
             runner.AddEntityType((int)EntityTypes.UI, world => world.Create(
                 new StatusComponent(),
                 new AnimationComponent(),
@@ -779,6 +784,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Door>();
             runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
+            runner.AddGOCustomManager<Dialogue>();
             runner.AddGOCustomManager<UI>();
             runner.AddGOCustomManager<UIIcon>();
             runner.AddGOCustomManager<MainMenu>();
@@ -804,6 +810,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Door>(EntityTypes.Door);
             duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
+            duoRunner.AddEnvironment<Dialogue>(EntityTypes.Dialogue);
             duoRunner.AddEnvironment<UI>(EntityTypes.UI);
             duoRunner.AddEnvironment<UIIcon>(EntityTypes.UIIcon);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);
