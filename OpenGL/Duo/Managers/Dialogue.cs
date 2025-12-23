@@ -86,7 +86,6 @@ internal class Dialogue : GumObject
         Debug.Assert(_nodes.Count > 0);
         var node = _nodes.Peek();
         Debug.Assert(!node.Running);
-        Debug.Assert(!node.Closed);
         // Update the dialogue box with the message from the node.
         var dialogueBox = _view.dialogueBoxInstance;
         dialogueBox.DialogueText = node.Message;
@@ -189,6 +188,18 @@ internal class Dialogue : GumObject
             ForceOpen();
         if (State == RunningStates.Stopping && _stateTime <= 0)
             ForceClose();
+
+        // Update the dialogue box with the message.
+        if (_nodes.Count > 0 && State == RunningStates.Running)
+        {
+            var node = _nodes.Peek();
+            if (!node.Running)
+                OpenMessage();
+            if (node.Running && !node.Closed && _view.dialogueBoxInstance.DialogueMaxLettersToShow != null)
+                UpdateMessage();
+            if (node.Running && node.Closed)
+                CloseMessage();
+        }
 
         // Update time
         var timeElapsed = Pow.Globals.GameTime.GetElapsedSeconds();
