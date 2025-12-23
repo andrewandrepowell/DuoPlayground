@@ -34,6 +34,18 @@ partial class dialogueBox : MonoGameGum.Forms.Controls.FrameworkElement
     public SpriteRuntime background { get; protected set; }
     public TextRuntime text { get; protected set; }
 
+    public int? DialogueMaxLettersToShow
+    {
+        get => text.MaxLettersToShow;
+        set => text.MaxLettersToShow = value;
+    }
+
+    public string DialogueText
+    {
+        get => text.Text;
+        set => text.Text = value;
+    }
+
     public dialogueBox(InteractiveGue visual) : base(visual) { }
     public dialogueBox()
     {

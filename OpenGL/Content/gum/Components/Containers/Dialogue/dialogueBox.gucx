@@ -282,6 +282,12 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>int?</Type>
+      <Name>text.MaxLettersToShow</Name>
+      <ExposedAsName>DialogueMaxLettersToShow</ExposedAsName>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>int</Type>
       <Name>text.OutlineThickness</Name>
       <Value xsi:type="xsd:int">0</Value>
@@ -303,6 +309,7 @@
       <Type>string</Type>
       <Name>text.Text</Name>
       <Value xsi:type="xsd:string">This is a test to verify how the text looks. I'm going to fill up the box with text to see how the next lines look as well.</Value>
+      <ExposedAsName>DialogueText</ExposedAsName>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
