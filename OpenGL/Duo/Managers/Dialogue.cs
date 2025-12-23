@@ -58,7 +58,7 @@ internal class Dialogue : GumObject
     private void Open()
     {
         Debug.Assert(State == RunningStates.Waiting);
-        GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y + _closedHeightOffset);
+        GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y - _closedHeightOffset);
         _stateTime = _stateChangePeriod;
         State = RunningStates.Starting;
     }
@@ -76,7 +76,7 @@ internal class Dialogue : GumObject
     }
     private void ForceClose()
     {
-        GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y + _closedHeightOffset);
+        GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y - _closedHeightOffset);
         State = RunningStates.Waiting;
     }
     private void OpenMessage()
@@ -88,8 +88,7 @@ internal class Dialogue : GumObject
         Debug.Assert(!node.Running);
         // Update the dialogue box with the message from the node.
         var dialogueBox = _view.dialogueBoxInstance;
-        dialogueBox.DialogueText = node.Message;
-        dialogueBox.DialogueMaxLettersToShow = 0;
+        dialogueBox.DialogueText = "";
         // Update the state of the node.
         var privateNode = (INode)node;
         privateNode.Start();
@@ -120,13 +119,12 @@ internal class Dialogue : GumObject
         Debug.Assert(node.Running);
         Debug.Assert(!node.Closed);
         var dialogueBox = _view.dialogueBoxInstance;
-        Debug.Assert(dialogueBox.DialogueMaxLettersToShow != null);
+        Debug.Assert(dialogueBox.DialogueText.Length < node.Message.Length);
         // Update the number of letters to show.
-        var newLettersToShow = dialogueBox.DialogueMaxLettersToShow + _charactersPerUpdateToMessage;
-        if (newLettersToShow < dialogueBox.DialogueText.Length)
-            dialogueBox.DialogueMaxLettersToShow = newLettersToShow;
-        else
-            dialogueBox.DialogueMaxLettersToShow = null;
+        var newLettersToShow = dialogueBox.DialogueText.Length + _charactersPerUpdateToMessage;
+        if (newLettersToShow > dialogueBox.DialogueText.Length)
+            newLettersToShow = node.Message.Length;
+        dialogueBox.DialogueText = node.Message.Substring(startIndex: 0, length: newLettersToShow);
         // Set the update time.
         _updateTime = _updateMessagePeriod;
     }
@@ -169,14 +167,14 @@ internal class Dialogue : GumObject
         if (Pow.Globals.GamePaused) return;
 
         // Update position of the dialogue window.
-        if (State == RunningStates.Running && _stateTime >= 0)
+        if (State == RunningStates.Starting && _stateTime >= 0)
             GumManager.Position = new Vector2(
                 x: GumManager.Origin.X,
-                y: GumManager.Origin.Y + MathHelper.SmoothStep(0, _closedHeightOffset, _stateTime / _stateChangePeriod));
+                y: GumManager.Origin.Y - MathHelper.SmoothStep(0, _closedHeightOffset, _stateTime / _stateChangePeriod));
         if (State == RunningStates.Stopping && _stateTime >= 0)
             GumManager.Position = new Vector2(
                 x: GumManager.Origin.X,
-                y: GumManager.Origin.Y + MathHelper.SmoothStep(_closedHeightOffset, 0, _stateTime / _stateChangePeriod));
+                y: GumManager.Origin.Y - MathHelper.SmoothStep(_closedHeightOffset, 0, _stateTime / _stateChangePeriod));
 
         // Update state.
         // The State represents whether the dialogue box is open or not.
@@ -195,7 +193,7 @@ internal class Dialogue : GumObject
             var node = _nodes.Peek();
             if (!node.Running)
                 OpenMessage();
-            if (node.Running && !node.Closed && _view.dialogueBoxInstance.DialogueMaxLettersToShow != null)
+            if (node.Running && !node.Closed && _view.dialogueBoxInstance.DialogueText.Length < node.Message.Length)
                 UpdateMessage();
             if (node.Running && node.Closed)
                 CloseMessage();

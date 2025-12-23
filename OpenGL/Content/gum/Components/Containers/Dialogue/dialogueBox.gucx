@@ -284,7 +284,6 @@
     <Variable>
       <Type>int?</Type>
       <Name>text.MaxLettersToShow</Name>
-      <ExposedAsName>DialogueMaxLettersToShow</ExposedAsName>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
