@@ -88,7 +88,6 @@ namespace Duo.Managers
         }
         public void Bounce(Vector2 directionMagnitude)
         {
-            Debug.Print($"Bounced to direction and magnitude {directionMagnitude}.");
             _characterPhysics.Fling(directionMagnitude);
         }
     }

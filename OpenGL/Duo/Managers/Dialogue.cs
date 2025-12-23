@@ -144,13 +144,11 @@ internal class Dialogue : GumObject
             GumManager.PositionMode = PositionModes.Screen;
         }
         {
+            _nodes.Clear();
+        }
+        {
             ForceClose();
         }
-    }
-    public override void Cleanup()
-    {
-        _nodes.Clear();
-        base.Cleanup();
     }
     public Node Submit(string message)
     {
@@ -188,7 +186,7 @@ internal class Dialogue : GumObject
             ForceClose();
 
         // Update the dialogue box with the message.
-        if (_nodes.Count > 0 && State == RunningStates.Running)
+        if (State == RunningStates.Running && _nodes.Count > 0)
         {
             var node = _nodes.Peek();
             if (!node.Running)
