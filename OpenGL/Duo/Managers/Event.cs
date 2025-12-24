@@ -54,12 +54,12 @@ internal class Submitter : Environment
             {
                 Debug.Assert(_runnerNodes.Count == 0);
                 _runner = Globals.DuoRunner.Environments.Where(x => x.ID == _runnerID).OfType<Runner>().First();
-                _runnerNodes.AddRange(Regex.Replace(input: _commandsRaw, pattern: @"\s+", replacement: "")
+                _runnerNodes.AddRange(_commandsRaw
                     .Split(";")
                     .Select(command => command
-                        .Split(",")
-                        .ToDictionary(pair => pair.Split(":")[0], pair => pair.Split(":")[1]))
-                    .Select(command=> new Runner.Node(
+                        .Split("#")
+                        .ToDictionary(pair => pair.Split(":")[0].Trim(), pair => pair.Split(":")[1].Trim()))
+                    .Select(command => new Runner.Node(
                         action: Enum.Parse<Runner.Actions>(command["Action"]),
                         startCondition: Enum.Parse<Runner.Triggers>(command["StartCondition"]),
                         stopCondition: Enum.Parse<Runner.Triggers>(command["StopCondition"]),
@@ -86,7 +86,7 @@ internal class Submitter : Environment
         {
             // Submit the commands
             if (!Triggered && 
-                (Trigger == Triggers.Proximity && ((Position - _triggerCharacter.Position).LengthSquared() <= _triggerDistance)))
+                (Trigger == Triggers.Proximity && ((Position - _triggerCharacter.Position).LengthSquared() <= (_triggerDistance * _triggerDistance))))
             {
                 foreach (var node in _runnerNodes)
                     _runner.Submit(node);
@@ -232,14 +232,16 @@ internal class Runner : Environment
             {
                 var node = _waitingNodes.Peek();
 
+                // Queue up the node for the start up for the given conditions.
                 if ((node.StartCondition == Triggers.Immediate) ||
-                    (node.StartCondition == Triggers.NoOutstanding && _outstandingNodes.Count == 0))
+                    (node.StartCondition == Triggers.NoOutstanding && _outstandingNodes.Count == 0 && _startNodes.Count == 0))
                 {
                     _startNodes.Enqueue(node);
                     _waitingNodes.Dequeue();
                 }
 
-                if (node.StartCondition == Triggers.NoOutstanding && _outstandingNodes.Count > 0)
+                // If the latest waiting node needs to block due to existing outstanding, stop trying to queue up nodes.
+                if (node.StartCondition == Triggers.NoOutstanding && (_outstandingNodes.Count > 0 || _startNodes.Count > 0))
                     break;
             }
 
@@ -268,10 +270,23 @@ internal class Runner : Environment
             {
                 Debug.Assert(node.Running && !node.Stopped);
                 var inode = (INode)node;
+
+                // Update the node.
                 inode.Update();
 
-                if (node.StopCondition == Triggers.Timeout && node.TimeOutFinished)
-                    _stopNodes.Enqueue(node);
+                // Perform stop condition for dialogue action.
+                if (node.Action == Actions.Dialogue)
+                {
+                    var dialogueNode = inode.DialogueNode;
+
+                    if (node.StopCondition == Triggers.Timeout)
+                    {
+                        if (!dialogueNode.Closed && node.TimeOutFinished)
+                            dialogueNode.Close();
+                        if (dialogueNode.Closed)
+                            _stopNodes.Enqueue(node);
+                    }
+                }
             }
 
             // Queued nodes are stopped and removed from the outstanding list.

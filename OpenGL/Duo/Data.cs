@@ -84,6 +84,8 @@ namespace Duo.Data
         Collectible, 
         HUD,
         Dialogue,
+        EventSubmitter,
+        EventRunner,
         MainMenu,
         MainMenuButton,
         Dimmer, 
@@ -716,6 +718,12 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<Dialogue>()));
+            runner.AddEntityType((int)EntityTypes.EventSubmitter, world => world.Create(
+                new StatusComponent(),
+                new GOCustomComponent<Managers.Event.Submitter>()));
+            runner.AddEntityType((int)EntityTypes.EventRunner, world => world.Create(
+                new StatusComponent(),
+                new GOCustomComponent<Managers.Event.Runner>()));
             runner.AddEntityType((int)EntityTypes.UI, world => world.Create(
                 new StatusComponent(),
                 new AnimationComponent(),
@@ -785,6 +793,8 @@ namespace Duo.Data
             runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<Dialogue>();
+            runner.AddGOCustomManager<Managers.Event.Submitter>();
+            runner.AddGOCustomManager<Managers.Event.Runner>();
             runner.AddGOCustomManager<UI>();
             runner.AddGOCustomManager<UIIcon>();
             runner.AddGOCustomManager<MainMenu>();
@@ -811,6 +821,8 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<Dialogue>(EntityTypes.Dialogue);
+            duoRunner.AddEnvironment<Managers.Event.Submitter>(EntityTypes.EventSubmitter);
+            duoRunner.AddEnvironment<Managers.Event.Runner>(EntityTypes.EventRunner);
             duoRunner.AddEnvironment<UI>(EntityTypes.UI);
             duoRunner.AddEnvironment<UIIcon>(EntityTypes.UIIcon);
             duoRunner.AddEnvironment<MainMenu>(EntityTypes.MainMenu);

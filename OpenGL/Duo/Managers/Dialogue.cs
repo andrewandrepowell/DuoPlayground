@@ -18,8 +18,8 @@ internal class Dialogue : GumObject
     private Queue<Node> _nodes = new();
     private const float _stateChangePeriod = 0.5f;
     private float _stateTime;
-    private const float _updateMessagePeriod = 0.25f;
-    private const int _charactersPerUpdateToMessage = 32;
+    private const float _updateMessagePeriod = 0.125f;
+    private const int _charactersPerUpdateToMessage = 16;
     private float _updateTime;
     private dialogueView _view;
     private interface INode
@@ -46,12 +46,12 @@ internal class Dialogue : GumObject
         }
         void INode.Start()
         {
-            Debug.Assert(Running);
+            Debug.Assert(!Running);
             Running = true;
         }
         void INode.Stop()
         {
-            Debug.Assert(!Running);
+            Debug.Assert(Running);
             Running = false;
         }
     }
@@ -65,14 +65,14 @@ internal class Dialogue : GumObject
     private void ForceOpen()
     {
         GumManager.Position = GumManager.Origin;
-        State = RunningStates.Starting;
+        State = RunningStates.Running;
     }
     private void Close()
     {
         Debug.Assert(State == RunningStates.Running);
         GumManager.Position = GumManager.Origin;
         _stateTime = _stateChangePeriod;
-        State = RunningStates.Starting;
+        State = RunningStates.Stopping;
     }
     private void ForceClose()
     {
@@ -122,7 +122,7 @@ internal class Dialogue : GumObject
         Debug.Assert(dialogueBox.DialogueText.Length < node.Message.Length);
         // Update the number of letters to show.
         var newLettersToShow = dialogueBox.DialogueText.Length + _charactersPerUpdateToMessage;
-        if (newLettersToShow > dialogueBox.DialogueText.Length)
+        if (newLettersToShow > node.Message.Length)
             newLettersToShow = node.Message.Length;
         dialogueBox.DialogueText = node.Message.Substring(startIndex: 0, length: newLettersToShow);
         // Set the update time.
@@ -142,6 +142,9 @@ internal class Dialogue : GumObject
             GumManager.Initialize(_view.Visual);
             GumManager.Layer = Layers.Interface;
             GumManager.PositionMode = PositionModes.Screen;
+        }
+        {
+            _view.dialogueBoxInstance.DialogueText = "";
         }
         {
             _nodes.Clear();
@@ -193,7 +196,7 @@ internal class Dialogue : GumObject
             var node = _nodes.Peek();
             if (!node.Running)
                 OpenMessage();
-            if (node.Running && !node.Closed && _view.dialogueBoxInstance.DialogueText.Length < node.Message.Length)
+            if (node.Running && !node.Closed && _view.dialogueBoxInstance.DialogueText.Length < node.Message.Length && _updateTime <= 0)
                 UpdateMessage();
             if (node.Running && node.Closed)
                 CloseMessage();

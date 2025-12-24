@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="136">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="139">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_3.tsx"/>
  <tileset firstgid="3137" source="test_tileset_4.tsx"/>
@@ -1594,6 +1594,18 @@
   <object id="135" x="880" y="1936">
    <properties>
     <property name="EntityType" value="Dialogue"/>
+    <property name="ID" value="Dialogue"/>
+   </properties>
+   <polygon points="0,0 16,0 16,16 0,16"/>
+  </object>
+  <object id="136" x="768" y="1920" width="96" height="16">
+   <text fontfamily="Segoe UI" pixelsize="12" wrap="1" color="#ffffff">Event Runner</text>
+  </object>
+  <object id="137" x="768" y="1936">
+   <properties>
+    <property name="DialogueID" value="Dialogue"/>
+    <property name="EntityType" value="EventRunner"/>
+    <property name="ID" value="EventRunner"/>
    </properties>
    <polygon points="0,0 16,0 16,16 0,16"/>
   </object>
@@ -2143,6 +2155,29 @@
     <property name="WaitAnimation" value="CabinBouncerIdle"/>
    </properties>
    <polygon points="0,0 0,-48 48,-48 48,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="15" name="objects_events_0">
+  <object id="138" x="1744" y="1808">
+   <properties>
+    <property name="Commands">Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+DialogueMessage:Hello this is a test.#
+TimeOutValue:4.0;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+DialogueMessage:This is a separate message.#
+TimeOutValue:4.0</property>
+    <property name="EntityType" value="EventSubmitter"/>
+    <property name="RunnerID" value="EventRunner"/>
+    <property name="Trigger" value="Proximity"/>
+    <property name="TriggerCharacterID" value="Protag"/>
+    <property name="TriggerDistance" value="32.0"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
  </objectgroup>
 </map>
