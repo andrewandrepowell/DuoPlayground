@@ -152,6 +152,8 @@ internal class Dialogue : GumObject
     }
     public Node Submit(string message)
     {
+        // In general, we don't want to allocate to heap,
+        // however this is an exemption because submit calls should be sparse.
         var node = new Node(message: message);
         Debug.Assert(_nodes.Count <= _maxNodes);
         _nodes.Enqueue(node);

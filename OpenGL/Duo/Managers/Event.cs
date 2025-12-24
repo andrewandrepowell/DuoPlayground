@@ -6,37 +6,92 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 
 namespace Duo.Managers.Event;
 
 internal class Submitter : Environment
 {
     public enum Triggers { Proximity }
-    private string runnerID;
-    private Runner runner;
-    private string triggerCharacterID;
-    private Character triggerCharacter;
+    private string _runnerID;
+    private Runner _runner;
+    private string _triggerCharacterID;
+    private Character _triggerCharacter;
+    private float _triggerDistance;
+    private string _commandsRaw;
+    private List<Runner.Node> _runnerNodes = [];
     public bool Initialized { get; private set; }
     public Triggers Trigger { get; private set; }
+    public Vector2 Position { get; private set; }
+    public bool Triggered { get; private set; }
     public override void Initialize(PolygonNode node)
     {
         base.Initialize(node);
-        runnerID = node.Parameters.GetValueOrDefault("RunnerID", "Runner");
-        runner = null;
-        triggerCharacterID = node.Parameters.GetValueOrDefault("TriggerCharacterID", "Cat");
-        triggerCharacter = null;
+        _runnerID = node.Parameters.GetValueOrDefault("RunnerID", "Runner");
+        _runner = null;
+        _triggerCharacterID = node.Parameters.GetValueOrDefault("TriggerCharacterID", "Cat");
+        _triggerCharacter = null;
+        _triggerDistance = float.Parse(node.Parameters.GetValueOrDefault("TriggerDistance", "32.0"));
+        _commandsRaw = node.Parameters.GetValueOrDefault("Commands", "");
+        _runnerNodes.Clear();
+        Position = node.Position + node.Vertices.Average();
         Trigger = Enum.Parse<Triggers>(node.Parameters.GetValueOrDefault("Trigger", "Proximity"));
+        Triggered = false;
         Initialized = false;
     }
     public override void Update()
     {
         base.Update();
+
+        // Initialze the submitter.
         if (!Initialized)
         {
+            // Acquire reference to the event runner and create the runner nodes.
+            // Normally, we want to avoid allocation to the heap, but this doesn't run every update.
+            if (_runner == null)
+            {
+                Debug.Assert(_runnerNodes.Count == 0);
+                _runner = Globals.DuoRunner.Environments.Where(x => x.ID == _runnerID).OfType<Runner>().First();
+                _runnerNodes.AddRange(Regex.Replace(input: _commandsRaw, pattern: @"\s+", replacement: "")
+                    .Split(";")
+                    .Select(command => command
+                        .Split(",")
+                        .ToDictionary(pair => pair.Split(":")[0], pair => pair.Split(":")[1]))
+                    .Select(command=> new Runner.Node(
+                        action: Enum.Parse<Runner.Actions>(command["Action"]),
+                        startCondition: Enum.Parse<Runner.Triggers>(command["StartCondition"]),
+                        stopCondition: Enum.Parse<Runner.Triggers>(command["StopCondition"]),
+                        dialogueMessage: command.GetValueOrDefault("DialogueMessage", null),
+                        timeOutValue: float.Parse(command.GetValueOrDefault("TimeOutValue", "1.0")))));
+            }
+
+            // Acquire reference to the trigger character, given the appropriate trigger.
+            if (Trigger == Triggers.Proximity && _triggerCharacter == null)
+            {
+                _triggerCharacter = Globals.DuoRunner.Environments.Where(x => x.ID == _triggerCharacterID).OfType<Character>().First();
+            }
+
+            // Once all the required references have been found, the submitter is initialized.
+            if ((_runner != null && _runner.Initialized) && 
+                (Trigger != Triggers.Proximity || _triggerCharacter != null))
+            {
+                Initialized = true;
+            }
         }
+
+        // Main loop.
         else
         {
-
+            // Submit the commands
+            if (!Triggered && 
+                (Trigger == Triggers.Proximity && ((Position - _triggerCharacter.Position).LengthSquared() <= _triggerDistance)))
+            {
+                foreach (var node in _runnerNodes)
+                    _runner.Submit(node);
+                Triggered = true;
+            }
         }
     }
 }
@@ -58,14 +113,14 @@ internal class Runner : Environment
         Triggers startCondition,
         Triggers stopCondition,
         string dialogueMessage = null,
-        float? timeOutValue = null) : INode
+        float timeOutValue = 1.0f) : INode
     {
-        private float _time = timeOutValue.GetValueOrDefault();
+        private float _time = timeOutValue;
         public Actions Action { get; } = action;
         public Triggers StartCondition { get; } = startCondition;
         public Triggers StopCondition { get; } = stopCondition;
         public string DialogueMessage { get; } = dialogueMessage;
-        public float? TimeOutValue { get; } = timeOutValue;
+        public float TimeOutValue { get; } = timeOutValue;
         public bool TimeOutFinished => _time <= 0;
         public bool Running { get; private set; } = false;
         public bool Stopped { get; private set; } = false;
@@ -104,29 +159,34 @@ internal class Runner : Environment
     private string _dialogueID;
     private Dialogue _dialogue;
     public bool Initialized { get; private set; }
+    public void Submit(Node node)
+    {
+        Debug.Assert(!node.Stopped);
+        Debug.Assert(!node.Running);
+        Debug.Assert(_startConditions.Contains(node.StartCondition));
+        Debug.Assert(_stopConditions.Contains(node.StopCondition));
+        if (node.Action == Actions.Dialogue)
+            Debug.Assert(node.DialogueMessage != null);
+        if (node.StopCondition == Triggers.Timeout)
+            Debug.Assert(node.TimeOutValue > 0);
+        _waitingNodes.Enqueue(node);
+    }
     public Node Submit(
         Actions action,
         Triggers startCondition,
         Triggers stopCondition,
         string dialogueMessage = null,
-        float? timeOutValue = null)
+        float timeOutValue = 1.0f)
     {
-        Debug.Assert(_startConditions.Contains(startCondition));
-        Debug.Assert(_stopConditions.Contains(stopCondition));
-        if (action == Actions.Dialogue)
-            Debug.Assert(dialogueMessage != null);
-        if (stopCondition == Triggers.Timeout)
-        {
-            Debug.Assert(timeOutValue.HasValue);
-            Debug.Assert(timeOutValue > 0);
-        }
+        // In general, we don't want to allocate to heap,
+        // however this is an exemption because submit calls should be sparse.
         var node = new Node(
             action: action,
             startCondition: startCondition,
             stopCondition: stopCondition,
             dialogueMessage: dialogueMessage,
             timeOutValue: timeOutValue);
-        _waitingNodes.Enqueue(node);
+        Submit(node);
         return node;
     }
     public override void Initialize(PolygonNode node)
