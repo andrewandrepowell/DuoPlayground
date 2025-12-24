@@ -2158,24 +2158,36 @@
   </object>
  </objectgroup>
  <objectgroup id="15" name="objects_events_0">
-  <object id="138" x="1744" y="1808">
+  <object id="138" x="1552" y="1808">
    <properties>
     <property name="Commands">Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:Hello this is a test.#
+DialogueMessage:This is a test of my event and dialogue system.#
 TimeOutValue:4.0;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:This is a separate message.#
+DialogueMessage:Currently, I can just queue up messages upon the cat getting close to the proximity trigger.#
+TimeOutValue:4.0;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+DialogueMessage:However, I'll add dynamic camera changes to focus on different objects of interest, manual interactable events, help messages, etc.#
+TimeOutValue:4.0;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+DialogueMessage:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
 TimeOutValue:4.0</property>
     <property name="EntityType" value="EventSubmitter"/>
     <property name="RunnerID" value="EventRunner"/>
     <property name="Trigger" value="Proximity"/>
     <property name="TriggerCharacterID" value="Protag"/>
-    <property name="TriggerDistance" value="32.0"/>
+    <property name="TriggerDistance" value="128.0"/>
    </properties>
    <polygon points="0,0 0,-16 16,-16 16,0"/>
   </object>
