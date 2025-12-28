@@ -20,7 +20,9 @@ namespace Duo.Data
     internal enum Maps { LevelDebug0, LevelDebug1, LevelDebug2, Title, Intro }
     internal enum Sprites 
     { 
-        Cat, Pixel, 
+        Cat,
+        Raven,
+        Pixel, 
         Platform, 
         PlatformCabin,
         Background, PurpleHillsBackground,
@@ -36,11 +38,12 @@ namespace Duo.Data
         OptionsButton,
         FireplaceFlame, FireplaceGlow,
         BasicBouncer,
-        CabinBouncer
+        CabinBouncer,
     }
     internal enum Animations 
     { 
-        CatWalk, CatIdle, CatJump, CatFall, CatLand, 
+        CatWalk, CatIdle, CatJump, CatFall, CatLand,
+        RavenFly,
         Pixel, 
         Platform,
         PlatformCabin,
@@ -159,6 +162,22 @@ namespace Duo.Data
                 spriteAnimationId: 6,
                 indices: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
                 period: 0.7f,
+                repeat: true);
+            runner.AnimationGenerator.ConfigureSprite(
+                spriteId: (int)Sprites.Raven,
+                assetName: "images/bird_0",
+                regionSize: new(144, 144),
+                directionSpriteEffects: new(new Dictionary<Directions, SpriteEffects>()
+                {
+                    {Directions.Left, SpriteEffects.None},
+                    {Directions.Right, SpriteEffects.FlipHorizontally},
+                }));
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.RavenFly,
+                spriteId: (int)Sprites.Raven,
+                spriteAnimationId: 0,
+                indices: [1, 2, 3, 4, 5],
+                period: 0.100f,
                 repeat: true);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Pixel,

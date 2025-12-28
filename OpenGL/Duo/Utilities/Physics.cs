@@ -42,6 +42,7 @@ namespace Duo.Utilities.Physics
         private const float _baseFling = _baseJump;
         private const float _flingTimerMax = 1.0f;
         private const float _impulseFlingModified = 0.15f;
+        private const float _stickSpeedThreshold = 0.40f;
         private readonly static Vector2 _baseGroundNormal = -Vector2.UnitY;
         private bool _initialized = false;
         private Vector2 _groundNormal;
@@ -73,9 +74,9 @@ namespace Duo.Utilities.Physics
         private float _fallGravityTimer;
         private const float _fallGravityTimerMax = 3;
         private bool _vaultReady;
-
         private Vector2 _flingForce;
         private float _flingTimerValue;
+        private bool _flying;
         private ServiceInteractableContact _serviceInteractableContact;
 
         private void UpdateCollideFriction(float friction)
@@ -163,6 +164,19 @@ namespace Duo.Utilities.Physics
                 return _flingTimerValue > 0;
             }
         }
+        public bool Flying
+        {
+            set
+            {
+                Debug.Assert(_initialized);
+                _flying = value;
+            }
+            get
+            {
+                Debug.Assert(_initialized);
+                return _flying;
+            }
+        }
         public void Initialize(Body body, Boxes boxes, ServiceInteractableContact serviceInteractableContact = null)
         {
             Debug.Assert(!_initialized);
@@ -237,6 +251,7 @@ namespace Duo.Utilities.Physics
                 _fallGravityTimer = 0;
                 _vaultReady = true;
                 _moveForceAverager.Clear();
+                _flying = false;
                 _serviceInteractableContact = serviceInteractableContact;
             }
             _initialized = true;
@@ -503,8 +518,10 @@ namespace Duo.Utilities.Physics
             // Gravity and stick forces.
             {
                 Vector2 force;
-                if (Grounded && Moving && speedValue > 0.40f)
+                if (Grounded && Moving && speedValue > _stickSpeedThreshold)
                     force = -_groundNormal * _baseGravity;
+                else if (_flying)
+                    force = Vector2.Zero;
                 else if (falling)
                     force = -_baseGroundNormal * _baseGravity * MathHelper.Lerp(6, 1, _fallGravityTimer / _fallGravityTimerMax);
                 else

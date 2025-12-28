@@ -31,7 +31,7 @@ namespace Duo.Managers
                 }
             }
         }
-        public enum Modes { FullTrack, BoxTrack }
+        public enum Modes { FullTrack, BoxTrack, CameraWalk }
         public override void Initialize(PolygonNode node)
         {
             base.Initialize(node);
@@ -127,6 +127,11 @@ namespace Duo.Managers
                                 newCameraPosition.Y = _mapBoundary.Bottom;
                             camera.Position = newCameraPosition;
                         }
+                    }
+                    break;
+                case Modes.CameraWalk:
+                    {
+
                     }
                     break;
             }

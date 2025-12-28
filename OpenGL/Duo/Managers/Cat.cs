@@ -88,13 +88,17 @@ namespace Duo.Managers
         }
         private void ContactInteractable(in Utilities.Physics.Character.BoxNode boxNode, Interactable interactable)
         {
+            // Contacts can't happen while game is paused.
             if (Pow.Globals.GamePaused || !_initialized)
                 return;
 
+            // Cat interacts with key if it jumps on top of it.
             if (boxNode.BoxType == BoxTypes.Ground && 
                 interactable is Key key && 
                 key.Action == Interactable.Actions.Waiting)
                 key.Interact();
+
+            // Cat collects the collectible if the cat runs into it.
             if (boxNode.BoxType == BoxTypes.Collide &&
                 interactable is Collectible collectible &&
                 collectible.Action == Interactable.Actions.Waiting)
