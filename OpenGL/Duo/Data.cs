@@ -75,13 +75,14 @@ namespace Duo.Data
     {
         MenuWind
     }
-    internal enum Boxes { Cat, Root, RootBlockage, Collectible, BasicBouncer }
+    internal enum Boxes { Cat, Bird, Root, RootBlockage, Collectible, BasicBouncer }
     internal enum Masks { UIGuide }
     public enum EntityTypes { 
         DuoRunner, 
         Camera, 
         Surface, 
-        Cat, 
+        Cat,
+        Raven,
         Key, 
         Door, 
         Collectible, 
@@ -709,6 +710,11 @@ namespace Duo.Data
                 new PhysicsComponent(),
                 new ControlComponent(),
                 new GOCustomComponent<Cat>()));
+            runner.AddEntityType((int)EntityTypes.Raven, world => world.Create(
+                new StatusComponent(),
+                new AnimationComponent(),
+                new PhysicsComponent(),
+                new GOCustomComponent<Raven>()));
             runner.AddEntityType((int)EntityTypes.Surface, world => world.Create(
                 new StatusComponent(),
                 new AnimationComponent(),
@@ -806,6 +812,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<DuoRunner>();
             runner.AddGOCustomManager<Managers.Camera>();
             runner.AddGOCustomManager<Cat>();
+            runner.AddGOCustomManager<Raven>();
             runner.AddGOCustomManager<Surface>();
             runner.AddGOCustomManager<Key>();
             runner.AddGOCustomManager<Door>();
@@ -834,6 +841,7 @@ namespace Duo.Data
             // Environment
             duoRunner.AddEnvironment<Managers.Camera>(EntityTypes.Camera);
             duoRunner.AddEnvironment<Cat>(EntityTypes.Cat);
+            duoRunner.AddEnvironment<Raven>(EntityTypes.Raven);
             duoRunner.AddEnvironment<Surface>(EntityTypes.Surface);
             duoRunner.AddEnvironment<Key>(EntityTypes.Key);
             duoRunner.AddEnvironment<Door>(EntityTypes.Door);
@@ -860,6 +868,9 @@ namespace Duo.Data
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Cat, 
                 assetName: "tiled/cat_boxes_0");
+            duoRunner.BoxesGenerator.Configure(
+                id: (int)Boxes.Bird,
+                assetName: "tiled/bird_boxes_0");
             duoRunner.BoxesGenerator.Configure(
                 id: (int)Boxes.Root,
                 assetName: "tiled/root_boxes_0");

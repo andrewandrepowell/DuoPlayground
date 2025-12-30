@@ -13,6 +13,7 @@ namespace Duo.Managers
         protected abstract IReadOnlyDictionary<Actions, Animations> ActionAnimationMap { get; }
         protected abstract Boxes Boxes { get; }
         protected virtual Layers Layer => Layers.Ground;
+        protected virtual bool Flying => false;
         protected virtual Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => null;
     }
 }

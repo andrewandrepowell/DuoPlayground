@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,14 @@ namespace Duo.Managers
 {
     internal partial class Character
     {
+        private static readonly Actions[] _flyingActions = [Actions.Idle, Actions.Walk];
         private Actions _action = Actions.Idle;
         private void UpdateAction(Actions action)
         {
+#if DEBUG
+            if (Flying)
+                Debug.Assert(_flyingActions.Contains(action));
+#endif
             if (ActionAnimationMap.TryGetValue(action, out var animation))
             {
                 var animationManager = AnimationManager;

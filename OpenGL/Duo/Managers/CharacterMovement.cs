@@ -26,6 +26,7 @@ namespace Duo.Managers
                 boxes: Boxes,
                 serviceInteractableContact: ServiceInteractableContact);
             _characterPhysics.Position = node.Vertices.Average() + node.Position;
+            _characterPhysics.Flying = Flying;
         }
         private void CleanupMovement()
         {
@@ -39,11 +40,11 @@ namespace Duo.Managers
                 UpdateAction(Actions.Idle);
             else if (!Jumping && Grounded && Moving && Action != Actions.Walk && Action != Actions.Fall && (Action != Actions.Land || !AnimationManager.Running))
                 UpdateAction(Actions.Walk);
-            else if (!Jumping && !Grounded && Action != Actions.Fall && _characterPhysics.UpSpeed < 0)
+            else if (!Flying && !Jumping && !Grounded && Action != Actions.Fall && _characterPhysics.UpSpeed < 0)
                 UpdateAction(Actions.Fall);
-            else if (!Jumping && Grounded && Action == Actions.Fall && Action != Actions.Land)
+            else if (!Flying && !Jumping && Grounded && Action == Actions.Fall && Action != Actions.Land)
                 UpdateAction(Actions.Land);
-            else if (Jumping && Action != Actions.Jump)
+            else if (!Flying && Jumping && Action != Actions.Jump)
                 UpdateAction(Actions.Jump);
         }
         public bool MovingLeft => _characterPhysics.MovingLeft;

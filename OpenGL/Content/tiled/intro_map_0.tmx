@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="139">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="140">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_3.tsx"/>
  <tileset firstgid="3137" source="test_tileset_4.tsx"/>
@@ -1199,6 +1199,15 @@
    <properties>
     <property name="EntityType" value="Cat"/>
     <property name="ID" value="Protag"/>
+   </properties>
+   <polygon points="0,0 48,0 48,48 0,48"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="16" name="objects_npcs_0">
+  <object id="139" x="1408" y="1696">
+   <properties>
+    <property name="EntityType" value="Raven"/>
+    <property name="ID" value="Raven"/>
    </properties>
    <polygon points="0,0 48,0 48,48 0,48"/>
   </object>
