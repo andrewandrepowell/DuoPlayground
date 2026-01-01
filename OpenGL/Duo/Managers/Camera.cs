@@ -13,8 +13,8 @@ namespace Duo.Managers
     {
         private const float _trackBoxPercent = 0.20f;
         private const float _walkDistanceThreshold = 8;
-        private const float _walkCameraMaximumSpeed = 4;
-        private const float _walkCameraMinimumSpeed = 1;
+        private const float _walkCameraMaximumSpeed = 256;
+        private const float _walkCameraMinimumSpeed = 32;
         private const float _walkCemeraSpeedChangeDistanceThreshold = 16 * 8;
         private string _trackID;
         private DuoObject _duoObjectTracked;

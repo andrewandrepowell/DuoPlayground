@@ -27,6 +27,7 @@ namespace Duo.Managers
                 serviceInteractableContact: ServiceInteractableContact);
             _characterPhysics.Position = node.Vertices.Average() + node.Position;
             _characterPhysics.Flying = Flying;
+            Direction = Enum.Parse<Directions>(node.Parameters.GetValueOrDefault("Direction", "Left"));
         }
         private void CleanupMovement()
         {

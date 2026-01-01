@@ -1204,8 +1204,9 @@
   </object>
  </objectgroup>
  <objectgroup id="16" name="objects_npcs_0">
-  <object id="139" x="1408" y="1696">
+  <object id="139" x="1280" y="1664">
    <properties>
+    <property name="Direction" value="Right"/>
     <property name="EntityType" value="Raven"/>
     <property name="ID" value="Raven"/>
    </properties>
@@ -1226,6 +1227,7 @@
   <object id="3" x="880" y="2000">
    <properties>
     <property name="EntityType" value="Camera"/>
+    <property name="ID" value="Camera"/>
     <property name="TrackID" value="Protag"/>
    </properties>
    <polygon points="0,0 16,0 16,16 0,16"/>
@@ -1612,6 +1614,7 @@
   </object>
   <object id="137" x="768" y="1936">
    <properties>
+    <property name="CameraID" value="Camera"/>
     <property name="DialogueID" value="Dialogue"/>
     <property name="EntityType" value="EventRunner"/>
     <property name="ID" value="EventRunner"/>
@@ -2172,26 +2175,44 @@
     <property name="Commands">Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:This is a test of my event and dialogue system.#
+DialogueMessage:*CAW* *CAW* This is a test of my event and dialogue system!#
+TimeOutValue:4.0;
+
+Action:Camera#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+CameraDuoTrackedObjectID:Raven#
+CameraMode:CameraWalk;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+DialogueMessage:Currently, dialogue messages can be queued up and the camera focus can be changed. Camera will focus on cat when dialogue is finished.#
 TimeOutValue:4.0;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:Currently, I can just queue up messages upon the cat getting close to the proximity trigger.#
-TimeOutValue:4.0;
-
-Action:Dialogue#
-StartCondition:NoOutstanding#
-StopCondition:Timeout#
-DialogueMessage:However, I'll add dynamic camera changes to focus on different objects of interest, manual interactable events, help messages, etc.#
+DialogueMessage:I still need to add user interaction to continue the dialogue.#
 TimeOutValue:4.0;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
 DialogueMessage:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
-TimeOutValue:4.0</property>
+TimeOutValue:4.0;
+
+Action:Camera#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+CameraDuoTrackedObjectID:Protag#
+CameraMode:CameraWalk;
+
+Action:Camera#
+StartCondition:NoOutstanding#
+StopCondition:NotRunning#
+CameraDuoTrackedObjectID:Protag#
+CameraMode:BoxTrack</property>
     <property name="EntityType" value="EventSubmitter"/>
     <property name="RunnerID" value="EventRunner"/>
     <property name="Trigger" value="Proximity"/>

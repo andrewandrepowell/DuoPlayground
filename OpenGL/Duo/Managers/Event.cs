@@ -64,7 +64,12 @@ internal class Submitter : Environment
                         startCondition: Enum.Parse<Runner.Triggers>(command["StartCondition"]),
                         stopCondition: Enum.Parse<Runner.Triggers>(command["StopCondition"]),
                         dialogueMessage: command.GetValueOrDefault("DialogueMessage", null),
-                        timeOutValue: float.Parse(command.GetValueOrDefault("TimeOutValue", "1.0")))));
+                        timeOutValue: float.Parse(command.GetValueOrDefault("TimeOutValue", "1.0")),
+                        cameraDuoTrackedObject: command.TryGetValue("CameraDuoTrackedObjectID", out string cameraDuoTrackedObjectID) ? Globals.DuoRunner.Environments
+                            .Where(x=>x.ID == cameraDuoTrackedObjectID)
+                            .OfType<DuoObject>()
+                            .First() : null,
+                        cameraMode: Enum.Parse<Camera.Modes>(command.GetValueOrDefault("CameraMode", "FullTrack")))));
             }
 
             // Acquire reference to the trigger character, given the appropriate trigger.
@@ -99,8 +104,8 @@ internal class Submitter : Environment
 
 internal class Runner : Environment
 {
-    public enum Actions { Dialogue }
-    public enum Triggers { Immediate, NoOutstanding, Timeout }
+    public enum Actions { Dialogue, Camera }
+    public enum Triggers { Immediate, NoOutstanding, Timeout, NotRunning }
     private interface INode
     {
         public Dialogue.Node DialogueNode { get; set; }
@@ -113,7 +118,9 @@ internal class Runner : Environment
         Triggers startCondition,
         Triggers stopCondition,
         string dialogueMessage = null,
-        float timeOutValue = 1.0f) : INode
+        float timeOutValue = 1.0f,
+        DuoObject cameraDuoTrackedObject = null,
+        Camera.Modes cameraMode = Camera.Modes.FullTrack) : INode
     {
         private float _time = timeOutValue;
         public Actions Action { get; } = action;
@@ -121,6 +128,8 @@ internal class Runner : Environment
         public Triggers StopCondition { get; } = stopCondition;
         public string DialogueMessage { get; } = dialogueMessage;
         public float TimeOutValue { get; } = timeOutValue;
+        public DuoObject CameraDuoTrackedObject { get; } = cameraDuoTrackedObject;
+        public Camera.Modes CameraMode { get; } = cameraMode;
         public bool TimeOutFinished => _time <= 0;
         public bool Running { get; private set; } = false;
         public bool Stopped { get; private set; } = false;
@@ -151,13 +160,15 @@ internal class Runner : Environment
         }
     }
     private static readonly Triggers[] _startConditions = [Triggers.Immediate, Triggers.NoOutstanding];
-    private static readonly Triggers[] _stopConditions = [Triggers.Timeout];
+    private static readonly Triggers[] _stopConditions = [Triggers.Timeout, Triggers.NotRunning];
     private Queue<Node> _waitingNodes = new();
     private List<Node> _outstandingNodes = new();
     private Queue<Node> _startNodes = new();
     private Queue<Node> _stopNodes = new();
     private string _dialogueID;
     private Dialogue _dialogue;
+    private string _cameraID;
+    private Camera _camera;
     public bool Initialized { get; private set; }
     public void Submit(Node node)
     {
@@ -194,6 +205,8 @@ internal class Runner : Environment
         base.Initialize(node);
         _dialogueID = node.Parameters.GetValueOrDefault("DialogueID", "Dialogue");
         _dialogue = null;
+        _cameraID = node.Parameters.GetValueOrDefault("CameraID", "Camera");
+        _camera = null;
         _waitingNodes.Clear();
         _outstandingNodes.Clear();
         _startNodes.Clear();
@@ -211,13 +224,10 @@ internal class Runner : Environment
         // Initialization needs to occur first.
         if (!Initialized)
         {
-            if (_dialogue == null)
-            {
-                Debug.Assert(!Initialized);
-                _dialogue = Globals.DuoRunner.Environments.Where(x => x.ID == _dialogueID).OfType<Dialogue>().First();
-            }
+            _dialogue ??= Globals.DuoRunner.Environments.Where(x => x.ID == _dialogueID).OfType<Dialogue>().First();
+            _camera ??= Globals.DuoRunner.Environments.Where(x => x.ID == _cameraID).OfType<Camera>().First();
 
-            if (_dialogue != null)
+            if (_dialogue != null && _camera != null)
                 Initialized = true;
         }
 
@@ -257,7 +267,18 @@ internal class Runner : Environment
                 // Prepare node if it's a dialogue action.
                 // Messages need to be submitted to the dialogue manager.
                 if (node.Action == Actions.Dialogue)
+                {
+                    Debug.Assert(node.StopCondition == Triggers.Timeout);
                     inode.DialogueNode = _dialogue.Submit(message: node.DialogueMessage);
+                }
+
+                // Configure camrea is node action is camera.
+                if (node.Action == Actions.Camera)
+                {
+                    Debug.Assert(node.StopCondition == Triggers.NotRunning);
+                    _camera.Mode = node.CameraMode;
+                    _camera.DuoObjectTracked = node.CameraDuoTrackedObject;
+                }
 
                 // Start the node and add it to the outstanding queue.
                 inode.Start();
@@ -285,6 +306,15 @@ internal class Runner : Environment
                             dialogueNode.Close();
                         if (dialogueNode.Closed)
                             _stopNodes.Enqueue(node);
+                    }
+                }
+
+                // Perform stop condition for camera action.
+                if (node.Action == Actions.Camera)
+                {
+                    if (node.StopCondition == Triggers.NotRunning && !_camera.IsRunning)
+                    {
+                        _stopNodes.Enqueue(node);
                     }
                 }
             }
