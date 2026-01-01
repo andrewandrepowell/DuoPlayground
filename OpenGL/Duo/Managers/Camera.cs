@@ -12,13 +12,32 @@ namespace Duo.Managers
     internal class Camera : Environment
     {
         private const float _trackBoxPercent = 0.20f;
+        private const float _walkDistanceThreshold = 8;
+        private const float _walkCameraMaximumSpeed = 4;
+        private const float _walkCameraMinimumSpeed = 1;
+        private const float _walkCemeraSpeedChangeDistanceThreshold = 16 * 8;
         private string _trackID;
         private DuoObject _duoObjectTracked;
         private Modes _mode;
         private RectangleF _trackBox = new();
         private bool _updateMode;
         private RectangleF _mapBoundary;
-        public DuoObject DuoObjectTracked => _duoObjectTracked;
+        private void ResetState()
+        {
+            _updateMode = true;
+            IsRunning = true;
+        }
+        public DuoObject DuoObjectTracked 
+        {
+            get => _duoObjectTracked;
+            set
+            {
+                if (_duoObjectTracked == value)
+                    return;
+                _duoObjectTracked = value;
+                ResetState();
+            }
+        }
         public Modes Mode
         {
             get => _mode;
@@ -27,10 +46,11 @@ namespace Duo.Managers
                 if (_mode != value)
                 {
                     _mode = value;
-                    _updateMode = true;
+                    ResetState();
                 }
             }
         }
+        public bool IsRunning { get; private set; }
         public enum Modes { FullTrack, BoxTrack, CameraWalk }
         public override void Initialize(PolygonNode node)
         {
@@ -40,6 +60,7 @@ namespace Duo.Managers
                 _duoObjectTracked = null;
                 _mode = Modes.BoxTrack;
                 _updateMode = true;
+                IsRunning = true;
             }
             {
                 var camera = Pow.Globals.Runner.Camera;
@@ -92,10 +113,16 @@ namespace Duo.Managers
                 case Modes.FullTrack:
                     {
                         camera.Position = _duoObjectTracked.Position;
+                        IsRunning = true;
                     }
                     break;
                 case Modes.BoxTrack:
                     {
+                        // Not running until the camera position is update,
+                        IsRunning = false;
+
+                        // Make sure the track box moves with the tracked object.
+                        // New camera position is defined as the middle of the track box.
                         if (!_trackBox.Contains(_duoObjectTracked.Position))
                         {
                             // Update track box position based on tracked duo object.
@@ -112,8 +139,10 @@ namespace Duo.Managers
 
                             // Update camera position based on track position.
                             camera.Position = _trackBox.Position + (Vector2)_trackBox.Size / 2;
+                            IsRunning = true;
                         }
 
+                        // Make sure the camera position never falls outside of the map boundary.
                         if (!_mapBoundary.Contains(camera.Position))
                         {
                             var newCameraPosition = camera.Position;
@@ -126,12 +155,35 @@ namespace Duo.Managers
                             if (camera.Position.Y > _mapBoundary.Bottom)
                                 newCameraPosition.Y = _mapBoundary.Bottom;
                             camera.Position = newCameraPosition;
+                            IsRunning = true;
                         }
                     }
                     break;
                 case Modes.CameraWalk:
                     {
+                        // Not running until the camera position is update,
+                        IsRunning = false;
 
+                        // Only run if the position of the tracked is different from the position of the camera.
+                        if (!_duoObjectTracked.Position.EqualsWithTolerence(camera.Position))
+                        {
+                            var vectorToTracked = _duoObjectTracked.Position - camera.Position;
+                            var distanceToTracked = vectorToTracked.Length();
+
+                            // If the distance to the tracked object is too far, move camera to direction of the tracked object.
+                            if (distanceToTracked > _walkDistanceThreshold)
+                            {
+                                var directionToTracked = vectorToTracked / distanceToTracked;
+                                var speedToTracked = MathHelper.Lerp(
+                                    value1: _walkCameraMinimumSpeed, 
+                                    value2: _walkCameraMaximumSpeed, 
+                                    amount: MathHelper.Min(_walkCemeraSpeedChangeDistanceThreshold, distanceToTracked) / _walkCemeraSpeedChangeDistanceThreshold);
+                                var changeInPosition = directionToTracked * speedToTracked * Pow.Globals.GameTime.GetElapsedSeconds();
+                                var newCameraPosition = camera.Position + changeInPosition;
+                                camera.Position = newCameraPosition;
+                                IsRunning = true;
+                            }
+                        } 
                     }
                     break;
             }
