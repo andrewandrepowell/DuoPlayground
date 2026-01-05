@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using Pow.Utilities;
+using Pow.Utilities.Gum;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,24 +60,28 @@ internal class Dialogue : GumObject
     {
         Debug.Assert(State == RunningStates.Waiting);
         GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y - _closedHeightOffset);
+        GumManager.Visibility = 1.0f;
         _stateTime = _stateChangePeriod;
         State = RunningStates.Starting;
     }
     private void ForceOpen()
     {
         GumManager.Position = GumManager.Origin;
+        GumManager.Visibility = 1.0f;
         State = RunningStates.Running;
     }
     private void Close()
     {
         Debug.Assert(State == RunningStates.Running);
         GumManager.Position = GumManager.Origin;
+        GumManager.Visibility = 1.0f;
         _stateTime = _stateChangePeriod;
         State = RunningStates.Stopping;
     }
     private void ForceClose()
     {
         GumManager.Position = new Vector2(x: GumManager.Origin.X, y: GumManager.Origin.Y - _closedHeightOffset);
+        GumManager.Visibility = 0.0f;
         State = RunningStates.Waiting;
     }
     private void OpenMessage()

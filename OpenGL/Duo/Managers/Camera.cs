@@ -141,22 +141,6 @@ namespace Duo.Managers
                             camera.Position = _trackBox.Position + (Vector2)_trackBox.Size / 2;
                             IsRunning = true;
                         }
-
-                        // Make sure the camera position never falls outside of the map boundary.
-                        if (!_mapBoundary.Contains(camera.Position))
-                        {
-                            var newCameraPosition = camera.Position;
-                            if (camera.Position.X < _mapBoundary.Left)
-                                newCameraPosition.X = _mapBoundary.Left;
-                            if (camera.Position.X > _mapBoundary.Right)
-                                newCameraPosition.X = _mapBoundary.Right;
-                            if (camera.Position.Y < _mapBoundary.Top)
-                                newCameraPosition.Y = _mapBoundary.Top;
-                            if (camera.Position.Y > _mapBoundary.Bottom)
-                                newCameraPosition.Y = _mapBoundary.Bottom;
-                            camera.Position = newCameraPosition;
-                            IsRunning = true;
-                        }
                     }
                     break;
                 case Modes.CameraWalk:
@@ -187,6 +171,23 @@ namespace Duo.Managers
                     }
                     break;
             }
+
+            // Make sure the camera position never falls outside of the map boundary.
+            if (!_mapBoundary.Contains(camera.Position))
+            {
+                var newCameraPosition = camera.Position;
+                if (camera.Position.X < _mapBoundary.Left)
+                    newCameraPosition.X = _mapBoundary.Left;
+                if (camera.Position.X > _mapBoundary.Right)
+                    newCameraPosition.X = _mapBoundary.Right;
+                if (camera.Position.Y < _mapBoundary.Top)
+                    newCameraPosition.Y = _mapBoundary.Top;
+                if (camera.Position.Y > _mapBoundary.Bottom)
+                    newCameraPosition.Y = _mapBoundary.Bottom;
+                camera.Position = newCameraPosition;
+                IsRunning = true;
+            }
+
             base.Update();
         }
     }

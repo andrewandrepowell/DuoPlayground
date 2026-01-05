@@ -2,60 +2,46 @@
   "UserEvents": {
     "bd01b0b648c2c64eb1bddd9361d9972ea684b344fedc4d166654a85e8919e7ad": [
       {
-        "NewName": "Containers/Dialogue/dialogueView",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2025-12-21T22:53:17.6383091Z"
-      },
-      {
-        "NewName": "Containers/Dialogue/dialogueBox",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2025-12-21T22:54:43.2717279Z"
-      },
-      {
-        "NewName": "Containers/Dialogue/dialogueView (Container).dialogueBoxInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2025-12-21T22:56:20.9993368Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "Containers/Dialogue/dialogueView (Container).Containers/Dialogue/dialogueBox dialogueBoxInstance in Containers/Dialogue/dialogueView (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2025-12-21T23:54:59.9265202Z"
-      },
-      {
-        "NewName": "Containers/Dialogue/dialogueView (Container).dialogueBoxInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2025-12-22T00:02:50.4223021Z"
-      },
-      {
-        "NewName": "Containers/Dialogue/dialogueBox (Container).background",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2025-12-22T00:06:36.7934617Z"
-      },
-      {
-        "NewName": "Containers/Dialogue/dialogueView (Container).leftSpacer",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2025-12-22T00:23:00.9010184Z"
-      },
-      {
         "NewName": "Containers/Dialogue/dialogueBox (Container).text",
         "OldName": null,
         "ElementType": "Components",
         "EventType": 5,
         "TimestampUtc": "2025-12-22T03:15:22.878408Z"
+      },
+      {
+        "NewName": "Containers/GhostText/ghostTextView",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-01-05T02:28:43.602157Z"
+      },
+      {
+        "NewName": "Containers/GhostText/ghostTextBox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-01-05T02:29:55.1121336Z"
+      },
+      {
+        "NewName": "Containers/GhostText/ghostTextBox (Container).text",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-01-05T02:31:05.3900009Z"
+      },
+      {
+        "NewName": "Containers/GhostText/ghostTextView (Container).ghostTextBoxInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-01-05T02:35:44.7864193Z"
+      },
+      {
+        "NewName": "Containers/GhostText/ghostTextBox (Container).background",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-01-05T02:37:46.5551436Z"
       }
     ]
   }

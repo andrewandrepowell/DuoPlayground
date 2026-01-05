@@ -44,7 +44,7 @@ namespace Pow.Utilities
             var graphicsDeviceManager = Globals.GraphicsDeviceManager;
             graphicsDeviceManager.PreferredBackBufferWidth = (int)_screenWindowSize.Width;
             graphicsDeviceManager.PreferredBackBufferHeight = (int)_screenWindowSize.Height;
-            graphicsDeviceManager.IsFullScreen = false;
+            graphicsDeviceManager.IsFullScreen = true;
             graphicsDeviceManager.HardwareModeSwitch = false;
             graphicsDeviceManager.ApplyChanges();
             {

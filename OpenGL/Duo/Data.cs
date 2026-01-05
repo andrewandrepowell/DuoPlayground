@@ -88,6 +88,7 @@ namespace Duo.Data
         Collectible, 
         HUD,
         Dialogue,
+        GhostText,
         EventSubmitter,
         EventRunner,
         MainMenu,
@@ -743,6 +744,10 @@ namespace Duo.Data
                 new StatusComponent(),
                 new GumComponent(),
                 new GOCustomComponent<Dialogue>()));
+            runner.AddEntityType((int)EntityTypes.GhostText, world => world.Create(
+                new StatusComponent(),
+                new GumComponent(),
+                new GOCustomComponent<GhostText>()));
             runner.AddEntityType((int)EntityTypes.EventSubmitter, world => world.Create(
                 new StatusComponent(),
                 new GOCustomComponent<Managers.Event.Submitter>()));
@@ -819,6 +824,7 @@ namespace Duo.Data
             runner.AddGOCustomManager<Collectible>();
             runner.AddGOCustomManager<HUD>();
             runner.AddGOCustomManager<Dialogue>();
+            runner.AddGOCustomManager<GhostText>();
             runner.AddGOCustomManager<Managers.Event.Submitter>();
             runner.AddGOCustomManager<Managers.Event.Runner>();
             runner.AddGOCustomManager<UI>();
@@ -848,6 +854,7 @@ namespace Duo.Data
             duoRunner.AddEnvironment<Collectible>(EntityTypes.Collectible);
             duoRunner.AddEnvironment<HUD>(EntityTypes.HUD);
             duoRunner.AddEnvironment<Dialogue>(EntityTypes.Dialogue);
+            duoRunner.AddEnvironment<GhostText>(EntityTypes.GhostText);
             duoRunner.AddEnvironment<Managers.Event.Submitter>(EntityTypes.EventSubmitter);
             duoRunner.AddEnvironment<Managers.Event.Runner>(EntityTypes.EventRunner);
             duoRunner.AddEnvironment<UI>(EntityTypes.UI);
