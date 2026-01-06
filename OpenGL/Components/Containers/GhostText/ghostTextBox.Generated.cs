@@ -34,6 +34,12 @@ partial class ghostTextBox : MonoGameGum.Forms.Controls.FrameworkElement
     public NineSliceRuntime background { get; protected set; }
     public TextRuntime text { get; protected set; }
 
+    public string GhostTextText
+    {
+        get => text.Text;
+        set => text.Text = value;
+    }
+
     public ghostTextBox(InteractiveGue visual) : base(visual) { }
     public ghostTextBox()
     {

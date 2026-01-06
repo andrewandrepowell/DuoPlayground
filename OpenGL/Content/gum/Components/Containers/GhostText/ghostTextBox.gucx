@@ -95,6 +95,7 @@
       <Type>string</Type>
       <Name>text.Text</Name>
       <Value xsi:type="xsd:string">Press "Interact" to Continue</Value>
+      <ExposedAsName>GhostTextText</ExposedAsName>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
