@@ -669,8 +669,6 @@ namespace Duo.Data
                 indices: Enumerable.Range(1, 14).ToArray(),
                 period: 0.050f,
                 repeat: false);
-
-
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.CabinBouncer,
                 assetName: "images/basic_bouncer_1",

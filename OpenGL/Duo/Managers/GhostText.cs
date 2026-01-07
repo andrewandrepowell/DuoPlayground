@@ -14,7 +14,7 @@ namespace Duo.Managers;
 internal class GhostText : GumObject
 {
     private const int _maxNodes = 64;
-    private const float _stateChangePeriod = 0.5f;
+    private const float _stateChangePeriod = 1f;
     private float _stateTime;
     private Queue<Node> _nodes = new();
     private ghostTextView _view;
@@ -101,8 +101,9 @@ internal class GhostText : GumObject
         Debug.Assert(node.Running);
         Debug.Assert(node.Closed);
         var inode = (INode)node;
-        // Stop the node to indicate back to use this specific message is complete.
+        // Stop the node to indicate back to use this specific message is complete and remove from queue.
         inode.Stop();
+        _nodes.Dequeue();
         // Prepare for state change.
         GumManager.Visibility = 0.0f;
         State = RunningStates.Waiting;
@@ -143,9 +144,9 @@ internal class GhostText : GumObject
 
         // Update visibility based on state.
         if (State == RunningStates.Starting && _stateTime >= 0)
-            GumManager.Visibility = MathHelper.Lerp(1, 0, _stateTime / _stateTime);
+            GumManager.Visibility = MathHelper.Lerp(1, 0, _stateTime / _stateChangePeriod);
         if (State == RunningStates.Stopping && _stateTime >= 0)
-            GumManager.Visibility = MathHelper.Lerp(0, 1, _stateTime / _stateTime);
+            GumManager.Visibility = MathHelper.Lerp(0, 1, _stateTime / _stateChangePeriod);
 
         // Update state.
         // The State represents whether the dialogue box is open or not.

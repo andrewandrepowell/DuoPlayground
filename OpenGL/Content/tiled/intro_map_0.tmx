@@ -2182,43 +2182,49 @@
     <property name="Commands">Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:*CAW* *CAW* This is a test of my event and dialogue system!#
+Message:*CAW* *CAW* This is a test of my event and dialogue system!#
 TimeOutValue:4.0;
 
 Action:Camera#
 StartCondition:Immediate#
 StopCondition:NotRunning#
-CameraDuoTrackedObjectID:Raven#
+DuoObjectID:Raven#
 CameraMode:CameraWalk;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:Currently, dialogue messages can be queued up and the camera focus can be changed. Camera will focus on cat when dialogue is finished.#
+Message:Currently, dialogue messages can be queued up and the camera focus can be changed. Camera will focus on cat when dialogue is finished.#
+TimeOutValue:4.0;
+
+Action:GhostText#
+StartCondition:Immediate#
+StopCondition:Timeout#
+Message:Press &quot;Interact&quot; to continue.#
 TimeOutValue:4.0;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:I still need to add user interaction to continue the dialogue.#
+Message:I still need to add user interaction to continue the dialogue.#
 TimeOutValue:4.0;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Timeout#
-DialogueMessage:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
+Message:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
 TimeOutValue:4.0;
 
 Action:Camera#
 StartCondition:Immediate#
 StopCondition:NotRunning#
-CameraDuoTrackedObjectID:Protag#
+DuoObjectID:Protag#
 CameraMode:CameraWalk;
 
 Action:Camera#
 StartCondition:NoOutstanding#
 StopCondition:NotRunning#
-CameraDuoTrackedObjectID:Protag#
+DuoObjectID:Protag#
 CameraMode:BoxTrack</property>
     <property name="EntityType" value="EventSubmitter"/>
     <property name="RunnerID" value="EventRunner"/>

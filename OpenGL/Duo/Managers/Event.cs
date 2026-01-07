@@ -63,10 +63,10 @@ internal class Submitter : Environment
                         action: Enum.Parse<Runner.Actions>(command["Action"]),
                         startCondition: Enum.Parse<Runner.Triggers>(command["StartCondition"]),
                         stopCondition: Enum.Parse<Runner.Triggers>(command["StopCondition"]),
-                        dialogueMessage: command.GetValueOrDefault("DialogueMessage", null),
+                        message: command.GetValueOrDefault("Message", null),
                         timeOutValue: float.Parse(command.GetValueOrDefault("TimeOutValue", "1.0")),
-                        cameraDuoTrackedObject: command.TryGetValue("CameraDuoTrackedObjectID", out string cameraDuoTrackedObjectID) ? Globals.DuoRunner.Environments
-                            .Where(x=>x.ID == cameraDuoTrackedObjectID)
+                        duoObject: command.TryGetValue("DuoObjectID", out string duoObjectID) ? Globals.DuoRunner.Environments
+                            .Where(x=>x.ID == duoObjectID)
                             .OfType<DuoObject>()
                             .First() : null,
                         cameraMode: Enum.Parse<Camera.Modes>(command.GetValueOrDefault("CameraMode", "FullTrack")))));
@@ -104,11 +104,12 @@ internal class Submitter : Environment
 
 internal class Runner : Environment
 {
-    public enum Actions { Dialogue, Camera }
+    public enum Actions { Dialogue, GhostText, Camera }
     public enum Triggers { Immediate, NoOutstanding, Timeout, NotRunning }
     private interface INode
     {
         public Dialogue.Node DialogueNode { get; set; }
+        public GhostText.Node GhostTextNode { get; set; }
         public void Update();
         public void Start();
         public void Stop();
@@ -117,18 +118,18 @@ internal class Runner : Environment
         Actions action,
         Triggers startCondition,
         Triggers stopCondition,
-        string dialogueMessage = null,
+        string message = null,
         float timeOutValue = 1.0f,
-        DuoObject cameraDuoTrackedObject = null,
+        DuoObject duoObject = null,
         Camera.Modes cameraMode = Camera.Modes.FullTrack) : INode
     {
         private float _time = timeOutValue;
         public Actions Action { get; } = action;
         public Triggers StartCondition { get; } = startCondition;
         public Triggers StopCondition { get; } = stopCondition;
-        public string DialogueMessage { get; } = dialogueMessage;
+        public string Message { get; } = message;
         public float TimeOutValue { get; } = timeOutValue;
-        public DuoObject CameraDuoTrackedObject { get; } = cameraDuoTrackedObject;
+        public DuoObject DuoObject { get; } = duoObject;
         public Camera.Modes CameraMode { get; } = cameraMode;
         public bool TimeOutFinished => _time <= 0;
         public bool Running { get; private set; } = false;
@@ -142,6 +143,7 @@ internal class Runner : Environment
                 _time -= Pow.Globals.GameTime.GetElapsedSeconds();
         }
         Dialogue.Node INode.DialogueNode { get; set; } = null;
+        GhostText.Node INode.GhostTextNode { get; set; } = null;
         void INode.Start()
         {
             // Check to make sure the state of everything is what we expect.
@@ -169,6 +171,8 @@ internal class Runner : Environment
     private Dialogue _dialogue;
     private string _cameraID;
     private Camera _camera;
+    private string _ghostTextID;
+    private GhostText _ghostText;
     public bool Initialized { get; private set; }
     public void Submit(Node node)
     {
@@ -177,28 +181,10 @@ internal class Runner : Environment
         Debug.Assert(_startConditions.Contains(node.StartCondition));
         Debug.Assert(_stopConditions.Contains(node.StopCondition));
         if (node.Action == Actions.Dialogue)
-            Debug.Assert(node.DialogueMessage != null);
+            Debug.Assert(node.Message != null);
         if (node.StopCondition == Triggers.Timeout)
             Debug.Assert(node.TimeOutValue > 0);
         _waitingNodes.Enqueue(node);
-    }
-    public Node Submit(
-        Actions action,
-        Triggers startCondition,
-        Triggers stopCondition,
-        string dialogueMessage = null,
-        float timeOutValue = 1.0f)
-    {
-        // In general, we don't want to allocate to heap,
-        // however this is an exemption because submit calls should be sparse.
-        var node = new Node(
-            action: action,
-            startCondition: startCondition,
-            stopCondition: stopCondition,
-            dialogueMessage: dialogueMessage,
-            timeOutValue: timeOutValue);
-        Submit(node);
-        return node;
     }
     public override void Initialize(PolygonNode node)
     {
@@ -207,6 +193,8 @@ internal class Runner : Environment
         _dialogue = null;
         _cameraID = node.Parameters.GetValueOrDefault("CameraID", "Camera");
         _camera = null;
+        _ghostTextID = node.Parameters.GetValueOrDefault("GhostTextID", "GhostText");
+        _ghostText = null;
         _waitingNodes.Clear();
         _outstandingNodes.Clear();
         _startNodes.Clear();
@@ -226,8 +214,9 @@ internal class Runner : Environment
         {
             _dialogue ??= Globals.DuoRunner.Environments.Where(x => x.ID == _dialogueID).OfType<Dialogue>().First();
             _camera ??= Globals.DuoRunner.Environments.Where(x => x.ID == _cameraID).OfType<Camera>().First();
+            _ghostText ??= Globals.DuoRunner.Environments.Where(x => x.ID == _ghostTextID).OfType<GhostText>().First();
 
-            if (_dialogue != null && _camera != null)
+            if (_dialogue != null && _camera != null && _ghostText != null)
                 Initialized = true;
         }
 
@@ -269,7 +258,14 @@ internal class Runner : Environment
                 if (node.Action == Actions.Dialogue)
                 {
                     Debug.Assert(node.StopCondition == Triggers.Timeout);
-                    inode.DialogueNode = _dialogue.Submit(message: node.DialogueMessage);
+                    inode.DialogueNode = _dialogue.Submit(message: node.Message);
+                }
+
+                // Prepare node if it's a ghost text action.
+                if (node.Action == Actions.GhostText)
+                {
+                    Debug.Assert(node.StopCondition == Triggers.Timeout);
+                    inode.GhostTextNode = _ghostText.Submit(message: node.Message);
                 }
 
                 // Configure camrea is node action is camera.
@@ -277,7 +273,7 @@ internal class Runner : Environment
                 {
                     Debug.Assert(node.StopCondition == Triggers.NotRunning);
                     _camera.Mode = node.CameraMode;
-                    _camera.DuoObjectTracked = node.CameraDuoTrackedObject;
+                    _camera.DuoObjectTracked = node.DuoObject;
                 }
 
                 // Start the node and add it to the outstanding queue.
@@ -305,6 +301,20 @@ internal class Runner : Environment
                         if (!dialogueNode.Closed && node.TimeOutFinished)
                             dialogueNode.Close();
                         if (dialogueNode.Closed)
+                            _stopNodes.Enqueue(node);
+                    }
+                }
+
+                // Perform stop condition for ghost text.
+                if (node.Action == Actions.GhostText)
+                {
+                    var ghostTextNode = inode.GhostTextNode;
+
+                    if (node.StopCondition == Triggers.Timeout)
+                    {
+                        if (!ghostTextNode.Closed && node.TimeOutFinished)
+                            ghostTextNode.Close();
+                        if (ghostTextNode.Closed)
                             _stopNodes.Enqueue(node);
                     }
                 }
