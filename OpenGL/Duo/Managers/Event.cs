@@ -1,14 +1,20 @@
-﻿using MonoGame.Extended;
+﻿using Arch.Core.Extensions;
+using Duo.Data;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using Pow.Components;
 using Pow.Utilities;
+using Pow.Utilities.Control;
+using Pow.Utilities.UA;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace Duo.Managers.Event;
 
@@ -102,10 +108,10 @@ internal class Submitter : Environment
 }
 
 
-internal class Runner : Environment
+internal class Runner : Environment, IUserAction, IControl
 {
     public enum Actions { Dialogue, GhostText, Camera }
-    public enum Triggers { Immediate, NoOutstanding, Timeout, NotRunning }
+    public enum Triggers { Immediate, NoOutstanding, Timeout, NotRunning, Interacted }
     private interface INode
     {
         public Dialogue.Node DialogueNode { get; set; }
@@ -162,7 +168,7 @@ internal class Runner : Environment
         }
     }
     private static readonly Triggers[] _startConditions = [Triggers.Immediate, Triggers.NoOutstanding];
-    private static readonly Triggers[] _stopConditions = [Triggers.Timeout, Triggers.NotRunning];
+    private static readonly Triggers[] _stopConditions = [Triggers.Timeout, Triggers.NotRunning, Triggers.Interacted];
     private Queue<Node> _waitingNodes = new();
     private List<Node> _outstandingNodes = new();
     private Queue<Node> _startNodes = new();
@@ -173,7 +179,42 @@ internal class Runner : Environment
     private Camera _camera;
     private string _ghostTextID;
     private GhostText _ghostText;
+    private UAManager _uaManager;
     public bool Initialized { get; private set; }
+    public Keys[] ControlKeys => _uaManager.ControlKeys;
+    public Buttons[] ControlButtons => _uaManager.ControlButtons;
+    public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;
+    public void UpdateControl(ButtonStates buttonState, Keys key) => _uaManager.UpdateControl(buttonState, key);
+    public void UpdateControl(ButtonStates buttonState, Buttons button) => _uaManager.UpdateControl(buttonState, button);
+    public void UpdateControl(Directions thumbsticks, Vector2 position) => _uaManager.UpdateControl(thumbsticks, position);
+    public void UpdateUserAction(int actionId, ButtonStates buttonState, float strength)
+    {
+        if (!Initialized)
+            return;
+
+        if (Pow.Globals.GamePaused)
+            return;
+
+        var control = (Controls)actionId;
+
+        if (buttonState == ButtonStates.Pressed && control == Controls.Interact)
+        {
+            foreach (var node in _outstandingNodes)
+            {
+                Debug.Assert(node.Running && !node.Stopped);
+                var inode = (INode)node;
+
+                if (node.StopCondition != Triggers.Interacted)
+                    continue;
+
+                if (node.Action == Actions.Dialogue && !inode.DialogueNode.Closed)
+                    inode.DialogueNode.Close();
+
+                if (node.Action == Actions.GhostText && !inode.GhostTextNode.Closed)
+                    inode.GhostTextNode.Close();
+            }
+        }
+    }
     public void Submit(Node node)
     {
         Debug.Assert(!node.Stopped);
@@ -189,16 +230,25 @@ internal class Runner : Environment
     public override void Initialize(PolygonNode node)
     {
         base.Initialize(node);
-        _dialogueID = node.Parameters.GetValueOrDefault("DialogueID", "Dialogue");
-        _dialogue = null;
-        _cameraID = node.Parameters.GetValueOrDefault("CameraID", "Camera");
-        _camera = null;
-        _ghostTextID = node.Parameters.GetValueOrDefault("GhostTextID", "GhostText");
-        _ghostText = null;
-        _waitingNodes.Clear();
-        _outstandingNodes.Clear();
-        _startNodes.Clear();
-        _stopNodes.Clear();
+        {
+            _dialogueID = node.Parameters.GetValueOrDefault("DialogueID", "Dialogue");
+            _dialogue = null;
+            _cameraID = node.Parameters.GetValueOrDefault("CameraID", "Camera");
+            _camera = null;
+            _ghostTextID = node.Parameters.GetValueOrDefault("GhostTextID", "GhostText");
+            _ghostText = null;
+        }
+        {
+            _waitingNodes.Clear();
+            _outstandingNodes.Clear();
+            _startNodes.Clear();
+            _stopNodes.Clear();
+        }
+        {
+            Entity.Get<ControlComponent>().Manager.Initialize(this);
+            _uaManager = Globals.DuoRunner.UAGenerator.Acquire();
+            _uaManager.Initialize(this);
+        }
         Initialized = false;
     }
     public override void Update()
@@ -257,14 +307,18 @@ internal class Runner : Environment
                 // Messages need to be submitted to the dialogue manager.
                 if (node.Action == Actions.Dialogue)
                 {
-                    Debug.Assert(node.StopCondition == Triggers.Timeout);
+                    Debug.Assert(
+                        node.StopCondition == Triggers.Timeout || 
+                        node.StopCondition == Triggers.Interacted);
                     inode.DialogueNode = _dialogue.Submit(message: node.Message);
                 }
 
                 // Prepare node if it's a ghost text action.
                 if (node.Action == Actions.GhostText)
                 {
-                    Debug.Assert(node.StopCondition == Triggers.Timeout);
+                    Debug.Assert(
+                        node.StopCondition == Triggers.Timeout ||
+                        node.StopCondition == Triggers.Interacted);
                     inode.GhostTextNode = _ghostText.Submit(message: node.Message);
                 }
 
@@ -296,13 +350,13 @@ internal class Runner : Environment
                 {
                     var dialogueNode = inode.DialogueNode;
 
-                    if (node.StopCondition == Triggers.Timeout)
-                    {
-                        if (!dialogueNode.Closed && node.TimeOutFinished)
-                            dialogueNode.Close();
-                        if (dialogueNode.Closed)
-                            _stopNodes.Enqueue(node);
-                    }
+                    // Close on timeout.
+                    if (node.StopCondition == Triggers.Timeout && !dialogueNode.Closed && node.TimeOutFinished)
+                        dialogueNode.Close();
+
+                    // Stop on closed.
+                    if (dialogueNode.Closed)
+                        _stopNodes.Enqueue(node);
                 }
 
                 // Perform stop condition for ghost text.
@@ -310,22 +364,20 @@ internal class Runner : Environment
                 {
                     var ghostTextNode = inode.GhostTextNode;
 
-                    if (node.StopCondition == Triggers.Timeout)
-                    {
-                        if (!ghostTextNode.Closed && node.TimeOutFinished)
-                            ghostTextNode.Close();
-                        if (ghostTextNode.Closed)
-                            _stopNodes.Enqueue(node);
-                    }
+                    // Close on timeout.
+                    if (node.StopCondition == Triggers.Timeout && !ghostTextNode.Closed && node.TimeOutFinished)
+                        ghostTextNode.Close();
+
+                    // Stop on closed.
+                    if (ghostTextNode.Closed)
+                        _stopNodes.Enqueue(node);
                 }
 
                 // Perform stop condition for camera action.
                 if (node.Action == Actions.Camera)
                 {
                     if (node.StopCondition == Triggers.NotRunning && !_camera.IsRunning)
-                    {
                         _stopNodes.Enqueue(node);
-                    }
                 }
             }
 

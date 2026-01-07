@@ -2199,9 +2199,8 @@ TimeOutValue:4.0;
 
 Action:GhostText#
 StartCondition:Immediate#
-StopCondition:Timeout#
-Message:Press &quot;Interact&quot; to continue.#
-TimeOutValue:4.0;
+StopCondition:Interacted#
+Message:Press &quot;Interact&quot; to continue.;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#

@@ -751,6 +751,7 @@ namespace Duo.Data
                 new GOCustomComponent<Managers.Event.Submitter>()));
             runner.AddEntityType((int)EntityTypes.EventRunner, world => world.Create(
                 new StatusComponent(),
+                new ControlComponent(),
                 new GOCustomComponent<Managers.Event.Runner>()));
             runner.AddEntityType((int)EntityTypes.UI, world => world.Create(
                 new StatusComponent(),
