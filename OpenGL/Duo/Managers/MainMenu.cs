@@ -113,6 +113,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private ReadOnlyDictionary<string, ButtonNode> _buttonNodes;
     private Action _nextAction;
     private bool _fixFocus;
+    private bool _skipFixFocus;
     private float _buttonVisibility
     {
         set
@@ -145,6 +146,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
             menu.options.Click += (object? sender, EventArgs e) => OpenOptions();
             menu.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
             _fixFocus = false;
+            _skipFixFocus = false;
             menu.exit.LostFocus += (object? sender, EventArgs e) => FixFocus();
         }
         {
@@ -368,6 +370,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
         Debug.Assert(Pow.Globals.GamePaused);
         Debug.Assert(_view.menu.ButtonFocused);
         Debug.Assert(_branches.State == RunningStates.Running);
+        _skipFixFocus = true;
         var menu = _view.menu;
         menu.ResetFocus();
         GumManager.Visibility = 1;
@@ -382,6 +385,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private void ForceOpen()
     {
         var menu = _view.menu;
+        _skipFixFocus = true;
         menu.ResetFocus();
         menu.resume.IsFocused = true;
         GumManager.Visibility = 1;
@@ -392,6 +396,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
     private void ForceClose()
     {
         Pow.Globals.GameResume();
+        _skipFixFocus = true;
         var menu = _view.menu;
         menu.ResetFocus();
         GumManager.Visibility = 0;
@@ -405,6 +410,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
         Debug.Assert(_state == RunningStates.Running);
         Debug.Assert(_nextAction == null);
         Debug.Assert(_branches.State == RunningStates.Running);
+        _skipFixFocus = true;
         _view.menu.ResetFocus();
         _branches.Close();
         _nextAction = nextAction;
@@ -421,6 +427,7 @@ internal class MainMenu : GumObject, IUserAction, IControl
         Debug.Assert(Pow.Globals.GamePaused);
         Debug.Assert(_view.menu.ButtonFocused);
         Debug.Assert(_branches.State == RunningStates.Running);
+        _skipFixFocus = true;
         var menu = _view.menu;
         menu.ResetFocus();
         _options.Open();
@@ -438,7 +445,9 @@ internal class MainMenu : GumObject, IUserAction, IControl
     }
     private void FixFocus()
     {
-        if (!_view.menu.ButtonFocused && _state == RunningStates.Running)
+        if (!_skipFixFocus && !_view.menu.ButtonFocused && _state == RunningStates.Running)
             _fixFocus = true;
+        // skip fix focus is needed to ensure if focus is intentionally lost, fix focus can be skipped once.
+        _skipFixFocus = false;
     }
 }
