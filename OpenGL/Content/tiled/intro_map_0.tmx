@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="141">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="190" height="128" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="142">
  <tileset firstgid="1" source="test_tileset_0.tsx"/>
  <tileset firstgid="65" source="test_tileset_3.tsx"/>
  <tileset firstgid="3137" source="test_tileset_4.tsx"/>
@@ -2179,23 +2179,16 @@
  <objectgroup id="15" name="objects_events_0">
   <object id="138" x="1552" y="1808">
    <properties>
-    <property name="Commands">Action:Dialogue#
-StartCondition:NoOutstanding#
-StopCondition:Timeout#
-Message:*CAW* *CAW* This is a test of my event and dialogue system!#
-TimeOutValue:4.0;
-
-Action:Camera#
+    <property name="Commands">Action:Camera#
 StartCondition:Immediate#
 StopCondition:NotRunning#
 DuoObjectID:Raven#
 CameraMode:CameraWalk;
 
 Action:Dialogue#
-StartCondition:NoOutstanding#
-StopCondition:Timeout#
-Message:Currently, dialogue messages can be queued up and the camera focus can be changed. Camera will focus on cat when dialogue is finished.#
-TimeOutValue:4.0;
+StartCondition:Immediate#
+StopCondition:Interacted#
+Message:*CAW* *CAW* Welcome to this small, very incomplete demo of Duo Playground! The controller UI element that shows the player the controls isn't drawn yet, so just know the interact button is triangle.;
 
 Action:GhostText#
 StartCondition:Immediate#
@@ -2204,18 +2197,16 @@ Message:Press &quot;Interact&quot; to continue.;
 
 Action:Dialogue#
 StartCondition:NoOutstanding#
-StopCondition:Timeout#
-Message:I still need to add user interaction to continue the dialogue.#
-TimeOutValue:4.0;
+StopCondition:Interacted#
+Message:The only goal is to just get to the end of the level! I appreciate any feedback, and please enjoy! :D;
 
-Action:Dialogue#
-StartCondition:NoOutstanding#
-StopCondition:Timeout#
-Message:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
-TimeOutValue:4.0;
+Action:GhostText#
+StartCondition:Immediate#
+StopCondition:Interacted#
+Message:Press &quot;Interact&quot; to continue.;
 
 Action:Camera#
-StartCondition:Immediate#
+StartCondition:NoOutstanding#
 StopCondition:NotRunning#
 DuoObjectID:Protag#
 CameraMode:CameraWalk;
@@ -2224,7 +2215,46 @@ Action:Camera#
 StartCondition:NoOutstanding#
 StopCondition:NotRunning#
 DuoObjectID:Protag#
-CameraMode:BoxTrack</property>
+CameraMode:BoxTrack
+</property>
+    <property name="EntityType" value="EventSubmitter"/>
+    <property name="RunnerID" value="EventRunner"/>
+    <property name="Trigger" value="Proximity"/>
+    <property name="TriggerCharacterID" value="Protag"/>
+    <property name="TriggerDistance" value="128.0"/>
+   </properties>
+   <polygon points="0,0 0,-16 16,-16 16,0"/>
+  </object>
+  <object id="141" x="2288" y="560">
+   <properties>
+    <property name="Commands">Action:Camera#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+DuoObjectID:Raven#
+CameraMode:CameraWalk;
+
+Action:Dialogue#
+StartCondition:Immediate#
+StopCondition:Interacted#
+Message:*CAW* *CAW* Congratulations on getting to the end!;
+
+Action:GhostText#
+StartCondition:Immediate#
+StopCondition:Interacted#
+Message:Press &quot;Interact&quot; to continue.;
+
+Action:Camera#
+StartCondition:NoOutstanding#
+StopCondition:NotRunning#
+DuoObjectID:Protag#
+CameraMode:CameraWalk;
+
+Action:Camera#
+StartCondition:NoOutstanding#
+StopCondition:NotRunning#
+DuoObjectID:Protag#
+CameraMode:BoxTrack
+</property>
     <property name="EntityType" value="EventSubmitter"/>
     <property name="RunnerID" value="EventRunner"/>
     <property name="Trigger" value="Proximity"/>

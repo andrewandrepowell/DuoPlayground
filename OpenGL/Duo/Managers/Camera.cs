@@ -12,7 +12,7 @@ namespace Duo.Managers
     internal class Camera : Environment
     {
         private const float _trackBoxPercent = 0.20f;
-        private const float _walkDistanceThreshold = 8;
+        private const float _walkDistanceThreshold = 32;
         private const float _walkCameraMaximumSpeed = 256;
         private const float _walkCameraMinimumSpeed = 32;
         private const float _walkCemeraSpeedChangeDistanceThreshold = 16 * 8;

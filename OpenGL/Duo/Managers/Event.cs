@@ -393,3 +393,53 @@ internal class Runner : Environment, IUserAction, IControl
         }
     }
 }
+
+
+/*
+ * Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+Message:*CAW* *CAW* This is a test of my event and dialogue system!#
+TimeOutValue:4.0;
+
+Action:Camera#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+DuoObjectID:Raven#
+CameraMode:CameraWalk;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+Message:Currently, dialogue messages can be queued up and the camera focus can be changed. Camera will focus on cat when dialogue is finished.#
+TimeOutValue:4.0;
+
+Action:GhostText#
+StartCondition:Immediate#
+StopCondition:Interacted#
+Message:Press "Interact" to continue.;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+Message:I still need to add user interaction to continue the dialogue.#
+TimeOutValue:4.0;
+
+Action:Dialogue#
+StartCondition:NoOutstanding#
+StopCondition:Timeout#
+Message:I'll be keeping the event system as simple as possible since the game isn't intended to be too sophisticated.#
+TimeOutValue:4.0;
+
+Action:Camera#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+DuoObjectID:Protag#
+CameraMode:CameraWalk;
+
+Action:Camera#
+StartCondition:NoOutstanding#
+StopCondition:NotRunning#
+DuoObjectID:Protag#
+CameraMode:BoxTrack
+ */

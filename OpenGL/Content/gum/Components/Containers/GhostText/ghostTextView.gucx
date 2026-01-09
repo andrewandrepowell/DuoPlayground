@@ -17,6 +17,12 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>float</Type>
+      <Name>ghostTextBoxInstance.Y</Name>
+      <Value xsi:type="xsd:float">80</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>VerticalAlignment</Type>
       <Name>ghostTextBoxInstance.YOrigin</Name>
       <Value xsi:type="xsd:int">1</Value>
@@ -25,7 +31,7 @@
     <Variable>
       <Type>PositionUnitType</Type>
       <Name>ghostTextBoxInstance.YUnits</Name>
-      <Value xsi:type="xsd:int">7</Value>
+      <Value xsi:type="xsd:int">3</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
