@@ -87,6 +87,7 @@ namespace Duo.Managers
         private RunningStates _state;
         private Action _nextAction;
         private bool _fixFocus;
+        private bool _skipFixFocus;
 #if DEBUG
         private float _debugWait;
 #endif
@@ -110,6 +111,7 @@ namespace Duo.Managers
                 _view.buttons.options.Click += (object? sender, EventArgs e) => OpenOptions();
                 _view.buttons.exit.Click += (object? sender, EventArgs e) => Transition(Pow.Globals.Game.Exit);
                 _fixFocus = false;
+                _skipFixFocus = false;
                 _view.buttons.exit.LostFocus += (object? sender, EventArgs e) => FixFocus();
             }
             {
@@ -269,6 +271,7 @@ namespace Duo.Managers
             Debug.Assert(_branches.State == RunningStates.Running);
             Debug.Assert(_options.State == RunningStates.Waiting);
             Debug.Assert(_view.buttons.ButtonFocused);
+            _skipFixFocus = true;
             var menu = _view.buttons;
             menu.ResetFocus();
             _branches.Close();
@@ -276,6 +279,7 @@ namespace Duo.Managers
         }
         private void ForceOpen()
         {
+            _skipFixFocus = true;
             var menu = _view.buttons;
             menu.ResetFocus();
             menu.start.IsFocused = true;
@@ -284,6 +288,7 @@ namespace Duo.Managers
         }
         private void ForceClose()
         {
+            _skipFixFocus = true;
             var menu = _view.buttons;
             menu.ResetFocus();
             _branches.ForceClose();
@@ -307,6 +312,7 @@ namespace Duo.Managers
             Debug.Assert(_branches.State == RunningStates.Running);
             Debug.Assert(_options.State == RunningStates.Waiting);
             Debug.Assert(_view.buttons.ButtonFocused);
+            _skipFixFocus = true;
             var menu = _view.buttons;
             menu.ResetFocus();
             _options.Open();
@@ -323,8 +329,9 @@ namespace Duo.Managers
         }
         private void FixFocus()
         {
-            if (!_view.buttons.ButtonFocused && _state == RunningStates.Running)
+            if (!_skipFixFocus && !_view.buttons.ButtonFocused && _state == RunningStates.Running)
                 _fixFocus = true;
+            _skipFixFocus = true;
         }
     }
 }
