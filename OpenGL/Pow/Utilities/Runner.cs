@@ -86,7 +86,7 @@ public class Runner : IDisposable, IMapParent
         {
             ThreadPrefixName = "Pow.Thread",
             ThreadCount = 0, // Determined at runtime
-            MaxExpectedConcurrentJobs = 64,
+            MaxExpectedConcurrentJobs = 8,
             StrictAllocationMode = false,
         });
         EcsWorld.SharedJobScheduler = _jobScheduler;
