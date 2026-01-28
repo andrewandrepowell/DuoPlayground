@@ -33,7 +33,7 @@ namespace Duo.Managers
             }
             UpdateAction(Actions.Idle);
         }
-        public enum Actions { Walk, Idle, Jump, Fall, Land }
+        public enum Actions { Walk, Idle, Jump, Fall, Land, Express }
         public Actions Action => _action;
     }
 }

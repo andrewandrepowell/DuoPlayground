@@ -20,15 +20,18 @@ namespace Duo.Managers
             InitializeAction();
             InitializeDirection();
             InitializeMovement(node);
+            InitializeExpress();
         }
         public override void Cleanup()
         {
             CleanupMovement();
+            CleanupExpress();
             base.Cleanup();
         }
         public override void Update()
         {
             MovementUpdate();
+            ExpressUpdate();
             base.Update();
         }
 

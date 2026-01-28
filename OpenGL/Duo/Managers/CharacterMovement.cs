@@ -37,15 +37,19 @@ namespace Duo.Managers
         {
             if (Pow.Globals.GamePaused) return;
             _characterPhysics.Update();
-            if (!Jumping && Grounded && !Moving && Action != Actions.Idle && Action != Actions.Fall && ((Action != Actions.Land) || !AnimationManager.Running))
+            var noLandAction = ((Action != Actions.Land) || !AnimationManager.Running);
+            var noExpressAction = ((Action != Actions.Express) || (_expressNodes.Count == 0));
+            if (_expressNodes.Count > 0 && Action != Actions.Express)
+                UpdateAction(Actions.Express);
+            else if (!Jumping && Grounded && !Moving && Action != Actions.Idle && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Idle);
-            else if (!Jumping && Grounded && Moving && Action != Actions.Walk && Action != Actions.Fall && (Action != Actions.Land || !AnimationManager.Running))
+            else if (!Jumping && Grounded && Moving && Action != Actions.Walk && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Walk);
-            else if (!Flying && !Jumping && !Grounded && Action != Actions.Fall && _characterPhysics.UpSpeed < 0)
+            else if (!Flying && !Jumping && !Grounded && _characterPhysics.UpSpeed < 0 && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Fall);
-            else if (!Flying && !Jumping && Grounded && Action == Actions.Fall && Action != Actions.Land)
+            else if (!Flying && !Jumping && Grounded && Action == Actions.Fall && Action != Actions.Land && noExpressAction)
                 UpdateAction(Actions.Land);
-            else if (!Flying && Jumping && Action != Actions.Jump)
+            else if (!Flying && Jumping && Action != Actions.Jump && noExpressAction)
                 UpdateAction(Actions.Jump);
         }
         public bool MovingLeft => _characterPhysics.MovingLeft;
@@ -82,7 +86,6 @@ namespace Duo.Managers
         public void Jump()
         {
             _characterPhysics.Jump();
-            UpdateAction(Actions.Jump);
         }
         public void ReleaseJump()
         {

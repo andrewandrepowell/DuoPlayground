@@ -53,11 +53,13 @@ namespace Duo.Managers
             var released = buttonState == ButtonStates.Released;
             var pressed = buttonState == ButtonStates.Pressed;
             var paused = Pow.Globals.GamePaused;
+            var expressing = Action == Actions.Express;
+            var noControl = paused || expressing;
 
-            if (paused && pressed)
+            if (noControl && pressed)
                 return;
 
-            if (((released && left) || paused) && MovingLeft)
+            if (((released && left) || noControl) && MovingLeft)
                 ReleaseLeft();
             if (pressed && left)
             {
@@ -69,7 +71,7 @@ namespace Duo.Managers
                     MoveLeft(strength);
             }
 
-            if (((released && right) || paused) && MovingRight)
+            if (((released && right) || noControl) && MovingRight)
                 ReleaseRight();
             if (pressed && right)
             {
@@ -81,7 +83,7 @@ namespace Duo.Managers
                     MoveRight(strength);
             }
 
-            if (((released && jump) || paused) && Jumping)
+            if (((released && jump) || noControl) && Jumping)
                 ReleaseJump();
             if (pressed && jump && Grounded && !Jumping)
                 Jump();
