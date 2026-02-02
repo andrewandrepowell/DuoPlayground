@@ -43,7 +43,7 @@ namespace Duo.Data
     internal enum Animations 
     { 
         CatWalk, CatIdle, CatJump, CatFall, CatLand,
-        RavenFly,
+        RavenFly, RavenCaw,
         Pixel, 
         Platform,
         PlatformCabin,
@@ -179,6 +179,13 @@ namespace Duo.Data
                 spriteId: (int)Sprites.Raven,
                 spriteAnimationId: 0,
                 indices: [1, 2, 3, 4, 5],
+                period: 0.100f,
+                repeat: true);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.RavenCaw,
+                spriteId: (int)Sprites.Raven,
+                spriteAnimationId: 1,
+                indices: [6, 7, 8, 9, 10],
                 period: 0.100f,
                 repeat: true);
             runner.AnimationGenerator.ConfigureSprite(

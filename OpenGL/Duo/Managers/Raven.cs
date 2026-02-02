@@ -15,7 +15,14 @@ internal class Raven : NPC
         { Actions.Idle, Animations.RavenFly },
         { Actions.Walk, Animations.RavenFly },
     });
+    private static readonly ReadOnlyDictionary<int, Animations> _expressAnimationMap = new(new Dictionary<int, Animations>()
+    {
+        { (int)Expressions.Idle, Animations.RavenFly },
+        { (int)Expressions.Caw, Animations.RavenCaw },
+    });
     protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
+    protected override IReadOnlyDictionary<int, Animations> ExpressAnimationMap => _expressAnimationMap;
     protected override Boxes Boxes => Boxes.Bird;
     protected override bool Flying => true;
+    public enum Expressions { Idle, Caw }
 }

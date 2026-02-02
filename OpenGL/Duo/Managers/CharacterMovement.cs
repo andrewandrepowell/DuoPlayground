@@ -35,15 +35,18 @@ namespace Duo.Managers
         }
         private void MovementUpdate()
         {
-            if (Pow.Globals.GamePaused) return;
+            if (Pow.Globals.GamePaused) 
+                return;
+
             _characterPhysics.Update();
+
             var noLandAction = ((Action != Actions.Land) || !AnimationManager.Running);
             var noExpressAction = ((Action != Actions.Express) || (_expressNodes.Count == 0));
             if (_expressNodes.Count > 0 && Action != Actions.Express)
                 UpdateAction(Actions.Express);
-            else if (!Jumping && Grounded && !Moving && Action != Actions.Idle && Action != Actions.Fall && noLandAction && noExpressAction)
+            else if (!Jumping && (Grounded || Flying) && !Moving && Action != Actions.Idle && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Idle);
-            else if (!Jumping && Grounded && Moving && Action != Actions.Walk && Action != Actions.Fall && noLandAction && noExpressAction)
+            else if (!Jumping && (Grounded || Flying) && Moving && Action != Actions.Walk && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Walk);
             else if (!Flying && !Jumping && !Grounded && _characterPhysics.UpSpeed < 0 && Action != Actions.Fall && noLandAction && noExpressAction)
                 UpdateAction(Actions.Fall);

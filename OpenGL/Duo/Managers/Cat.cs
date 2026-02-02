@@ -35,6 +35,7 @@ namespace Duo.Managers
         protected override Boxes Boxes => Boxes.Cat;
         protected override Layers Layer => Layers.Protag;
         protected override Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => ContactInteractable;
+        public enum Expressions { Idle }
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;

@@ -2190,6 +2190,12 @@ StartCondition:Immediate#
 StopCondition:Interacted#
 Message:*CAW* *CAW* Welcome to this small, very incomplete demo of Duo Playground! The controller UI element that shows the player the controls isn't drawn yet, so just know the interact button is triangle.;
 
+Action:Express#
+StartCondition:Immediate#
+StopCondition:Interacted#
+ExpressID:1#
+CharacterID:Raven;
+
 Action:GhostText#
 StartCondition:Immediate#
 StopCondition:Interacted#

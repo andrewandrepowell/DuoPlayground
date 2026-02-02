@@ -12,10 +12,9 @@ namespace Duo.Managers
     {
         protected abstract IReadOnlyDictionary<Actions, Animations> ActionAnimationMap { get; }
         protected abstract Boxes Boxes { get; }
+        protected virtual IReadOnlyDictionary<int, Animations> ExpressAnimationMap => null;
         protected virtual Layers Layer => Layers.Ground;
         protected virtual bool Flying => false;
         protected virtual Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => null;
-        protected void ExpressStart(ExpressNode node) => throw new NotImplementedException();
-        protected void ExpressStop(ExpressNode node) => throw new NotImplementedException();
     }
 }

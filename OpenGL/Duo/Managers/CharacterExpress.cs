@@ -15,9 +15,9 @@ internal partial class Character
         public void Start();
         public void Stop();
     }
-    public class ExpressNode(string expression) : IExpress
+    public class ExpressNode(int id) : IExpress
     {
-        public string Expression { get; } = expression;
+        public int ID { get; } = id;
         public bool Running { get; private set; } = false;
         public bool Stopped { get; private set; } = false;
         public bool Closed { get; private set; } = false;
@@ -49,6 +49,15 @@ internal partial class Character
     {
         _expressNodes.Clear();
     }
+    private void UpdateExpress(int id)
+    {
+        Debug.Assert(Action == Actions.Express);
+        if (ExpressAnimationMap.TryGetValue(id, out var animation))
+        {
+            var animationManager = AnimationManager;
+            animationManager.Play((int)animation);
+        }
+    }
     private void ExpressUpdate()
     {
         if (Pow.Globals.GamePaused) 
@@ -60,21 +69,18 @@ internal partial class Character
             if (!node.Running && !node.Stopped && !node.Closed)
             {
                 inode.Start();
-                ExpressStart(node);
+                UpdateExpress(node.ID);
             }
             if (node.Running && !node.Stopped && node.Closed)
-            {
-                ExpressStop(node);
                 inode.Stop();
-            }
             if (!node.Running && (node.Stopped || node.Closed))
                 _expressNodes.Dequeue();
         }
     }
-    public ExpressNode Submit(string expression)
+    public ExpressNode SubmitExpress(int id)
     {
         Debug.Assert(_expressNodes.Count <= _maxNumberOfExpressNodes);
-        var node = new ExpressNode(expression: expression);
+        var node = new ExpressNode(id: id);
         _expressNodes.Enqueue(node);
         return node;
     }

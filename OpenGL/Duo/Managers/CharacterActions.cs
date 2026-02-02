@@ -10,7 +10,7 @@ namespace Duo.Managers
 {
     internal partial class Character
     {
-        private static readonly Actions[] _flyingActions = [Actions.Idle, Actions.Walk];
+        private static readonly Actions[] _flyingActions = [Actions.Idle, Actions.Walk, Actions.Express];
         private Actions _action = Actions.Idle;
         private void UpdateAction(Actions action)
         {

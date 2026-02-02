@@ -1,5 +1,6 @@
 ﻿using Arch.Core.Extensions;
 using Duo.Data;
+using Duo.Utilities.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -75,7 +76,12 @@ internal class Submitter : Environment
                             .Where(x=>x.ID == duoObjectID)
                             .OfType<DuoObject>()
                             .First() : null,
-                        cameraMode: Enum.Parse<Camera.Modes>(command.GetValueOrDefault("CameraMode", "FullTrack")))));
+                        cameraMode: Enum.Parse<Camera.Modes>(command.GetValueOrDefault("CameraMode", "FullTrack")),
+                        expressID: int.Parse(command.GetValueOrDefault("ExpressID", "0")),
+                        character: command.TryGetValue("CharacterID", out string characterID) ? Globals.DuoRunner.Environments
+                            .Where(x=>x.ID == characterID)
+                            .OfType<Character>()
+                            .First() : null)));
             }
 
             // Acquire reference to the trigger character, given the appropriate trigger.
@@ -110,12 +116,11 @@ internal class Submitter : Environment
 
 internal class Runner : Environment, IUserAction, IControl
 {
-    public enum Actions { Dialogue, GhostText, Camera }
+    public enum Actions { Dialogue, GhostText, Camera, Express }
     public enum Triggers { Immediate, NoOutstanding, Timeout, NotRunning, Interacted }
     private interface INode
     {
-        public Dialogue.Node DialogueNode { get; set; }
-        public GhostText.Node GhostTextNode { get; set; }
+        public object ControlNode { get; set; }
         public void Update();
         public void Start();
         public void Stop();
@@ -127,7 +132,9 @@ internal class Runner : Environment, IUserAction, IControl
         string message = null,
         float timeOutValue = 1.0f,
         DuoObject duoObject = null,
-        Camera.Modes cameraMode = Camera.Modes.FullTrack) : INode
+        Camera.Modes cameraMode = Camera.Modes.FullTrack,
+        int expressID = 0,
+        Character character = null) : INode
     {
         private float _time = timeOutValue;
         public Actions Action { get; } = action;
@@ -137,6 +144,8 @@ internal class Runner : Environment, IUserAction, IControl
         public float TimeOutValue { get; } = timeOutValue;
         public DuoObject DuoObject { get; } = duoObject;
         public Camera.Modes CameraMode { get; } = cameraMode;
+        public int ExpressID { get; } = expressID;
+        public Character Character { get; } = character;
         public bool TimeOutFinished => _time <= 0;
         public bool Running { get; private set; } = false;
         public bool Stopped { get; private set; } = false;
@@ -148,16 +157,21 @@ internal class Runner : Environment, IUserAction, IControl
             if (StopCondition == Triggers.Timeout && _time > 0)
                 _time -= Pow.Globals.GameTime.GetElapsedSeconds();
         }
-        Dialogue.Node INode.DialogueNode { get; set; } = null;
-        GhostText.Node INode.GhostTextNode { get; set; } = null;
+        object INode.ControlNode { get; set; }
         void INode.Start()
         {
             // Check to make sure the state of everything is what we expect.
             Debug.Assert(!Stopped);
             Debug.Assert(!Running);
             var node = (INode)this;
+#if DEBUG
             if (Action == Actions.Dialogue)
-                Debug.Assert(node.DialogueNode != null);
+                Debug.Assert(node.ControlNode is Dialogue.Node);
+            if (Action == Actions.GhostText)
+                Debug.Assert(node.ControlNode is GhostText.Node);
+            if (Action == Actions.Express)
+                Debug.Assert(node.ControlNode is Character.ExpressNode);
+#endif
             // Set the running state.
             Running = true;
         }
@@ -207,11 +221,26 @@ internal class Runner : Environment, IUserAction, IControl
                 if (node.StopCondition != Triggers.Interacted)
                     continue;
 
-                if (node.Action == Actions.Dialogue && !inode.DialogueNode.Closed)
-                    inode.DialogueNode.Close();
+                if (node.Action == Actions.Dialogue)
+                {
+                    var dialogueNode = (Dialogue.Node)inode.ControlNode;
+                    if (!dialogueNode.Closed)
+                        dialogueNode.Close();
+                }
 
-                if (node.Action == Actions.GhostText && !inode.GhostTextNode.Closed)
-                    inode.GhostTextNode.Close();
+                if (node.Action == Actions.GhostText)
+                {
+                    var ghostTextNode = (GhostText.Node)inode.ControlNode;
+                    if (!ghostTextNode.Closed)
+                        ghostTextNode.Close();
+                }
+
+                if (node.Action == Actions.Express)
+                {
+                    var expressNode = (Character.ExpressNode)inode.ControlNode;
+                    if (!expressNode.Closed)
+                        expressNode.Close();
+                }
             }
         }
     }
@@ -310,7 +339,7 @@ internal class Runner : Environment, IUserAction, IControl
                     Debug.Assert(
                         node.StopCondition == Triggers.Timeout || 
                         node.StopCondition == Triggers.Interacted);
-                    inode.DialogueNode = _dialogue.Submit(message: node.Message);
+                    inode.ControlNode = _dialogue.Submit(message: node.Message);
                 }
 
                 // Prepare node if it's a ghost text action.
@@ -319,7 +348,7 @@ internal class Runner : Environment, IUserAction, IControl
                     Debug.Assert(
                         node.StopCondition == Triggers.Timeout ||
                         node.StopCondition == Triggers.Interacted);
-                    inode.GhostTextNode = _ghostText.Submit(message: node.Message);
+                    inode.ControlNode = _ghostText.Submit(message: node.Message);
                 }
 
                 // Configure camrea is node action is camera.
@@ -328,6 +357,15 @@ internal class Runner : Environment, IUserAction, IControl
                     Debug.Assert(node.StopCondition == Triggers.NotRunning);
                     _camera.Mode = node.CameraMode;
                     _camera.DuoObjectTracked = node.DuoObject;
+                }
+
+                // Prepare node for expression.
+                if (node.Action == Actions.Express)
+                {
+                    Debug.Assert(
+                        node.StopCondition == Triggers.Timeout ||
+                        node.StopCondition == Triggers.Interacted);
+                    inode.ControlNode = node.Character.SubmitExpress(node.ExpressID);
                 }
 
                 // Start the node and add it to the outstanding queue.
@@ -348,7 +386,7 @@ internal class Runner : Environment, IUserAction, IControl
                 // Perform stop condition for dialogue action.
                 if (node.Action == Actions.Dialogue)
                 {
-                    var dialogueNode = inode.DialogueNode;
+                    var dialogueNode = (Dialogue.Node)inode.ControlNode;
 
                     // Close on timeout.
                     if (node.StopCondition == Triggers.Timeout && !dialogueNode.Closed && node.TimeOutFinished)
@@ -362,7 +400,7 @@ internal class Runner : Environment, IUserAction, IControl
                 // Perform stop condition for ghost text.
                 if (node.Action == Actions.GhostText)
                 {
-                    var ghostTextNode = inode.GhostTextNode;
+                    var ghostTextNode = (GhostText.Node)inode.ControlNode;
 
                     // Close on timeout.
                     if (node.StopCondition == Triggers.Timeout && !ghostTextNode.Closed && node.TimeOutFinished)
@@ -377,6 +415,19 @@ internal class Runner : Environment, IUserAction, IControl
                 if (node.Action == Actions.Camera)
                 {
                     if (node.StopCondition == Triggers.NotRunning && !_camera.IsRunning)
+                        _stopNodes.Enqueue(node);
+                }
+
+                if (node.Action == Actions.Express)
+                {
+                    var expressNode = (Character.ExpressNode)inode.ControlNode;
+
+                    // close on timeout
+                    if (node.StopCondition == Triggers.Timeout && !expressNode.Closed && node.TimeOutFinished)
+                        expressNode.Close();
+
+                    // Stop on closed.
+                    if (expressNode.Closed)
                         _stopNodes.Enqueue(node);
                 }
             }
