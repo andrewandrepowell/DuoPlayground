@@ -2196,6 +2196,12 @@ StopCondition:Interacted#
 ExpressID:1#
 CharacterID:Raven;
 
+Action:Express#
+StartCondition:Immediate#
+StopCondition:Interacted#
+ExpressID:0#
+CharacterID:Protag;
+
 Action:GhostText#
 StartCondition:Immediate#
 StopCondition:Interacted#

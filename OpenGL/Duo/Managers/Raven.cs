@@ -24,5 +24,6 @@ internal class Raven : NPC
     protected override IReadOnlyDictionary<int, Animations> ExpressAnimationMap => _expressAnimationMap;
     protected override Boxes Boxes => Boxes.Bird;
     protected override bool Flying => true;
+    public override int ParseExpress(string expression) => (int)Enum.Parse<Expressions>(expression);
     public enum Expressions { Idle, Caw }
 }

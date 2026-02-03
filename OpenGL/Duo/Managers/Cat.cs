@@ -31,10 +31,16 @@ namespace Duo.Managers
             { Actions.Land, Animations.CatLand },
             { Actions.Fall, Animations.CatFall },
         });
+        private static readonly ReadOnlyDictionary<int, Animations> _expressAnimationMap = new(new Dictionary<int, Animations>()
+        {
+            { (int)Expressions.Idle, Animations.CatIdle },
+        });
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
+        protected override IReadOnlyDictionary<int, Animations> ExpressAnimationMap => _expressAnimationMap;
         protected override Boxes Boxes => Boxes.Cat;
         protected override Layers Layer => Layers.Protag;
         protected override Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => ContactInteractable;
+        public override int ParseExpress(string expression) => (int)Enum.Parse<Expressions>(expression);
         public enum Expressions { Idle }
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;

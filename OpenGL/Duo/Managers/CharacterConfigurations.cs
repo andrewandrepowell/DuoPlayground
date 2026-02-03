@@ -16,5 +16,6 @@ namespace Duo.Managers
         protected virtual Layers Layer => Layers.Ground;
         protected virtual bool Flying => false;
         protected virtual Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => null;
+        public virtual int ParseExpress(string expression) => throw new NotImplementedException();
     }
 }
