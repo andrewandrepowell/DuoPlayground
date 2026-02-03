@@ -2193,13 +2193,13 @@ Message:*CAW* *CAW* Welcome to this small, very incomplete demo of Duo Playgroun
 Action:Express#
 StartCondition:Immediate#
 StopCondition:Interacted#
-ExpressID:1#
+ExpressID:Caw#
 CharacterID:Raven;
 
 Action:Express#
 StartCondition:Immediate#
 StopCondition:Interacted#
-ExpressID:0#
+ExpressID:Idle#
 CharacterID:Protag;
 
 Action:GhostText#
@@ -2211,6 +2211,18 @@ Action:Dialogue#
 StartCondition:NoOutstanding#
 StopCondition:Interacted#
 Message:The only goal is to just get to the end of the level! I appreciate any feedback, and please enjoy! :D;
+
+Action:Express#
+StartCondition:Immediate#
+StopCondition:Interacted#
+ExpressID:Caw#
+CharacterID:Raven;
+
+Action:Express#
+StartCondition:Immediate#
+StopCondition:Interacted#
+ExpressID:Idle#
+CharacterID:Protag;
 
 Action:GhostText#
 StartCondition:Immediate#

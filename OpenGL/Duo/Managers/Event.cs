@@ -77,11 +77,15 @@ internal class Submitter : Environment
                             .OfType<DuoObject>()
                             .First() : null,
                         cameraMode: Enum.Parse<Camera.Modes>(command.GetValueOrDefault("CameraMode", "FullTrack")),
-                        expressID: int.Parse(command.GetValueOrDefault("ExpressID", "0")),
-                        character: command.TryGetValue("CharacterID", out string characterID) ? Globals.DuoRunner.Environments
-                            .Where(x=>x.ID == characterID)
+                        expressID: (command.TryGetValue("CharacterID", out string characterID0) ? Globals.DuoRunner.Environments
+                            .Where(x => x.ID == characterID0)
                             .OfType<Character>()
-                            .First() : null)));
+                            .First()
+                            .ParseExpress(command.TryGetValue("ExpressID", out var expressID) ? expressID : "Idle") : 0),
+                        character: (command.TryGetValue("CharacterID", out string characterID1) ? Globals.DuoRunner.Environments
+                            .Where(x=>x.ID == characterID1)
+                            .OfType<Character>()
+                            .First() : null))));
             }
 
             // Acquire reference to the trigger character, given the appropriate trigger.
