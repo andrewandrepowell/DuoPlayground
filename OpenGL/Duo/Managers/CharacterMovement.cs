@@ -41,7 +41,7 @@ namespace Duo.Managers
             _characterPhysics.Update();
 
             var noLandAction = ((Action != Actions.Land) || !AnimationManager.Running);
-            var noExpressAction = ((Action != Actions.Express) || (_expressNodes.Count == 0));
+            var noExpressAction = ((Action != Actions.Express) || (_expressNodes.Count == 0 && _expressLingerTime <= 0));
             if (_expressNodes.Count > 0 && Action != Actions.Express)
                 UpdateAction(Actions.Express);
             else if (!Jumping && (Grounded || Flying) && !Moving && Action != Actions.Idle && Action != Actions.Fall && noLandAction && noExpressAction)

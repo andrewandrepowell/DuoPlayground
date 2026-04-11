@@ -34,6 +34,9 @@ namespace Duo.Managers
         private static readonly ReadOnlyDictionary<int, Animations> _expressAnimationMap = new(new Dictionary<int, Animations>()
         {
             { (int)Expressions.Idle, Animations.CatIdle },
+            { (int)Expressions.Rest, Animations.CatRest },
+            { (int)Expressions.Waking, Animations.CatWaking },
+            { (int)Expressions.Standing, Animations.CatStanding },
         });
         protected override IReadOnlyDictionary<Actions, Animations> ActionAnimationMap => _actionAnimationMap;
         protected override IReadOnlyDictionary<int, Animations> ExpressAnimationMap => _expressAnimationMap;
@@ -41,7 +44,7 @@ namespace Duo.Managers
         protected override Layers Layer => Layers.Protag;
         protected override Utilities.Physics.Character.ServiceInteractableContact ServiceInteractableContact => ContactInteractable;
         public override int ParseExpress(string expression) => (int)Enum.Parse<Expressions>(expression);
-        public enum Expressions { Idle }
+        public enum Expressions { Idle, Rest, Waking, Standing }
         public Keys[] ControlKeys => _uaManager.ControlKeys;
         public Buttons[] ControlButtons => _uaManager.ControlButtons;
         public Directions[] ControlThumbsticks => _uaManager.ControlThumbsticks;

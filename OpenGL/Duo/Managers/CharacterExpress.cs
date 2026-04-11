@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MonoGame.Extended;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Duo.Managers;
 internal partial class Character
 {
     private const int _maxNumberOfExpressNodes = 32;
+    private const float _expressLingerMaxTime = (float)2/30;
+    private float _expressLingerTime;
     private interface IExpress
     {
         public void Start();
@@ -43,6 +46,7 @@ internal partial class Character
     private Queue<ExpressNode> _expressNodes = [];
     private void InitializeExpress()
     {
+        _expressLingerTime = 0;
         _expressNodes.Clear();
     }
     private void CleanupExpress()
@@ -71,11 +75,17 @@ internal partial class Character
                 inode.Start();
                 UpdateExpress(node.ID);
             }
-            if (node.Running && !node.Stopped && node.Closed)
+            if (node.Running && !node.Stopped && (node.Closed || !AnimationManager.Running))
                 inode.Stop();
             if (!node.Running && (node.Stopped || node.Closed))
+            {
+                _expressLingerTime = _expressLingerMaxTime;
                 _expressNodes.Dequeue();
+            }
         }
+
+        if (_expressLingerTime > 0)
+            _expressLingerTime -= Pow.Globals.GameTime.GetElapsedSeconds();
     }
     public ExpressNode SubmitExpress(int id)
     {

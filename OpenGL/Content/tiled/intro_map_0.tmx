@@ -1204,7 +1204,7 @@
   </object>
  </objectgroup>
  <objectgroup id="16" name="objects_npcs_0">
-  <object id="139" x="1280" y="1664">
+  <object id="139" x="1536" y="1712">
    <properties>
     <property name="Direction" value="Right"/>
     <property name="EntityType" value="Raven"/>
@@ -2177,7 +2177,7 @@
   </object>
  </objectgroup>
  <objectgroup id="15" name="objects_events_0">
-  <object id="138" x="1552" y="1808">
+  <object id="138" x="1696" y="1792">
    <properties>
     <property name="Commands">Action:Camera#
 StartCondition:Immediate#
@@ -2199,7 +2199,7 @@ CharacterID:Raven;
 Action:Express#
 StartCondition:Immediate#
 StopCondition:Interacted#
-ExpressID:Idle#
+ExpressID:Rest#
 CharacterID:Protag;
 
 Action:GhostText#
@@ -2217,6 +2217,18 @@ StartCondition:Immediate#
 StopCondition:Interacted#
 ExpressID:Caw#
 CharacterID:Raven;
+
+Action:Express#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+ExpressID:Waking#
+CharacterID:Protag;
+
+Action:Express#
+StartCondition:Immediate#
+StopCondition:NotRunning#
+ExpressID:Standing#
+CharacterID:Protag;
 
 Action:Express#
 StartCondition:Immediate#

@@ -42,7 +42,7 @@ namespace Duo.Data
     }
     internal enum Animations 
     { 
-        CatWalk, CatIdle, CatJump, CatFall, CatLand,
+        CatWalk, CatIdle, CatJump, CatFall, CatLand, CatRest, CatWaking, CatStanding,
         RavenFly, RavenCaw,
         Pixel, 
         Platform,
@@ -165,6 +165,27 @@ namespace Duo.Data
                 indices: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
                 period: 0.7f,
                 repeat: true);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatRest,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 7,
+                indices: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46],
+                period: 0.7f,
+                repeat: true);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatWaking,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 8,
+                indices: [47, 48, 49, 50, 51, 52],
+                period: 0.3f,
+                repeat: false);
+            runner.AnimationGenerator.ConfigureAnimation(
+                animationId: (int)Animations.CatStanding,
+                spriteId: (int)Sprites.Cat,
+                spriteAnimationId: 9,
+                indices: [53, 54, 55, 56, 57, 58],
+                period: 0.3f,
+                repeat: false);
             runner.AnimationGenerator.ConfigureSprite(
                 spriteId: (int)Sprites.Raven,
                 assetName: "images/bird_0",

@@ -368,7 +368,8 @@ internal class Runner : Environment, IUserAction, IControl
                 {
                     Debug.Assert(
                         node.StopCondition == Triggers.Timeout ||
-                        node.StopCondition == Triggers.Interacted);
+                        node.StopCondition == Triggers.Interacted ||
+                        node.StopCondition == Triggers.NotRunning);
                     inode.ControlNode = node.Character.SubmitExpress(node.ExpressID);
                 }
 
@@ -430,8 +431,8 @@ internal class Runner : Environment, IUserAction, IControl
                     if (node.StopCondition == Triggers.Timeout && !expressNode.Closed && node.TimeOutFinished)
                         expressNode.Close();
 
-                    // Stop on closed.
-                    if (expressNode.Closed)
+                    // Stop on stopped. 
+                    if (expressNode.Stopped)
                         _stopNodes.Enqueue(node);
                 }
             }
